@@ -1,0 +1,5 @@
+# Personal profile overrides — hostnames, machine limits, git identity, repository paths.
+# Read in preference to the committed templates one directory up; never committed.
+plugins/project/skills/project-flow/profile/local/
+
+.DS_Store
