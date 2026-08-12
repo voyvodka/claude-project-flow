@@ -27,6 +27,7 @@ and the reason it was turned down is the only thing that stops it.
 | Dependency versions written from recall against a "latest stable" rule with no method | structural | 1.7.2 | `profile/code-style.md` — resolve with the package manager |
 | Decisions recorded individually and never read as a set; `--fetch` contradicted a read-only scope | structural, found by the tool itself | 1.9.0 | `phase-3-decide.md` — contradiction check before the gate |
 | Two of four research branches returned no summary, and the instruction forbade reading the files instead | structural, found by the tool itself | 2.2.1 | `phase-2-research.md` — the file is the deliverable, the summary a convenience |
+| "Success criteria" had no referent in a project that already shipped; phases ran against an outward goal the owner would not have chosen first | structural | 2.5.0 | `phase-1-discover.md` — item 4 splits when the MVP already shipped; `phase-0-detect.md` — what a codebase conceals |
 
 Two rows are worth more than their fix. The git identity rule was **correct, prominent and indexed
 as always-relevant, and still could not fire** — placement beat wording. And the `--fetch`
@@ -59,6 +60,7 @@ Also worth pinning if it recurs: this phase turned "I don't want operational bur
 per month", making a vague user constraint into a threshold Phase 2 can answer pass/fail. That is
 the `code-style.md` lesson — a requirement without a method is a wish — applied spontaneously to a
 user constraint rather than a profile rule, which is a place nothing had specified it for.
+
 
 ## Rejected
 

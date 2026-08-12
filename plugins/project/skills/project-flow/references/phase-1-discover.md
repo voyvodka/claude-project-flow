@@ -13,7 +13,7 @@ The failure mode this phase exists to prevent is not "too few questions" — it 
 | 1 | Problem | Which real problem, whose problem, how it is solved today |
 | 2 | Users | Who, roughly how many, how they are reached |
 | 3 | Main flow | The user's number-one task, start to finish |
-| 4 | Success criteria | One measurable sentence for "the MVP worked" |
+| 4 | Success criteria | One measurable sentence for "the MVP worked" — but see below when the MVP already shipped |
 | 5 | Out of scope | What the MVP will explicitly *not* do |
 | 6 | Constraints | Time, budget, team size, mandatory technologies |
 | 6b | Existing skill | What the team can already build in at full speed — and who or what actually writes the code |
@@ -30,6 +30,21 @@ The failure mode this phase exists to prevent is not "too few questions" — it 
 | 12 | Maintenance — who keeps it alive, for how long |
 
 Item 5 is the one users skip and the one that saves the most work. Never let the phase end without it. "Everything is in scope" is not an answer; push back once with concrete examples of things that could be cut.
+
+### Item 4 when the MVP already shipped
+
+"Did the MVP work" has no referent in a project with a year of release history behind it, and the
+nearest thing that fits the wording is usually an outward goal — growth, adoption, reach. Settle
+for that and the phase closes on a criterion that is **downstream of one nobody asked for.**
+
+So in an existing-code project item 4 is two answers, in this order:
+
+1. **The owner's bar for the product being fit to push.** Not a feature list — the standard below which they will not point anyone at it. Press for components; "when it feels right" is not yet an answer, and the components are usually specific once asked for.
+2. **The outward goal**, which the first one governs. Everything aimed outward waits behind it.
+
+Getting these the wrong way round is expensive and quiet: research, scope, and increments all
+order themselves against the outward goal, and the bar only surfaces at the moment something is
+about to be published — by which point the work is done and parked.
 
 ### Item 3 when there are several roles
 

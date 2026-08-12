@@ -62,3 +62,11 @@ When there is real source but no product docs, the checklist in Phase 1 still ap
 - Scale, auth model, integrations → read from config, middleware, and external clients.
 
 Present these as "here is what I read from the code, correct me" rather than as open questions. It is faster for the user and it surfaces drift between what the code does and what they believe it does — which is frequently the most valuable output of the whole phase.
+
+**The mirror of that list is the dangerous half.** Code reports what was built and is silent on whether its author thinks it is any good, so none of this can be seeded and all of it must be asked:
+
+- Whether they consider the product fit to show anyone yet, and what specifically is missing if not.
+- Which shipped features they consider *finished* rather than merely present.
+- What they want it to become — the quality bar, not the feature list.
+
+A working codebase is persuasive. It reads as settled, its decisions look deliberate, and its author's dissatisfaction with it appears in no file. A phase that seeds everything readable and asks nothing else will order the whole project against goals its owner would not have chosen.

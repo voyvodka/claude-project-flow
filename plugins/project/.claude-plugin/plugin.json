@@ -1,6 +1,6 @@
 {
   "name": "project",
-  "version": "2.4.0",
+  "version": "2.5.0",
   "description": "Carry a project from a rough idea to shipped code through six approval-gated phases: detect state, interrogate the idea, research market and stack, lock decisions into docs, scaffold AI tooling, then build in increments",
   "author": {
     "name": "voyvodka",
@@ -9,5 +9,11 @@
   "homepage": "https://github.com/voyvodka/claude-project-flow",
   "repository": "https://github.com/voyvodka/claude-project-flow",
   "license": "MIT",
-  "keywords": ["project-management", "planning", "research", "documentation", "scaffolding"]
+  "keywords": [
+    "project-management",
+    "planning",
+    "research",
+    "documentation",
+    "scaffolding"
+  ]
 }
