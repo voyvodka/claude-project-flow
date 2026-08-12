@@ -1,6 +1,6 @@
 {
   "name": "project",
-  "version": "2.5.0",
+  "version": "2.6.0",
   "description": "Carry a project from a rough idea to shipped code through six approval-gated phases: detect state, interrogate the idea, research market and stack, lock decisions into docs, scaffold AI tooling, then build in increments",
   "author": {
     "name": "voyvodka",

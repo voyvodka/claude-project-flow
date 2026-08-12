@@ -104,9 +104,10 @@ Everything this tool produces lives in the project folder and is meant to be com
 
 ```
 <project>/
-├── CLAUDE.md                    EN · main context source: identity, rules, map of docs/
+├── CLAUDE.md                    EN · main context source: identity, rules, pointer to docs/README.md
 ├── AGENTS.md                    EN · pointer to CLAUDE.md for non-Claude tools
 ├── docs/
+│   ├── README.md                index of everything under docs/ and what each file answers
 │   ├── product/
 │   │   ├── 00-state.md          where we are, what is open, standing assumptions
 │   │   ├── 01-brief.md          problem, users, main flow, success criteria, out of scope
@@ -123,6 +124,16 @@ Everything this tool produces lives in the project folder and is meant to be com
 ```
 
 `docs/product/` and `docs/research/` are deliberately separate: research is evidence with sources and goes stale; product docs are decisions and stay current.
+
+**The index lives in `docs/README.md`, not in `CLAUDE.md`.** A map kept in `CLAUDE.md` is a
+different file in a different directory from the document being added, so it is not updated, and a
+folder that outgrows the skeleton above ends up with a map naming a fraction of what is there —
+which reads as complete. Keeping the index inside the folder it indexes puts adding a file and
+listing it in the same place. `CLAUDE.md` points at it and names the entry point (`00-state.md`)
+and nothing more. This matters most when `docs/` is private and `CLAUDE.md` is committed: every
+note added would otherwise touch a public file.
+
+Adding anything under `docs/` means adding its row to `docs/README.md` in the same breath.
 
 ## Handover guarantee
 

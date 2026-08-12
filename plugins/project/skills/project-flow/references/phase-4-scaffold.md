@@ -14,7 +14,8 @@ Goal: build the project's brain, so that any AI session in this repo — Claude 
 | `.claude/skills/*/SKILL.md` | English | Only for genuinely repeated work |
 
 Start from `templates/project-CLAUDE.md` and `templates/project-AGENTS.md` (named with the
-prefix so they are not mistaken for this plugin's own context files).
+prefix so they are not mistaken for this plugin's own context files), and from
+`templates/docs-README.md` for the index.
 
 ## CLAUDE.md
 
@@ -24,12 +25,32 @@ It covers:
 
 - **What this project is** — two or three sentences, from `01-brief.md`.
 - **Stack and why** — the choice plus the one-line reason from `02-decisions.md`. The reason prevents casual substitution.
-- **Where the truth lives** — the map of `docs/`, saying which file answers which kind of question.
+- **Where the truth lives** — a pointer to `docs/README.md` plus the entry point (`00-state.md` first, then `02-decisions.md`). Not the map itself: write that into `docs/README.md`, which is created in this phase and is where every later addition gets listed.
 - **Rules and conventions** — the project's actual constraints. Only ones that bite.
 - **Standing assumptions** — the open `⚠️` list, and the instruction to ask the user rather than guess when work touches one.
 - **Out of scope** — from `03-mvp.md`. This is what stops a future session from helpfully building something that was deliberately cut.
 
 Do not restate what the code plainly shows. Directory listings, obvious framework conventions, and generic best practices are noise; they push the useful lines out of a reader's attention.
+
+## docs/README.md
+
+From `templates/docs-README.md`. It is the index of everything under `docs/`, and it lives inside
+the folder it indexes rather than in `CLAUDE.md` — so that adding a document and listing it are the
+same motion, in the same directory. A map kept in `CLAUDE.md` is a different file in a different
+place, and it goes stale the first time the folder outgrows the skeleton.
+
+Two parts do the work, and only one of them is a listing:
+
+- **A task router.** "If you are about to do X, read Y." A reader arrives with a job, not with a wish to browse a directory. Write one row per recurring job the project actually has, naming the area it touches; the generic rows in the template are the floor, not the set.
+- **One row per file**, saying what it *answers*. Where a file has a maintenance rule of its own — a ledger that must stay one line per entry, a research note that goes stale — the row is where that rule belongs, because the row is what gets read before the file is opened.
+
+State at the top what the folder is for: the things that cannot be read from the code. Then state
+the converse — that nothing here restates what the code already says. That second sentence is what
+keeps the folder from filling with prose nobody needs.
+
+If `docs/` is private and `CLAUDE.md` is committed, say so in the index and say it plainly. A
+reader who assumes otherwise will link to it from a public file, and every such link is dead for
+everyone but its author.
 
 ## AGENTS.md
 

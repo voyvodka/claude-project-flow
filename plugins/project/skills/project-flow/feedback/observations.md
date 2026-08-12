@@ -28,6 +28,7 @@ and the reason it was turned down is the only thing that stops it.
 | Decisions recorded individually and never read as a set; `--fetch` contradicted a read-only scope | structural, found by the tool itself | 1.9.0 | `phase-3-decide.md` — contradiction check before the gate |
 | Two of four research branches returned no summary, and the instruction forbade reading the files instead | structural, found by the tool itself | 2.2.1 | `phase-2-research.md` — the file is the deliverable, the summary a convenience |
 | "Success criteria" had no referent in a project that already shipped; phases ran against an outward goal the owner would not have chosen first | structural | 2.5.0 | `phase-1-discover.md` — item 4 splits when the MVP already shipped; `phase-0-detect.md` — what a codebase conceals |
+| The map of `docs/` lived in `CLAUDE.md`; a folder that outgrew the skeleton ended up with a map naming 9 of 48 files, two whole directories absent | duplication | 2.6.0 | `docs/README.md` — new `templates/docs-README.md`, written in `phase-4-scaffold.md`; `CLAUDE.md` now points at it |
 
 Two rows are worth more than their fix. The git identity rule was **correct, prominent and indexed
 as always-relevant, and still could not fire** — placement beat wording. And the `--fetch`

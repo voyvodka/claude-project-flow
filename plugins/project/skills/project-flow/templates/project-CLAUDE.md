@@ -19,14 +19,12 @@ the "Elenenler" line for it — the alternatives were considered and rejected fo
 
 ## Where the truth lives
 
-| Question | File |
-|---|---|
-| Where are we, what is next | `docs/product/00-state.md` |
-| What are we building and why | `docs/product/01-brief.md` |
-| Why is it built this way | `docs/product/02-decisions.md` |
-| What is in the MVP | `docs/product/03-mvp.md` |
-| What is the build order and progress | `docs/product/04-roadmap.md` |
-| What did research find | `docs/research/` |
+`docs/README.md` indexes every document and what each one answers. Read it rather than listing the
+directory, and keep it current when adding to `docs/` — the index is maintained there, not here.
+
+Read `docs/product/00-state.md` before proposing any implementation plan, then check
+`02-decisions.md`; ideas that look obvious are often already settled there, with the reason and
+the accepted cost.
 
 Product documents are the memory. When code and documents disagree, raise it — do not
 silently follow one of them.
