@@ -12,15 +12,19 @@ memory so the conversation does not have to.
 ## Install
 
 ```
-/plugin marketplace add voyvodka/claude-project-flow
-/plugin install project@claude-project-flow
+/plugin marketplace add voyvodka/claude-plugins
+/plugin install project@voyvodka
 ```
+
+The plugin is listed in a small [catalog marketplace](https://github.com/voyvodka/claude-plugins)
+rather than being one itself, so a single registration covers every plugin from the same author and
+`/plugin marketplace update voyvodka` refreshes all of them at once.
 
 The `owner/repo` shorthand clones over SSH. Without an SSH key on the machine, use the HTTPS URL
 instead — it needs no credentials for a public repository:
 
 ```
-/plugin marketplace add https://github.com/voyvodka/claude-project-flow.git
+/plugin marketplace add https://github.com/voyvodka/claude-plugins.git
 ```
 
 Then, in any project folder:
@@ -153,7 +157,6 @@ Conversation and everything under `docs/` follow the user's language. `CLAUDE.md
 ## Repository layout
 
 ```
-.claude-plugin/marketplace.json    marketplace manifest
 plugins/project/                   the plugin — see its own README for detail
 ```
 
