@@ -31,6 +31,16 @@ This is what keeps machine names, hostnames, open ports, e-mail addresses and wo
 repository paths out of a public repository while the plugin still runs against real answers
 locally.
 
+> **This only works when the plugin runs from a copy you own** — a clone, or a folder under a
+> `skills/` directory. A marketplace install is copied into a versioned plugin cache: the clone it
+> was built from never contained `local/` (it is gitignored), and a `local/` created inside the
+> cache is deleted the next time the plugin updates.
+>
+> The failure is silent and it is the expensive kind: nothing errors, the templates are read
+> instead, and the tool proceeds trusting **someone else's answers**. If you install from a
+> marketplace, either edit the committed files directly and accept that an update overwrites them,
+> or run the plugin from a clone. See the repository README.
+
 Two files are shipped as templates for exactly this reason and hold no real data until they are
 filled in: [`infrastructure.md`](infrastructure.md) and
 [`local-environment.md`](local-environment.md). Until one is filled in or overridden, treat its

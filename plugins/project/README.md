@@ -110,7 +110,8 @@ changes later.
 
 The files here are a worked example, not advice — replace them. Anything machine-specific goes in
 `profile/local/`, which is gitignored and read *instead of* the file of the same name one
-directory up. See the repository README for the split.
+directory up. See the repository README for the split — **and for why that split needs the plugin
+to run from a clone rather than from a marketplace install.**
 
 ## Status
 

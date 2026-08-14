@@ -114,6 +114,25 @@ ship as templates for exactly this reason — `infrastructure.md` and `local-env
 until one is filled in or overridden, the plugin treats its subject as genuinely open and asks
 rather than assuming.
 
+**This requires running the plugin from a copy you own.** A marketplace install is copied into a
+versioned plugin cache, and that breaks the override in both directions: the clone it was built
+from never contained `local/`, and a `local/` you create inside the cache is deleted by the next
+update. Nothing errors when it fails — the templates are read instead, and the tool proceeds
+trusting answers that describe a different developer, which is exactly the outcome the profile
+warns about.
+
+Two ways to have a real profile:
+
+```
+# clone it, and point a skills directory at the plugin — discovered in place, no cache copy
+git clone https://github.com/voyvodka/claude-project-flow.git
+ln -s "$PWD/claude-project-flow/plugins/project" ~/.claude/skills/project
+```
+
+or install from the marketplace and edit the committed `profile/` files directly, accepting that
+an update overwrites them. If you do neither, treat every default in `profile/` as someone else's
+and expect Phase 1 to confirm each one with you.
+
 ## It reviews itself
 
 At every phase gate the tool asks whether anything went wrong **because of how it is written**,
