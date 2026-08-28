@@ -1,0 +1,42 @@
+name: validate
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  manifest:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
+        with:
+          node-version: 24
+
+      # Deliberately unpinned: the gate asks "does this plugin load in the Claude Code
+      # people actually have", so it has to track the current CLI rather than a frozen one.
+      - name: Validate plugin manifest, skills and commands
+        run: npx --yes @anthropic-ai/claude-code@latest plugin validate plugins/project --strict
+
+      # SKILL.md routes to one reference per phase and the phases write from templates/.
+      # A renamed file breaks a phase at the moment it is needed, and nothing else catches it.
+      - name: Skill routing and templates must resolve
+        run: |
+          cd plugins/project/skills/project-flow
+          fail=0
+          for f in references/*.md templates/*.md profile/*.md; do
+            base=$(basename "$f")
+            hits=$(grep -rl --include='*.md' -- "$base" . | grep -v "^\./$f$" | wc -l | tr -d ' ')
+            if [ "$hits" = "0" ]; then echo "::error::unreferenced, nothing routes to it: $f"; fail=1; fi
+          done
+          for p in $(grep -o 'references/[a-z0-9-]*\.md' SKILL.md | sort -u); do
+            [ -f "$p" ] || { echo "::error::SKILL.md points at a missing reference: $p"; fail=1; }
+          done
+          for p in $(grep -rho 'templates/[a-zA-Z0-9._-]*\.md' references/*.md SKILL.md | sort -u); do
+            [ -f "$p" ] || { echo "::error::a phase reference points at a missing template: $p"; fail=1; }
+          done
+          exit $fail
