@@ -10,6 +10,8 @@ are summarised from that section and from git history.
 
 ## [Unreleased]
 
+## [2.8.0] - 2026-08-28
+
 ### Fixed
 
 - **The research phase could carry private infrastructure detail into a committed file.** The Tech
@@ -128,7 +130,8 @@ are summarised from that section and from git history.
 - First public release. The developer profile split: committed files became templates carrying the
   questions, while the answers moved to a gitignored `profile/local/` read in preference to them.
 
-[Unreleased]: https://github.com/voyvodka/claude-project-flow/compare/v2.7.0...HEAD
+[Unreleased]: https://github.com/voyvodka/claude-project-flow/compare/v2.8.0...HEAD
+[2.8.0]: https://github.com/voyvodka/claude-project-flow/compare/v2.7.0...v2.8.0
 [2.7.0]: https://github.com/voyvodka/claude-project-flow/releases/tag/v2.7.0
 [2.6.0]: https://github.com/voyvodka/claude-project-flow/compare/v2.5.0...v2.6.0
 [2.5.0]: https://github.com/voyvodka/claude-project-flow/compare/v2.4.0...v2.5.0
