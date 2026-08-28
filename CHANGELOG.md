@@ -10,6 +10,31 @@ are summarised from that section and from git history.
 
 ## [Unreleased]
 
+### Fixed
+
+- **Phase 1's "round limit" was not a limit.** `SKILL.md` promises questioning is bounded and that
+  leftover unknowns become marked assumptions, but `phase-1-discover.md` only said to *announce* a
+  fourth round — with no ceiling and no conversion rule, so a user whose answers keep opening new
+  ground could be questioned indefinitely, which is the exact failure the directive exists to
+  prevent. Four rounds is now a hard ceiling; what is still open converts to marked assumptions and
+  Phase 2 researches it.
+- **The decision-record format hardcoded Turkish field labels.** `phase-3-decide.md` showed
+  `Karar` / `Neden` / `Elenenler` / `Bağlı olduğu varsayım` as the literal block to fill in, while
+  `SKILL.md` says product documents follow the user's own language — so an English-language project
+  got Turkish headings inside otherwise English documents. The four *fields* are what is fixed; the
+  labels follow the document.
+- **`code-style.md` told the agent to append to a `gotchas.md` that nothing creates.** No phase
+  scaffolds it and no template defines it, so the rule fired mid-implementation against a file that
+  did not exist. It now says to create it on first use, with the three-layer structure already
+  described a few lines below — deliberately not scaffolded up front, so a project that never hits a
+  warning does not carry an empty ledger.
+- Two `avoid.md` exclusions (Sentry, API versioning) carried no argument, while the file's own rule
+  is that a candidate "has to beat the stated reason". With nothing stated there was nothing to
+  beat. Both are now marked as unargued weak priors to be raised in Phase 1 rather than treated as
+  settled.
+- The rejected entry in `feedback/observations.md` was missing two fields its own logging template
+  requires.
+
 ## [2.7.0] - 2026-08-28
 
 ### Fixed
