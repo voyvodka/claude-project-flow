@@ -13,7 +13,7 @@ memory so the conversation does not have to.
 
 ```
 /plugin marketplace add voyvodka/claude-plugins
-/plugin install project@voyvodka
+/plugin install project-flow@voyvodka
 ```
 
 The plugin is listed in a small [catalog marketplace](https://github.com/voyvodka/claude-plugins)
@@ -91,7 +91,7 @@ of thought. That handover is the point of the whole thing.
 
 ## The developer profile
 
-`plugins/project/skills/project-flow/profile/` is the part you are meant to edit. It records what
+`plugins/project-flow/skills/project-flow/profile/` is the part you are meant to edit. It records what
 you already know and reach for by default, one file per stack, so a project reads only what it
 touches.
 
@@ -130,7 +130,7 @@ Two ways to have a real profile:
 ```
 # clone it, and point a skills directory at the plugin — discovered in place, no cache copy
 git clone https://github.com/voyvodka/claude-project-flow.git
-ln -s "$PWD/claude-project-flow/plugins/project" ~/.claude/skills/project
+ln -s "$PWD/claude-project-flow/plugins/project-flow" ~/.claude/skills/project-flow
 ```
 
 or install from the marketplace and edit the committed `profile/` files directly, accepting that
@@ -144,8 +144,8 @@ separates structural failures from circumstantial ones, and logs them. The bar f
 evidence from a real project, not taste, and the preferred fix is to remove the cause rather than
 add a reminder. It proposes changes; it never applies them to itself without approval.
 
-`plugins/project/skills/project-flow/feedback/observations.md` is that ledger, and
-`plugins/project/README.md` records why each version changed — reasoning, not a changelog. Both
+`plugins/project-flow/skills/project-flow/feedback/observations.md` is that ledger, and
+`plugins/project-flow/README.md` records why each version changed — reasoning, not a changelog. Both
 include the findings that were **rejected**, and one that shipped and had to be reverted, because
 the reason a plausible rule was wrong is the only thing that stops it coming back.
 
@@ -157,7 +157,7 @@ Conversation and everything under `docs/` follow the user's language. `CLAUDE.md
 ## Repository layout
 
 ```
-plugins/project/                   the plugin — see its own README for detail
+plugins/project-flow/              the plugin — see its own README for detail
 ```
 
 ## Licence

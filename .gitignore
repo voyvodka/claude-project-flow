@@ -1,5 +1,9 @@
 # Personal profile overrides — hostnames, machine limits, git identity, repository paths.
 # Read in preference to the committed templates one directory up; never committed.
-plugins/project/skills/project-flow/profile/local/
+#
+# Path-independent on purpose: this rule was pinned to `plugins/project/...` and stopped
+# matching the moment the plugin directory was renamed, which briefly put these files into
+# a commit. An ignore rule that a rename can silently switch off is not an ignore rule.
+**/profile/local/
 
 .DS_Store
