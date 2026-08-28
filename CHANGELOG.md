@@ -4,11 +4,40 @@ All notable changes to the `project` plugin are documented here.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project
 adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-The `Status` section of [the plugin README](plugins/project/README.md) carries the *reasoning*
+The `Status` section of [the plugin README](plugins/project-flow/README.md) carries the *reasoning*
 behind each change — why the tool needed it. This file carries what changed. Releases before 2.7.0
 are summarised from that section and from git history.
 
 ## [Unreleased]
+
+## [3.0.0] - 2026-08-28
+
+### Changed
+
+- **The plugin is renamed from `project` to `project-flow`.** BREAKING for the install key: it is
+  now `/plugin install project-flow@voyvodka`, and `enabledPlugins` entries move accordingly. The
+  catalog carries a `renames` entry so Claude Code v2.1.193+ rewrites existing settings
+  automatically and reports the change; because the source is remote, expect one
+  `plugin-cache-miss` and a single `/plugin install` to pick it up under the new name.
+
+  `project` was a bare dictionary word standing in for a plugin about phased project delivery. It
+  collides easily — `cyberswat/claude-plugin-projects` already occupies the same space on GitHub —
+  and a generic install key is the one identifier a user cannot disambiguate at install time. The
+  skill one directory down has been called `project-flow` since the first release; the plugin now
+  matches it.
+
+  The repository name (`claude-project-flow`) is unchanged, and **the `/project` command is
+  unchanged** — it still starts, resumes and advances a project exactly as before. What moved is the
+  install key and the skill's namespaced id, which is now `project-flow:project-flow`.
+
+- `plugins/project/` is now `plugins/project-flow/`, so the plugin directory matches the plugin name.
+
+### Fixed
+
+- **The `.gitignore` rule protecting `profile/local/` was pinned to `plugins/project/...`** and
+  stopped matching the moment that directory was renamed. An ignore rule a rename can silently
+  switch off is not an ignore rule; it is now `**/profile/local/`. CI also asserts that nothing
+  under `profile/local/` is tracked, so the protection is checked rather than assumed.
 
 ## [2.8.0] - 2026-08-28
 
@@ -130,7 +159,8 @@ are summarised from that section and from git history.
 - First public release. The developer profile split: committed files became templates carrying the
   questions, while the answers moved to a gitignored `profile/local/` read in preference to them.
 
-[Unreleased]: https://github.com/voyvodka/claude-project-flow/compare/v2.8.0...HEAD
+[Unreleased]: https://github.com/voyvodka/claude-project-flow/compare/v3.0.0...HEAD
+[3.0.0]: https://github.com/voyvodka/claude-project-flow/compare/v2.8.0...v3.0.0
 [2.8.0]: https://github.com/voyvodka/claude-project-flow/compare/v2.7.0...v2.8.0
 [2.7.0]: https://github.com/voyvodka/claude-project-flow/releases/tag/v2.7.0
 [2.6.0]: https://github.com/voyvodka/claude-project-flow/compare/v2.5.0...v2.6.0

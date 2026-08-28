@@ -4,7 +4,7 @@ argument-hint: Optional rough description of the project idea
 allowed-tools: ["Read", "Write", "Edit", "Glob", "Grep", "Bash", "AskUserQuestion", "Agent", "WebSearch", "WebFetch", "Skill", "TaskCreate", "TaskUpdate", "TaskList", "TaskGet"]
 ---
 
-Load the `project:project-flow` skill with the Skill tool now, then follow it exactly.
+Load the `project-flow:project-flow` skill with the Skill tool now, then follow it exactly.
 
 Do not answer, plan, or write anything before the skill is loaded. The skill decides which phase this invocation belongs to.
 

@@ -73,7 +73,7 @@ and all code are always English.
 ## Layout
 
 ```
-plugins/project/
+plugins/project-flow/
 ├── commands/project.md                     thin entry point
 └── skills/project-flow/
     ├── SKILL.md                            directives, state contract, routing
