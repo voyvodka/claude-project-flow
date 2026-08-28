@@ -10,6 +10,42 @@ are summarised from that section and from git history.
 
 ## [Unreleased]
 
+## [3.0.1] - 2026-08-28
+
+### Fixed
+
+- **`phase-3-decide.md` told the reader the decision record has four fields**, while a paragraph
+  further down — untouched by that edit — describes `Kabul edilen bedel` / accepted cost as
+  mandatory, down to what to write when there is none. An agent following the explicit "four fields
+  are what is fixed" instruction would drop it. The template now carries all five.
+- The plugin README's `Status` section went stale twice in one day: backfilled at 2.7.0, then three
+  more releases shipped past it. The cause was keeping the same history in two files, so the cause
+  is gone — `CHANGELOG.md` is the record from 2.7.0 onward and `Status` is explicitly frozen
+  pre-2.7.0 history. This plugin tells every project it touches to write once and link; it now does.
+- The CI routing check aborted opaquely on the condition it exists to report: `grep` exits 1 when it
+  matches nothing, and under `set -eo pipefail` that killed the step before the `::error::`
+  annotation was printed. It now annotates and fails deliberately.
+
+### Fixed
+
+- **`phase-3-decide.md` documented four decision fields; the template it writes from has five.**
+  `templates/02-decisions.md` carries `Kabul edilen bedel` — what the decision knowingly gives up —
+  and the reference that explains the format never mentioned it, so the field the template asks for
+  was the one field nothing told the agent to fill. The reference now describes all five, in both
+  the Turkish block and the English label mapping, and says to write "—" when a decision genuinely
+  costs nothing rather than dropping the line.
+- **The CI routing check aborted instead of reporting.** `grep -rl` exits 1 when it matches nothing,
+  which under `set -eo pipefail` killed the step at the exact moment it found an unreferenced file —
+  an opaque failure in place of the annotated one the check exists to produce. Both stages of the
+  pipeline now tolerate the empty match.
+
+### Changed
+
+- **The README's `Status` section is frozen as pre-2.7.0 history.** It duplicated the changelog and
+  went stale twice in one day, which is the failure this plugin warns about everywhere else. The
+  authoritative record from 2.7.0 onward is `CHANGELOG.md`; the older entries stay because their
+  reasoning predates the changelog and is still worth reading.
+
 ## [3.0.0] - 2026-08-28
 
 ### Changed
@@ -159,7 +195,8 @@ are summarised from that section and from git history.
 - First public release. The developer profile split: committed files became templates carrying the
   questions, while the answers moved to a gitignored `profile/local/` read in preference to them.
 
-[Unreleased]: https://github.com/voyvodka/claude-project-flow/compare/v3.0.0...HEAD
+[Unreleased]: https://github.com/voyvodka/claude-project-flow/compare/v3.0.1...HEAD
+[3.0.1]: https://github.com/voyvodka/claude-project-flow/compare/v3.0.0...v3.0.1
 [3.0.0]: https://github.com/voyvodka/claude-project-flow/compare/v2.8.0...v3.0.0
 [2.8.0]: https://github.com/voyvodka/claude-project-flow/compare/v2.7.0...v2.8.0
 [2.7.0]: https://github.com/voyvodka/claude-project-flow/releases/tag/v2.7.0

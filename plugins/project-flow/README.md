@@ -116,8 +116,14 @@ to run from a clone rather than from a marketplace install.**
 
 ## Status
 
-The authoritative version is in `.claude-plugin/plugin.json`. What follows is why each change was
-made, newest first — reasoning, not a changelog.
+The authoritative version is in `.claude-plugin/plugin.json`, and **from 2.7.0 onward the record
+is [`CHANGELOG.md`](../../CHANGELOG.md)** — it carries both what changed and why, so there is one
+history rather than two.
+
+This section is the pre-2.7.0 history, kept because the reasoning in it is still worth reading and
+predates the changelog. It is not maintained. It went stale twice in a single day before that was
+admitted, which is the argument against keeping the same facts in two files that this plugin makes
+everywhere else.
 
 Version 2.6.0 — the map of `docs/` moved out of `CLAUDE.md` and into `docs/README.md`. A map kept
 in a different file in a different directory from the document being added does not get updated:

@@ -37,15 +37,16 @@ Each entry carries what a stranger needs to not undo it by accident:
 **Karar:** <what was chosen>
 **Neden:** <one or two sentences — the reason that actually decided it>
 **Elenenler:** <what was rejected, and the specific reason>
+**Kabul edilen bedel:** <what this gives up — "—" if genuinely nothing>
 **Bağlı olduğu varsayım:** <assumption ID, if this decision rests on one>
 ```
 
 **The labels are written in the document's own language, not copied from here.** The block above is
 shown in Turkish because that is this profile's default; `02-decisions.md` follows the user's
-language like every other product document, so in an English-language project the same four fields
-are `Decision` / `Why` / `Rejected` / `Rests on`. What is fixed is the *four fields* — every entry
-carries all four, whatever they are called. The same goes for the literal values used below: `yok`
-is `none` in an English document.
+language like every other product document, so in an English-language project the same five fields
+are `Decision` / `Why` / `Rejected` / `Accepted cost` / `Rests on`. What is fixed is the *five
+fields* — every entry carries all five, whatever they are called. The same goes for the literal
+values used below: `yok` is `none` in an English document.
 
 When a stack decision **departs from the profile default**, say so explicitly in the **Neden**
 line — "varsayılan X'ti, <şu gereksinim> nedeniyle Y seçildi". A deviation carries a real cost
