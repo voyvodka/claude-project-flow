@@ -35,6 +35,7 @@ but never silently.
 
 ```
 <project>/
+├── README.md                 written at MVP close in Phase 5, not at scaffold time
 ├── CLAUDE.md                 EN · main context source
 ├── AGENTS.md                 EN · pointer for non-Claude tools
 ├── docs/
@@ -117,6 +118,23 @@ to run from a clone rather than from a marketplace install.**
 
 The authoritative version is in `.claude-plugin/plugin.json`. What follows is why each change was
 made, newest first — reasoning, not a changelog.
+
+Version 2.6.0 — the map of `docs/` moved out of `CLAUDE.md` and into `docs/README.md`. A map kept
+in a different file in a different directory from the document being added does not get updated:
+one project outgrew the skeleton and ended up with a map naming 9 of 48 files, two whole
+directories absent, reading as complete. The index now lives inside the folder it indexes, created
+in Phase 4 from a new `templates/docs-README.md`, so adding a document and listing it are the same
+motion. It routes by task before it lists by file, because a reader arrives with a job rather than
+a wish to browse. `CLAUDE.md` keeps only the pointer and the entry point — which also stops every
+private note from touching a committed file.
+
+Version 2.5.0 — Phase 1's success criterion has no referent in a project that already shipped, and
+the nearest answer that fits the wording is an outward goal: growth, reach, adoption. For
+existing-code projects the question now splits in two, and the owner's bar for the product being
+fit to push comes first. Phase 0 gained the mirror of its seed-from-code list — what the source is
+silent on. Whether its author considers it finished, and what quality bar they want, must be asked,
+because a working codebase reads as settled and its owner's dissatisfaction with it appears in no
+file.
 
 Version 2.4.0 — published. Going public forced the split the profile always implied but never
 made: `profile/` held a specific machine, a specific server with its open ports, two e-mail
