@@ -43,7 +43,10 @@ jobs:
           fail=0
           for f in references/*.md templates/*.md profile/*.md; do
             base=$(basename "$f")
-            hits=$(grep -rl --include='*.md' -- "$base" . | grep -v "^\./$f$" | wc -l | tr -d ' ')
+            # `|| true` on both stages: grep exits 1 when it matches nothing, which under
+            # `set -eo pipefail` would kill the step at the exact moment it found the problem
+            # it exists to report — an opaque abort instead of an annotated failure.
+            hits=$( { grep -rl --include='*.md' -- "$base" . || true; } | { grep -v "^\./$f$" || true; } | wc -l | tr -d ' ')
             if [ "$hits" = "0" ]; then echo "::error::unreferenced, nothing routes to it: $f"; fail=1; fi
           done
           for p in $(grep -o 'references/[a-z0-9-]*\.md' SKILL.md | sort -u); do
