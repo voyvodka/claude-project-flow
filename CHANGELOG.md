@@ -12,6 +12,39 @@ are summarised from that section and from git history.
 
 ### Fixed
 
+- **The research phase could carry private infrastructure detail into a committed file.** The Tech
+  branch is told to paste `profile/infrastructure.md` into the subagent prompt. On any real machine
+  that resolves to `profile/local/infrastructure.md`, which is gitignored precisely because it holds
+  hostnames, provider and account names, port lists, domain portfolios and backup schedules. That
+  branch writes into `docs/research/tech.md` — a file this tool tells the user to commit, in a
+  different repository from the one the profile describes. Nothing said "conclusions, not
+  transcription", so it depended entirely on the subagent's judgement. It is now an explicit rule,
+  modelled on the wording the committed `infrastructure.md` already applies to itself.
+- **Phase 2 could not tell an interrupted branch from a finished one.** Branches write straight to
+  their final file, so a session that dies mid-fan-out leaves a file Phase 0 reads as complete.
+  Launched branches are now recorded in `00-state.md` at dispatch and marked done as each returns —
+  the rule Phase 5 already applies to increments.
+- **`SKILL.md` stated an absolute that `self-improvement.md` contradicts.** "This tool never edits
+  itself without the user's approval" sat next to two documented repair exceptions. The exceptions
+  are now named where the promise is made.
+- **"No application code before Phase 5" vs the Phase 3 spike.** Phase 3 explicitly writes and runs
+  throwaway code. The directive now says "no code that ships" and names the spike as the one bounded
+  exception, so the reader is not choosing which of two rules to break.
+- **"Two documents instead of five" was never defined.** Phase 1 offers the compact shape; Phases 3-5
+  then name `02-decisions.md` and `04-roadmap.md` directly, leaving a model that took the offer with
+  two conflicting instructions. The compact layout is now a table naming exactly which file absorbs
+  which, recorded in `00-state.md`.
+- **Nothing asked before writing over an existing `CLAUDE.md`, `AGENTS.md` or `docs/` tree.**
+  Phase 4 now stops, says what the existing file covers and where it disagrees, and offers
+  merge / replace / write-alongside.
+- The `Aktif faz` field enumerated phases 0-5 while Phase 5's closing step writes "MVP complete" into
+  it, and nothing distinguished a phase that is running from one that finished. It now carries a
+  parenthesised status.
+- `phase-0-detect.md`'s "Reconstructing state" section did not say it runs after approval rather than
+  before; the heading now does.
+
+### Fixed
+
 - **Phase 1's "round limit" was not a limit.** `SKILL.md` promises questioning is bounded and that
   leftover unknowns become marked assumptions, but `phase-1-discover.md` only said to *announce* a
   fourth round — with no ceiling and no conversion rule, so a user whose answers keep opening new

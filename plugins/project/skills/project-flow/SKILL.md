@@ -11,7 +11,7 @@ One command (`/project`) that carries a project from "I have a rough idea" to wo
 
 Breaking any of these breaks the tool.
 
-1. **No application code before Phase 5 is approved.** Phases 0–4 produce documentation and AI tooling only. If the user asks for code earlier, name what is still unknown and offer to fast-track the remaining phases instead of silently starting.
+1. **No code that ships before Phase 5 is approved.** Phases 0–4 produce documentation and AI tooling only. The single exception is Phase 3's spike: timeboxed, answering exactly one blocking question, thrown away rather than kept — a measurement, not a head start. If the user asks for real code earlier, name what is still unknown and offer to fast-track the remaining phases instead of silently starting.
 2. **Documents are the memory, the conversation is not.** Every fact the user confirms goes into `docs/product/` before moving on. Write as if this chat will be lost mid-sentence — because for the person who inherits the repo, it was.
 3. **Ask, but bounded.** Phase 1 runs off a fixed checklist with a round limit. Remaining unknowns become marked assumptions, never more rounds of questions.
 4. **The user opens every gate.** Never advance a phase without explicit approval. State what the next phase will do, then wait.
@@ -93,7 +93,10 @@ Load **only** the reference file for the phase being worked. Do not preload the 
 
 At phase gates and at increment close, ask once whether anything went wrong **because of how this
 tool is written** — and follow `references/self-improvement.md` if it did. Usually nothing did,
-and that is the end of it. This tool never edits itself without the user's approval.
+and that is the end of it. This tool never edits itself without the user's approval, with two
+narrow exceptions for repairs — a reference to a file that does not exist, and one of two directly
+contradictory statements being plainly stale. Both are defined in `references/self-improvement.md`;
+anything that is a design change, not a repair, goes to the user.
 
 Phases are ordered but not rigid: if the user has already settled the stack, Phase 2's tech branch is skipped and recorded as "user-supplied". Skipping is allowed; skipping *silently* is not — say what you are skipping and why, and note it in `00-state.md`.
 

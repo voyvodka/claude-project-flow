@@ -44,7 +44,7 @@ Example shape:
 
 Then wait for approval.
 
-## Reconstructing state
+## Reconstructing state — only after the report is approved, never before
 
 For "docs without state" and "existing code", write `docs/product/00-state.md` from the `templates/00-state.md` skeleton before doing anything else, filling only what the evidence supports.
 

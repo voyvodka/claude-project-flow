@@ -17,6 +17,16 @@ Start from `templates/project-CLAUDE.md` and `templates/project-AGENTS.md` (name
 prefix so they are not mistaken for this plugin's own context files), and from
 `templates/docs-README.md` for the index.
 
+**If any of these files already exists, stop and ask before writing.** An existing `CLAUDE.md`,
+`AGENTS.md` or `docs/` tree is someone's work, and it is usually the work of whoever will be most
+annoyed to lose it. Read it, say in two or three lines what it currently covers and where it
+disagrees with what this phase would write, then offer the choice: **merge** (keep their structure,
+fold in what is missing), **replace** (their content moves to `docs/` first), or **leave it and
+write alongside** (this tool's context goes in `docs/README.md` only). Never silently overwrite, and
+never silently append either — a file with two "What this project is" sections is worse than either
+version alone. Record which way it went in `00-state.md`, because the next session will otherwise
+propose the same overwrite again.
+
 ## CLAUDE.md
 
 This is the file an AI reads first in every future session, so it is written for reading under a budget: dense, specific, and free of anything derivable from the code itself.

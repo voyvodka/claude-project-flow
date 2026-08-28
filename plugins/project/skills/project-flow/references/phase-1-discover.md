@@ -141,6 +141,20 @@ Read the scale from the answers, not from ambition. A personal script, an intern
 
 For a small project, say so out loud and compress: fewer questions, no market research branch in Phase 2, two documents instead of five, no custom subagents in Phase 4. Proposing the full apparatus for a weekend script is exactly the over-engineering this tool is supposed to prevent.
 
+**"Two documents" means these two**, so the later phases know where to write:
+
+| Compact file | Absorbs | Written by |
+|---|---|---|
+| `docs/product/00-state.md` | unchanged — always exists | every phase |
+| `docs/product/01-brief.md` | `02-decisions.md` — decisions become a `## Kararlar` section at the end | Phases 1 and 3 |
+| `docs/product/03-mvp.md` | `04-roadmap.md` — the phased plan becomes a `## Yol haritası` section | Phases 3 and 5 |
+
+Record the choice in `00-state.md` as `Belge düzeni: kompakt` on the first line that mentions layout.
+Phases 3, 4 and 5 name `02-decisions.md` and `04-roadmap.md` directly; when the layout is compact,
+write to the absorbing file and its section instead, and say so once rather than silently. Do not
+invent a third shape — it is five files or these two, so that a reader who knows one project's
+layout knows every project's.
+
 ## Gate
 
 The phase ends with:
