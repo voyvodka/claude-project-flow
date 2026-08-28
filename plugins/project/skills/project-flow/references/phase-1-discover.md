@@ -101,7 +101,17 @@ Each round:
    restating what the brief already carries.
 5. Close the round with a short **settled / still open / assumed** summary.
 
-Aim to finish blocking items within **three rounds**. If a fourth is needed because answers keep opening new ground, say so explicitly rather than drifting into it.
+Aim to finish blocking items within **three rounds**. If a fourth is needed because answers keep
+opening new ground, say so explicitly rather than drifting into it.
+
+**Four rounds is the ceiling.** At the end of the fourth, stop asking. Every blocking item still
+open becomes a marked assumption in `01-brief.md` with the best available answer and the reason it
+is unresolved, and Phase 2 researches it instead. Say plainly which items converted and why.
+
+The ceiling is the point, not a formality: answers that keep opening new ground are the signal that
+the question is being *discovered* rather than *answered*, and another round buys another round.
+Research is the cheaper instrument for a genuinely open question — a marked assumption that Phase 2
+tests beats a fifth round the user has stopped reading.
 
 ## Closing the checklist
 

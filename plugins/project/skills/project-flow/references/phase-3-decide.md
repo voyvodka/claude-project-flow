@@ -40,6 +40,13 @@ Each entry carries what a stranger needs to not undo it by accident:
 **Bağlı olduğu varsayım:** <assumption ID, if this decision rests on one>
 ```
 
+**The labels are written in the document's own language, not copied from here.** The block above is
+shown in Turkish because that is this profile's default; `02-decisions.md` follows the user's
+language like every other product document, so in an English-language project the same four fields
+are `Decision` / `Why` / `Rejected` / `Rests on`. What is fixed is the *four fields* — every entry
+carries all four, whatever they are called. The same goes for the literal values used below: `yok`
+is `none` in an English document.
+
 When a stack decision **departs from the profile default**, say so explicitly in the **Neden**
 line — "varsayılan X'ti, <şu gereksinim> nedeniyle Y seçildi". A deviation carries a real cost
 in ramp-up time, so the reason has to survive being read back later. When the default is kept,

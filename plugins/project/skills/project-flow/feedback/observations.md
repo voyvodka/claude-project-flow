@@ -68,6 +68,8 @@ user constraint rather than a profile rule, which is a place nothing had specifi
 ### A gate instruction needs a mandatory landing place — *shipped in 2.3.0, reverted in 2.3.1*
 
 - **Project:** `new-idea` (Unity Asset Store, July 2026)
+- **Class:** structural — *later shown to be circumstantial, which is why it was reverted*
+- **Instruction involved:** none — proposed as a gap
 - **What was observed:** A user instruction issued at a phase gate — run a feasibility spike earlier
   than planned — never appeared in any project document across four attempts, and the phase never
   said it had declined it either.

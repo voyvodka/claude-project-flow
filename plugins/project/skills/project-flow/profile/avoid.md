@@ -6,14 +6,19 @@ proposal that *does* include one arrives with an argument attached.
 None of these is absolute. A candidate here can still win — but it has to beat the stated
 reason, not merely look attractive.
 
+Where a row carries **⚠️ no reason recorded**, there is nothing to beat. Do not treat it as settled:
+raise it in Phase 1, get the reason or the reversal, and write down whichever comes back. An
+exclusion whose argument nobody can state is how a stale preference outlives the situation that
+produced it.
+
 ## Ruled out
 
 | Technology | Why |
 |---|---|
 | NoSQL / document databases for relational domains | MongoDB, Firestore. The domains worked on are relational; a document store is the wrong tool and the cost shows up late |
 | Vendor-locking serverless | Vercel Functions, AWS Lambda and similar. Hard to move, and unnecessary when a paid-for server is already running |
-| Sentry | Deliberately excluded in current projects |
-| API versioning | Not used. A decision rather than an oversight |
+| Sentry | Deliberately excluded in current projects. ⚠️ No reason recorded — treat as a weak prior |
+| API versioning | Not used. A decision rather than an oversight. ⚠️ No reason recorded — treat as a weak prior |
 
 ## Soft — carries history, not a ban
 

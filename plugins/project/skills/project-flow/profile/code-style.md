@@ -115,7 +115,9 @@ mixed.** A repository with two lockfiles has two dependency graphs.
 When a build, lint or analyzer warning appears — especially a deprecation — do three things:
 
 1. Fix the call site.
-2. Add **one line** to the project's `gotchas.md`.
+2. Add **one line** to the project's `gotchas.md` — **creating the file if it does not exist**, with
+   the three headings below. No phase scaffolds it, deliberately: a project that never hits a
+   warning should not carry an empty ledger.
 3. Do not write it again.
 
 Keep the ledger short. It is a working reference, not an archive; an entry nobody reads costs
