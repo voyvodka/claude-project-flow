@@ -4,7 +4,11 @@ Cross-cutting rules. These hold in every language and every project — read thi
 
 ## Language
 
-**Code, identifiers, comments and commit messages are English. Documentation is Turkish.**
+**Code, identifiers, comments and commit messages are English.** That one holds everywhere.
+
+**Documentation defaults to Turkish** — like everything else under `profile/`, a default rather
+than a rule, confirmed in Phase 1 against the project at hand. A project with non-Turkish-speaking
+readers overrides it, and `SKILL.md` is the authority: documents follow the user's own language.
 
 If a project already uses Turkish-without-diacritics identifiers, match it rather than
 converting; consistency inside a file beats correctness across the repository.

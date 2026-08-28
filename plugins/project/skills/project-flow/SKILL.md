@@ -1,7 +1,6 @@
 ---
 name: project-flow
 description: Drives a project from a rough idea to shipped code through six approval-gated phases — detect where the folder stands, interrogate the idea with a bounded checklist, research market and stack via subagents, lock decisions into docs/, scaffold AI tooling, then implement in increments. Use when the user runs /project, or asks to start, scope, plan, or resume a project in a folder.
-version: 0.1.0
 ---
 
 # Project Flow
@@ -104,6 +103,7 @@ Everything this tool produces lives in the project folder and is meant to be com
 
 ```
 <project>/
+├── README.md                    written at MVP close in Phase 5, not at scaffold time
 ├── CLAUDE.md                    EN · main context source: identity, rules, pointer to docs/README.md
 ├── AGENTS.md                    EN · pointer to CLAUDE.md for non-Claude tools
 ├── docs/

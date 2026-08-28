@@ -91,6 +91,19 @@ Two exceptions, both narrow: fixing a factually broken reference (a path that do
 file name that changed), and correcting an internal inconsistency where one of two contradictory
 statements is plainly stale. Both are repairs, not design changes.
 
+## Where the edit has to land
+
+**Check first whether this plugin is running from a copy that survives an update.** A marketplace
+install is copied into a versioned plugin cache; an edit made there is deleted the next time the
+plugin updates, and it is deleted silently — the proposal was accepted, the file was written, and
+the change is simply gone. That is the same failure `profile/README.md` describes for
+`profile/local/`, and it applies to every file in this skill, not just that directory.
+
+So before applying anything: if `${CLAUDE_PLUGIN_ROOT}` points inside a `plugins/cache/` path, say
+so and stop. The change belongs in the source repository — open it there, or hand the user the
+proposal to carry over. An accepted change that cannot survive an update is worse than a rejected
+one, because everyone involved believes it landed.
+
 ## Logging
 
 Append to `feedback/observations.md` next to this skill. One entry:
