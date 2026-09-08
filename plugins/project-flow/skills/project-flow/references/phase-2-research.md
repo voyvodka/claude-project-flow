@@ -53,8 +53,14 @@ Rules:
 - In any calculation, separate what you verified from what you assumed. State the
   split explicitly: which inputs are sourced prices or published limits, and which
   are your own usage estimates.
-- Library and framework docs: use Context7 (resolve-library-id, then query-docs).
-  Your training data on versions and APIs is stale. Do not answer from memory.
+- Library and framework docs: never answer from memory — your training data on
+  versions and APIs is stale. Where a documentation tool is reachable in this
+  session, prefer it and cite what it returned; Context7 is the usual one
+  (resolve-library-id, then query-docs). It is not required and nothing here
+  depends on it: with no such tool, resolve versions against the package registry
+  (`npm view <pkg> version`, `pip index versions <pkg>`, `go list -m -versions
+  <mod>`) or the project's own release notes, and say which you used. A query
+  that returns nothing relevant leaves the claim unverified rather than confirmed.
 - Report trade-offs, not a winner. The user decides in the next phase.
 
 Return to the caller: at most 10 lines. The 3 findings that change a decision,
@@ -64,7 +70,7 @@ and any question the user now has to answer. Nothing else — the file holds the
 Branch-specific additions:
 
 - **Market** — name real competitors with links, their pricing tier, and the specific gap the user's idea targets. If the space is crowded, say so bluntly; that is a finding, not a failure. Note if you find *no* competitors — that usually means the market is small, not untapped.
-- **Tech** — paste the constraints from `01-brief.md` (team size, deadline, existing skill) and the **whole of the relevant `profile/` stack file** plus `profile/avoid.md` and `profile/infrastructure.md` into the prompt, then frame the question as **"is there a reason to deviate from the default for this project?"** rather than "which stack should we use?". The branch must either defend the default or name the specific requirement that breaks it — a candidate is only worth proposing if it beats the default on something this project actually needs. If the profile has no default for this project type, or the project overrode it in Phase 1, fall back to 2–3 candidates with an honest case for each. Either way: weigh the maintenance and hiring dimension, not just the technical one, and check current major versions via Context7.
+- **Tech** — paste the constraints from `01-brief.md` (team size, deadline, existing skill) and the **whole of the relevant `profile/` stack file** plus `profile/avoid.md` and `profile/infrastructure.md` into the prompt, then frame the question as **"is there a reason to deviate from the default for this project?"** rather than "which stack should we use?". The branch must either defend the default or name the specific requirement that breaks it — a candidate is only worth proposing if it beats the default on something this project actually needs. If the profile has no default for this project type, or the project overrode it in Phase 1, fall back to 2–3 candidates with an honest case for each. Either way: weigh the maintenance and hiring dimension, not just the technical one, and check current major versions against a documentation tool or the package registry — whichever this session can actually reach.
 
   > ⚠️ **`profile/infrastructure.md` is usually the local override, and the local override is private.**
   > `profile/local/infrastructure.md` is gitignored precisely because it holds real hostnames,
@@ -88,7 +94,7 @@ Branch-specific additions:
   - How well represented the stack is in model training data, and how stable its APIs have been. A framework that rewrote its core idioms recently produces confidently wrong code, because the model has learned both the old and the new shape.
   - How verifiable the output is without running it — static types, a compiler, a fast test path. This is what converts AI speed into AI reliability; a stack where mistakes surface only at runtime gives back everything it saved.
   - **Whether the agent can close the loop itself: run the thing, observe what it did, and confirm the result with no human in the middle.** This is a separate question from writing good code, and it is often the one that decides. A web interface an agent can drive in a browser and screenshot is in a different category from a mobile app that needs a simulator, a device, or a person tapping. Research the actual tooling — headless runners, e2e drivers, simulator automation, screenshot feedback — and report honestly where the loop still needs a human. Where a target platform closes the loop badly, say what the alternatives are: a different framework, a different test harness, or a different delivery form for that surface entirely (a responsive web view instead of a native app, when the reason for going native was perception rather than capability).
-  - Whether current documentation is reachable through Context7, so the model can check itself instead of recalling.
+  - Whether current documentation is reachable through a docs tool such as Context7, so the model can check itself instead of recalling.
   - How readable the result stays for the human who still has to review, debug, and operate it. Delegating authorship does not delegate responsibility, and an unfamiliar stack costs the reviewer even when it costs the writer nothing.
 
   These can point away from what the human knows best. Say so when they do — that tension is the finding, and the user resolves it in Phase 3.
