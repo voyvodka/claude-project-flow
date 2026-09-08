@@ -106,7 +106,14 @@ one, because everyone involved believes it landed.
 
 ## Logging
 
-Append to `feedback/observations.md` next to this skill. One entry:
+Append to `feedback/observations.md` next to this skill. **The section above applies here too** —
+that file lives in this skill, so on a marketplace install it sits in the versioned cache and the
+next update deletes whatever was appended, silently. Check `${CLAUDE_PLUGIN_ROOT}` before writing:
+if it is under `plugins/cache/`, say so and hand the user the entry to carry into the source
+repository instead. A log the update wipes is worse than no log, because the observation is gone
+*and* it was counted as recorded.
+
+One entry:
 
 ```
 ## <short title>

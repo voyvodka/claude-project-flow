@@ -10,6 +10,40 @@ are summarised from that section and from git history.
 
 ## [Unreleased]
 
+## [3.0.2] - 2026-09-08
+
+### Fixed
+
+- **The research phase told the subagent to use Context7 and gave it no way to proceed without it.**
+  `phase-2-research.md` said "use Context7 (resolve-library-id, then query-docs) … Do not answer
+  from memory", but this plugin declares no dependency on Context7 and nothing installs it. On a
+  machine without it the branch had an instruction it could not follow and no stated alternative,
+  against a rule that forbids answering from memory — so the only exit was the one the rule
+  forbids. `profile/code-style.md` already said "Context7 **or the registry**", so the two files
+  disagreed about whether the tool was required. The rule now leads with what is actually
+  non-negotiable (never answer from memory), prefers a docs tool where the session has one, and
+  names the registry commands to fall back to. The sibling `web-launcher` skill reached the same
+  shape from the same problem.
+- **`self-improvement.md` sent the observation log into a directory the next update deletes.**
+  "Where the edit has to land" tells the reader to stop when `${CLAUDE_PLUGIN_ROOT}` is inside a
+  `plugins/cache/` path, but the "Logging" section below it said, without qualification, to append
+  to `feedback/observations.md` — a file in that same cache. A reader arriving straight at Logging
+  appended an observation that a marketplace update then wiped, silently, having counted it as
+  recorded. The constraint is now restated where the writing actually happens.
+- **Two release blocks in this changelog held the same fixes twice.** `3.0.1` and `2.8.0` each
+  carried two `### Fixed` headings, because separate pull requests each appended to `[Unreleased]`
+  and the release stamped both without merging them. `3.0.1`'s second block restated the first in
+  different words; `2.8.0`'s split thirteen genuine entries across two lists with a `### Changed`
+  between them. Merged, with every unique entry kept.
+
+### Added
+
+- CI checks the changelog's structure: no section heading twice inside one version block, only
+  Keep a Changelog section names, an `[Unreleased]` section that the next change can land in, and
+  one dated heading per version. The duplication above was found by reading the file weeks later,
+  and it is mechanically detectable — so it is checked rather than trusted, which is the standard
+  this plugin applies to every project it touches.
+
 ## [3.0.1] - 2026-08-28
 
 ### Fixed
@@ -17,7 +51,9 @@ are summarised from that section and from git history.
 - **`phase-3-decide.md` told the reader the decision record has four fields**, while a paragraph
   further down — untouched by that edit — describes `Kabul edilen bedel` / accepted cost as
   mandatory, down to what to write when there is none. An agent following the explicit "four fields
-  are what is fixed" instruction would drop it. The template now carries all five.
+  are what is fixed" instruction would drop it. The reference now describes all five, in both the
+  Turkish block and the English label mapping, and says to write "—" when a decision genuinely
+  costs nothing rather than dropping the line.
 - The plugin README's `Status` section went stale twice in one day: backfilled at 2.7.0, then three
   more releases shipped past it. The cause was keeping the same history in two files, so the cause
   is gone — `CHANGELOG.md` is the record from 2.7.0 onward and `Status` is explicitly frozen
@@ -25,19 +61,6 @@ are summarised from that section and from git history.
 - The CI routing check aborted opaquely on the condition it exists to report: `grep` exits 1 when it
   matches nothing, and under `set -eo pipefail` that killed the step before the `::error::`
   annotation was printed. It now annotates and fails deliberately.
-
-### Fixed
-
-- **`phase-3-decide.md` documented four decision fields; the template it writes from has five.**
-  `templates/02-decisions.md` carries `Kabul edilen bedel` — what the decision knowingly gives up —
-  and the reference that explains the format never mentioned it, so the field the template asks for
-  was the one field nothing told the agent to fill. The reference now describes all five, in both
-  the Turkish block and the English label mapping, and says to write "—" when a decision genuinely
-  costs nothing rather than dropping the line.
-- **The CI routing check aborted instead of reporting.** `grep -rl` exits 1 when it matches nothing,
-  which under `set -eo pipefail` killed the step at the exact moment it found an unreferenced file —
-  an opaque failure in place of the annotated one the check exists to produce. Both stages of the
-  pipeline now tolerate the empty match.
 
 ### Changed
 
@@ -109,8 +132,6 @@ are summarised from that section and from git history.
   parenthesised status.
 - `phase-0-detect.md`'s "Reconstructing state" section did not say it runs after approval rather than
   before; the heading now does.
-
-### Fixed
 
 - **Phase 1's "round limit" was not a limit.** `SKILL.md` promises questioning is bounded and that
   leftover unknowns become marked assumptions, but `phase-1-discover.md` only said to *announce* a
