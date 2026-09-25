@@ -31,7 +31,7 @@ and the reason it was turned down is the only thing that stops it.
 | The map of `docs/` lived in `CLAUDE.md`; a folder that outgrew the skeleton ended up with a map naming 9 of 48 files, two whole directories absent | duplication | 2.6.0 | `docs/README.md` — new `templates/docs-README.md`, written in `phase-4-scaffold.md`; `CLAUDE.md` now points at it |
 | Three projects ended up enforcing their verification with a Stop or pre-push hook rather than a written instruction; Phase 4 had no place for either | gap, seen three times | 3.1.0 | `phase-4-scaffold.md` — Checks that must run; untested in a Phase 4 run |
 | `CLAUDE.md` files of 300–480 lines in two large projects loaded every area's rules into every session; each was cut by half or more, the area rules moved to path-scoped `.claude/rules/` | structural, seen twice | 3.1.0 | `phase-4-scaffold.md` — CLAUDE.md budget; `phase-5-build.md`; untested in a Phase 4 run |
-| A public repository whose owner wanted no AI tooling in it had no path through Phase 4, which writes every file as committed | gap, seen once — applied on the owner's decision | 3.1.0 | `phase-3-decide.md` — publication list; `phase-4-scaffold.md` — `.git/info/exclude`; untested in a Phase 4 run |
+| A public repository whose owner wanted no AI tooling in it had no path through Phase 4, which writes every file as committed | gap, seen once — applied on the owner's decision | 3.1.0 | `phase-3-decide.md` — publication list; `phase-4-scaffold.md` — `.git/info/exclude`; fired once when an existing project was re-checked against 3.1.0 (the answer reached its publication decision), not yet in a Phase 4 run |
 | Advisory subagents given edit tools and the strongest model by default; two projects settled on one writer with read-only consultants on a cheaper model | structural, seen twice | 3.1.0 | `phase-4-scaffold.md` — One writer; untested in a Phase 4 run |
 
 Two rows are worth more than their fix. The git identity rule was **correct, prominent and indexed
@@ -66,6 +66,21 @@ per month", making a vague user constraint into a threshold Phase 2 can answer p
 the `code-style.md` lesson — a requirement without a method is a wish — applied spontaneously to a
 user constraint rather than a profile rule, which is a place nothing had specified it for.
 
+
+### Tooling built on request is recorded only for subagents and skills
+
+- **Project:** a small single-user macOS menu-bar tool (September 2026), re-checked against 3.1.0
+- **Class:** unsure — logged rather than fixed
+- **What happened:** The owner asked for a Stop hook and a git pre-push hook. The size table puts a
+  project this small at "at most the Stop hook", so the pre-push hook was built on request, not on
+  recommendation. `phase-4-scaffold.md` asks for that distinction to be written into `00-state.md`,
+  but only in the paragraph about subagents and skills; the hooks section says nothing. It was
+  recorded by analogy.
+- **Instruction involved:** `references/phase-4-scaffold.md` — "Checks that must run" and the
+  on-request clause under "Subagents and skills — the budget"
+- **Proposed change:** none yet — if a second project shows hooks built past the size table without
+  the note, widen the on-request clause to cover everything in `.claude/` rather than repeating it
+- **Status:** logged
 
 ## Rejected
 
