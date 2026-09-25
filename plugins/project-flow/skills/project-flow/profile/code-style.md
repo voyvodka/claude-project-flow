@@ -139,7 +139,9 @@ more specific one — usually the stale one.
 
 ## Safety rails
 
-These are absolute and hold in every project.
+These are absolute and hold in every project. They are the one exception to the profile's
+"default, not rule": Phase 1 does not reopen them, and a project that needs one lifted asks the
+user at the moment it applies.
 
 - **Never run EF migration or database update commands.** Not `dotnet ef migrations add`, not
   `database update`, `remove`, or `script`. Write the entity change and tell the user the command.

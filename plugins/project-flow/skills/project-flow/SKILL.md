@@ -30,6 +30,13 @@ Breaking any of these breaks the tool.
 
 If the project already has documents in a given language, match that language rather than switching.
 
+**The templates are written in Turkish and the phase files quote their literals; the documents
+they produce need not be Turkish.** Headings, field labels and fixed literals — `Ek bilgiler`,
+`Karar`, `yok / uygulanmaz`, `Belge düzeni: kompakt`, `Artım 3`, `⚠️ VARSAYIM` — are translated
+into the document's language when written. What is fixed is the *section set and the fields*,
+never the words naming them: an English project gets `Additional details`, `Decision`,
+`none / not applicable` and `⚠️ ASSUMPTION`, with the same sections in the same order.
+
 ## Document hygiene
 
 The documents belong to the project, not to this tool. Someone reading them a year from now should not be able to tell which tool produced them.
@@ -97,6 +104,13 @@ and that is the end of it. This tool never edits itself without the user's appro
 narrow exceptions for repairs — a reference to a file that does not exist, and one of two directly
 contradictory statements being plainly stale. Both are defined in `references/self-improvement.md`;
 anything that is a design change, not a repair, goes to the user.
+
+**Before any self-edit or log entry, check where this skill is running from:**
+`${CLAUDE_PLUGIN_ROOT}`. Claude Code substitutes that path into this file when it loads; it is not
+set in the Bash environment, and it is not substituted in the reference files. If the substitution
+did not happen, use the base directory Claude Code showed when this skill loaded. A path
+containing `plugins/cache/` is a marketplace copy that the next update replaces — say so and hand
+the user the change instead of writing it. `references/self-improvement.md` explains why.
 
 Phases are ordered but not rigid: if the user has already settled the stack, Phase 2's tech branch is skipped and recorded as "user-supplied". Skipping is allowed; skipping *silently* is not — say what you are skipping and why, and note it in `00-state.md`.
 

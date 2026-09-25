@@ -1,7 +1,7 @@
 ---
 description: Start, resume, or advance a project — asks questions before writing anything, researches, records decisions in docs/, then builds in approved increments
 argument-hint: Optional rough description of the project idea
-allowed-tools: ["Read", "Write", "Edit", "Glob", "Grep", "Bash", "AskUserQuestion", "Agent", "WebSearch", "WebFetch", "Skill", "TaskCreate", "TaskUpdate", "TaskList", "TaskGet"]
+allowed-tools: ["Read", "Glob", "Grep", "Bash(git status *)", "Bash(git log *)", "Bash(git diff *)", "Bash(ls *)", "AskUserQuestion", "Agent", "WebSearch", "Skill", "TaskCreate", "TaskUpdate", "TaskList", "TaskGet"]
 ---
 
 Load the `project-flow:project-flow` skill with the Skill tool now, then follow it exactly.

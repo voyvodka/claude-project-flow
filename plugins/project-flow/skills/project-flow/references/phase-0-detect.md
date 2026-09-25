@@ -2,7 +2,7 @@
 
 Goal: figure out what this folder already is, and tell the user where they stand. Costs seconds, prevents every kind of duplicated or contradictory work later.
 
-Never skip this phase, even when the user opens with a clear new idea. A folder that looks empty may hold a `.git` history, a half-written brief, or someone else's abandoned attempt.
+`SKILL.md` runs this phase whenever `docs/product/00-state.md` is missing, and it is never skipped then — even when the user opens with a clear new idea. A folder that looks empty may hold a `.git` history, a half-written brief, or someone else's abandoned attempt.
 
 ## Scan
 
@@ -24,7 +24,7 @@ Pick exactly one:
 | Class | Signals | Enter at |
 |---|---|---|
 | **Empty** | No source, no docs, at most a `.git` or a README stub | Phase 1 |
-| **Resumption** | `00-state.md` exists | The phase it names |
+| **Resumption** | `00-state.md` exists — `SKILL.md` normally routes this before Phase 0 loads | The phase it names |
 | **Docs without state** | Product docs exist but no `00-state.md` — an older run, or hand-written notes | Reconstruct `00-state.md` from what is there, then continue |
 | **Existing code** | Real source, no product docs — a project started outside this tool | Phase 1, seeded from the code |
 | **Foreign** | Someone else's repo, or clearly unrelated to a new project | Stop. Ask what the user actually wants |

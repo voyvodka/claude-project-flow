@@ -13,6 +13,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          # The changelog step checks its compare links against real tags, and a shallow clone
+          # carries none.
+          fetch-depth: 0
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
         with:
           node-version: 24
@@ -43,9 +47,10 @@ jobs:
           fail=0
           for f in references/*.md templates/*.md profile/*.md; do
             base=$(basename "$f")
-            # `|| true` on both stages: grep exits 1 when it matches nothing, which under
-            # `set -eo pipefail` would kill the step at the exact moment it found the problem
-            # it exists to report — an opaque abort instead of an annotated failure.
+            # `|| true` on both stages: grep exits 1 when it matches nothing, and under the
+            # runner's `bash -e` a failing command substitution in an assignment kills the step
+            # at the exact moment it found the problem it exists to report — an opaque abort
+            # instead of an annotated failure.
             hits=$( { grep -rl --include='*.md' -- "$base" . || true; } | { grep -v "^\./$f$" || true; } | wc -l | tr -d ' ')
             if [ "$hits" = "0" ]; then echo "::error::unreferenced, nothing routes to it: $f"; fail=1; fi
           done
@@ -55,16 +60,21 @@ jobs:
           for p in $(grep -rho 'templates/[a-zA-Z0-9._-]*\.md' references/*.md SKILL.md | sort -u); do
             [ -f "$p" ] || { echo "::error::a phase reference points at a missing template: $p"; fail=1; }
           done
+          for p in $(grep -rho 'profile/[a-z0-9-]*\.md' references/*.md SKILL.md | sort -u); do
+            [ -f "$p" ] || { echo "::error::a phase reference points at a missing profile file: $p"; fail=1; }
+          done
           exit $fail
 
       # Two releases shipped a version block holding the same fixes twice, under two `### Fixed`
       # headings, because separate PRs each appended to `[Unreleased]` and the release stamped both
       # without merging them. Reading the file is what caught it, months later. A duplicated heading
-      # is mechanically detectable, so it is checked rather than trusted.
+      # is mechanically detectable, so it is checked rather than trusted. The link footer is checked
+      # for the same reason: it once pointed `[Unreleased]` a release behind, had no ref for the
+      # newest version and linked three tags that never existed.
       - name: Changelog structure
         run: |
           python3 - <<'PY'
-          import re, sys
+          import re, subprocess, sys
 
           lines = open('CHANGELOG.md').read().split('\n')
           errors, versions, cur, seen = [], [], None, set()
@@ -97,6 +107,29 @@ jobs:
           nums = [re.match(r'^\[([^\]]+)\]', v).group(1) for _, v in released]
           for d in sorted({n for n in nums if nums.count(n) > 1}):
               errors.append(f"version {d} has more than one heading — one version, one block")
+
+          # Link footer. The newest version may be untagged: a release PR adds its heading before
+          # the tag exists. Any other untagged version must carry no ref, since it would 404.
+          tags = set(subprocess.run(['git', 'tag'], capture_output=True, text=True,
+                                    check=True).stdout.split())
+          refs = dict(re.findall(r'^\[([^\]]+)\]: (\S+)$', '\n'.join(lines), re.M))
+          base = 'https://github.com/voyvodka/claude-project-flow/'
+          tagged = lambda v: f'v{v}' in tags or (nums and v == nums[0])
+
+          if nums and refs.get('Unreleased') != f'{base}compare/v{nums[0]}...HEAD':
+              errors.append(f"[Unreleased] must be {base}compare/v{nums[0]}...HEAD")
+          for i, v in enumerate(nums):
+              older = nums[i + 1] if i + 1 < len(nums) else None
+              if not tagged(v):
+                  if v in refs:
+                      errors.append(f"[{v}] links to v{v}, which is not a tag — drop the ref")
+                  continue
+              want = (f'{base}compare/v{older}...v{v}' if older and tagged(older)
+                      else f'{base}releases/tag/v{v}')
+              if refs.get(v) != want:
+                  errors.append(f"[{v}] must be {want}, found {refs.get(v)}")
+          for k in refs.keys() - set(nums) - {'Unreleased'}:
+              errors.append(f"[{k}] is a link ref with no version heading")
 
           for e in errors:
               print(f"::error file=CHANGELOG.md::{e}")

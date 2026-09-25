@@ -38,15 +38,20 @@ Each entry carries what a stranger needs to not undo it by accident:
 **Neden:** <one or two sentences — the reason that actually decided it>
 **Elenenler:** <what was rejected, and the specific reason>
 **Kabul edilen bedel:** <what this gives up — "—" if genuinely nothing>
-**Bağlı olduğu varsayım:** <assumption ID, if this decision rests on one>
+**Bağlı olduğu varsayım:** <assumption ID — "—" if it rests on none>
+**Kaynak:** <research file or link — optional>
 ```
 
-**The labels are written in the document's own language, not copied from here.** The block above is
-shown in Turkish because that is this profile's default; `02-decisions.md` follows the user's
-language like every other product document, so in an English-language project the same five fields
-are `Decision` / `Why` / `Rejected` / `Accepted cost` / `Rests on`. What is fixed is the *five
-fields* — every entry carries all five, whatever they are called. The same goes for the literal
-values used below: `yok` is `none` in an English document.
+**Five fields are required, plus an optional Source.** Every entry carries the first five, and a
+field with nothing to say gets "—" rather than being dropped or left blank: an entry resting on no
+assumption says so. `Kaynak` is the one line that may be omitted, when the decision rests on no
+research file or link.
+
+**The labels are written in the document's own language, not copied from here** — the general rule
+is under "Language" in `SKILL.md`. The block above is shown in Turkish because that is this
+profile's default; in an English-language project the fields are `Decision` / `Why` / `Rejected` /
+`Accepted cost` / `Rests on`, plus the optional `Source`. The same goes for the literal values used
+below: `yok` is `none` in an English document.
 
 When a stack decision **departs from the profile default**, say so explicitly in the **Neden**
 line — "varsayılan X'ti, <şu gereksinim> nedeniyle Y seçildi". A deviation carries a real cost
@@ -55,7 +60,7 @@ one line is enough; that is the point of having a default.
 
 The "Elenenler" line is the one that earns its keep on handover. Without it the next person re-evaluates the same rejected option and reaches the same conclusion, slowly. It is never left blank: if there genuinely was no alternative, write "yok" and the reason. An alternative folded into the **Neden** sentence does not count — it has to be findable where a reader looks for it.
 
-**Kabul edilen bedel** matters just as much and is easier to skip. Most real decisions give something up: offline access, a segment, a integration, a performance ceiling. Naming it tells the next reader the downside was seen and chosen, not missed — which is the difference between them trusting the decision and reopening it. When a decision costs nothing, write "—" rather than leaving the line off.
+**Kabul edilen bedel** matters just as much and is easier to skip. Most real decisions give something up: offline access, a segment, an integration, a performance ceiling. Naming it tells the next reader the downside was seen and chosen, not missed — which is the difference between them trusting the decision and reopening it. When a decision costs nothing, write "—" rather than leaving the line off.
 
 When a decision changes later, rewrite the entry in place and note the reversal in the **Neden** line — "önce X seçilmişti, Y nedeniyle değişti". The point is that the current file always reads as current truth.
 

@@ -14,5 +14,5 @@
 **Elenenler:** <ne reddedildi ve tam olarak neden — boş bırakılmaz; gerçekten alternatif
 yoksa "yok — <sebep>" yazılır>
 **Kabul edilen bedel:** <bu kararın bilerek feda ettiği şey; yoksa "—">
-**Bağlı olduğu varsayım:** <V1 — yoksa boş bırak>
-**Kaynak:** <araştırma dosyası veya link — varsa>
+**Bağlı olduğu varsayım:** <V1 — yoksa "—">
+**Kaynak:** <araştırma dosyası veya link — isteğe bağlı; yoksa satır silinir>

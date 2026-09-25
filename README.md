@@ -144,10 +144,12 @@ separates structural failures from circumstantial ones, and logs them. The bar f
 evidence from a real project, not taste, and the preferred fix is to remove the cause rather than
 add a reminder. It proposes changes; it never applies them to itself without approval.
 
-`plugins/project-flow/skills/project-flow/feedback/observations.md` is that ledger, and
-`plugins/project-flow/README.md` records why each version changed — reasoning, not a changelog. Both
-include the findings that were **rejected**, and one that shipped and had to be reverted, because
-the reason a plausible rule was wrong is the only thing that stops it coming back.
+`plugins/project-flow/skills/project-flow/feedback/observations.md` is that ledger.
+[`CHANGELOG.md`](CHANGELOG.md) records what changed in each version and why, from 2.7.0 on; the
+frozen `Status` section of `plugins/project-flow/README.md` keeps the reasoning behind earlier
+versions. The ledger and that section include the findings that were **rejected**, and one that
+shipped and had to be reverted, because the reason a plausible rule was wrong is the only thing
+that stops it coming back.
 
 ## Language
 

@@ -1,14 +1,81 @@
 # Changelog
 
-All notable changes to the `project` plugin are documented here.
+All notable changes to the `project-flow` plugin are documented here.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project
 adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-The `Status` section of [the plugin README](plugins/project-flow/README.md) carries the *reasoning*
-behind each change — why the tool needed it. This file carries what changed. Releases before 2.7.0
-are summarised from that section and from git history.
+From 2.7.0 onward this file is the one record of what changed and why. The `Status` section of
+[the plugin README](plugins/project-flow/README.md) is frozen pre-2.7.0 history, kept for the
+reasoning behind those releases; the entries below for them are summarised from it and from git
+history.
 
 ## [Unreleased]
+
+## [3.0.3] - 2026-09-25
+
+### Added
+
+- CI checks the changelog's link footer: `[Unreleased]` compares from the newest version, every
+  tagged version has a ref, and no ref points at a tag that does not exist. The newest version may
+  be untagged, because a release PR adds its heading before the tag. The checkout now fetches full
+  history so the check can see the tags.
+- The CI routing check also resolves every `profile/*.md` path a phase reference or `SKILL.md`
+  names, not only the templates.
+
+### Fixed
+
+- **The cache check could not fire.** `self-improvement.md` told the reader to stop if
+  `${CLAUDE_PLUGIN_ROOT}` pointed into `plugins/cache/`, but Claude Code substitutes that variable
+  only into skill, command and agent bodies as they load. It is not in the Bash environment and not
+  substituted into a reference file read later, so the reader saw the literal string. The check
+  now lives in `SKILL.md`, where the path is substituted, with the skill's base directory as the
+  fallback, and `self-improvement.md` points at it.
+- **The decision record had six lines in the template and "five fields" in the reference.**
+  `templates/02-decisions.md` carries a `Kaynak` line that `phase-3-decide.md` never mentioned, and
+  told the reader to leave `Bağlı olduğu varsayım` blank where the reference required all five.
+  Phase 3 now says five required fields plus an optional Source, gives the English label for it,
+  and says an entry resting on no assumption writes "—".
+- **Phase 1 counted six blocking items in a table of seven.** Item 6b, existing skill, is blocking,
+  and a reader counting to six could close the gate without it. The count now says seven, 1–6
+  and 6b.
+- **Turkish template literals leaked into English projects.** Only the decision labels had a
+  translation rule; `Ek bilgiler`, `yok / uygulanmaz`, `Belge düzeni` and the rest did not, and
+  the English-only `CLAUDE.md` template quoted the Turkish `Elenenler` label. `SKILL.md` now carries
+  one rule — headings and literals follow the document's language, the section set is what is
+  fixed — and the `CLAUDE.md` template names the line by what it holds.
+- `phase-4-scaffold.md` and the `AGENTS.md` template still described `CLAUDE.md` as holding a map
+  of `docs/`, which 2.6.0 moved into `docs/README.md`. Both now say pointer, and Phase 4's table
+  lists `docs/README.md` among the files it produces.
+- The profile's safety rails called themselves absolute while `profile/README.md` called
+  everything in the profile a default, and Phase 5 said "run it" against a rail forbidding tests
+  unasked. The rails are now the named exception, and Phase 5 asks before running tests when they
+  forbid it, reporting the increment as unverified if the answer is no.
+- `00-state.md` had nowhere for the records the phases tell it to keep — dispatched research
+  branches, the compact layout, a merge-or-replace choice, tooling built on request — while
+  `SKILL.md` forbids new headings. The template gains a `Belge düzeni` line and says where the rest
+  go.
+- `phase-0-detect.md` said never to skip Phase 0, while `SKILL.md` routes past it whenever a state
+  file exists. Both now say the same thing.
+- Three statements disagreed about where the reasoning for each version lives. The changelog intro
+  and the root README now match the plugin README: `CHANGELOG.md` from 2.7.0, frozen `Status`
+  before it.
+- `3.0.1` still recorded the frozen `Status` section twice, under `Fixed` and `Changed`, and `2.8.0`
+  still had a blank line splitting its `Fixed` list — both after `3.0.2` said they were merged.
+- The changelog footer pointed `[Unreleased]` at `v3.0.1`, had no `[3.0.2]` ref, and linked
+  `v2.4.0`, `v2.5.0` and `v2.6.0`, tags that were never created. Those three headings are now
+  plain text.
+- Leftover `project` names in the plugin README title and the changelog intro; "the last five
+  phases" in Phase 4, where four come before it; a dangling section reference and a miscounted
+  list in `dotnet-api-contracts.md`; a CI comment that described `set -eo pipefail` where the
+  runner uses `bash -e`.
+
+### Security
+
+- **`/project` pre-approved unscoped `Bash`, `Write`, `Edit` and `WebFetch`.** `allowed-tools`
+  grants permission without a prompt for the turn it runs in, so `git commit`, `git init` or a
+  database command could run unasked — against the skill's own rule that git runs only on request.
+  The command now pre-approves only reads and read-only git (`git status`, `git log`, `git diff`,
+  `ls`); writes and fetches go through the normal permission flow.
 
 ## [3.0.2] - 2026-09-08
 
@@ -54,10 +121,6 @@ are summarised from that section and from git history.
   are what is fixed" instruction would drop it. The reference now describes all five, in both the
   Turkish block and the English label mapping, and says to write "—" when a decision genuinely
   costs nothing rather than dropping the line.
-- The plugin README's `Status` section went stale twice in one day: backfilled at 2.7.0, then three
-  more releases shipped past it. The cause was keeping the same history in two files, so the cause
-  is gone — `CHANGELOG.md` is the record from 2.7.0 onward and `Status` is explicitly frozen
-  pre-2.7.0 history. This plugin tells every project it touches to write once and link; it now does.
 - The CI routing check aborted opaquely on the condition it exists to report: `grep` exits 1 when it
   matches nothing, and under `set -eo pipefail` that killed the step before the `::error::`
   annotation was printed. It now annotates and fails deliberately.
@@ -65,9 +128,11 @@ are summarised from that section and from git history.
 ### Changed
 
 - **The README's `Status` section is frozen as pre-2.7.0 history.** It duplicated the changelog and
-  went stale twice in one day, which is the failure this plugin warns about everywhere else. The
-  authoritative record from 2.7.0 onward is `CHANGELOG.md`; the older entries stay because their
-  reasoning predates the changelog and is still worth reading.
+  went stale twice in one day — backfilled at 2.7.0, then three more releases shipped past it —
+  which is the failure this plugin warns about everywhere else. The cause was keeping the same
+  history in two files, so the cause is gone: the authoritative record from 2.7.0 onward is
+  `CHANGELOG.md`, and the older entries stay because their reasoning predates the changelog and is
+  still worth reading.
 
 ## [3.0.0] - 2026-08-28
 
@@ -132,7 +197,6 @@ are summarised from that section and from git history.
   parenthesised status.
 - `phase-0-detect.md`'s "Reconstructing state" section did not say it runs after approval rather than
   before; the heading now does.
-
 - **Phase 1's "round limit" was not a limit.** `SKILL.md` promises questioning is bounded and that
   leftover unknowns become marked assumptions, but `phase-1-discover.md` only said to *announce* a
   fourth round — with no ceiling and no conversion rule, so a user whose answers keep opening new
@@ -216,11 +280,10 @@ are summarised from that section and from git history.
 - First public release. The developer profile split: committed files became templates carrying the
   questions, while the answers moved to a gitignored `profile/local/` read in preference to them.
 
-[Unreleased]: https://github.com/voyvodka/claude-project-flow/compare/v3.0.1...HEAD
+[Unreleased]: https://github.com/voyvodka/claude-project-flow/compare/v3.0.3...HEAD
+[3.0.3]: https://github.com/voyvodka/claude-project-flow/compare/v3.0.2...v3.0.3
+[3.0.2]: https://github.com/voyvodka/claude-project-flow/compare/v3.0.1...v3.0.2
 [3.0.1]: https://github.com/voyvodka/claude-project-flow/compare/v3.0.0...v3.0.1
 [3.0.0]: https://github.com/voyvodka/claude-project-flow/compare/v2.8.0...v3.0.0
 [2.8.0]: https://github.com/voyvodka/claude-project-flow/compare/v2.7.0...v2.8.0
 [2.7.0]: https://github.com/voyvodka/claude-project-flow/releases/tag/v2.7.0
-[2.6.0]: https://github.com/voyvodka/claude-project-flow/compare/v2.5.0...v2.6.0
-[2.5.0]: https://github.com/voyvodka/claude-project-flow/compare/v2.4.0...v2.5.0
-[2.4.0]: https://github.com/voyvodka/claude-project-flow/releases/tag/v2.4.0
