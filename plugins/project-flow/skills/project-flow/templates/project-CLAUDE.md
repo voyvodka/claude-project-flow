@@ -15,7 +15,7 @@
 | | | |
 
 Reasoning in full: `docs/product/02-decisions.md`. Do not swap a component without reading
-the "Elenenler" line for it — the alternatives were considered and rejected for stated reasons.
+its rejected-alternatives line — the alternatives were considered and rejected for stated reasons.
 
 ## Where the truth lives
 

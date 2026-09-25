@@ -99,19 +99,21 @@ plugin updates, and it is deleted silently — the proposal was accepted, the fi
 the change is simply gone. That is the same failure `profile/README.md` describes for
 `profile/local/`, and it applies to every file in this skill, not just that directory.
 
-So before applying anything: if `${CLAUDE_PLUGIN_ROOT}` points inside a `plugins/cache/` path, say
-so and stop. The change belongs in the source repository — open it there, or hand the user the
-proposal to carry over. An accepted change that cannot survive an update is worse than a rejected
-one, because everyone involved believes it landed.
+So before applying anything, run the location check in `SKILL.md` — it lives there because the
+plugin path is substituted into `SKILL.md` on load and into nothing in this directory. If this
+skill runs from a `plugins/cache/` path, say so and stop. The change belongs in the source
+repository — open it there, or hand the user the proposal to carry over. An accepted change that
+cannot survive an update is worse than a rejected one, because everyone involved believes it
+landed.
 
 ## Logging
 
 Append to `feedback/observations.md` next to this skill. **The section above applies here too** —
 that file lives in this skill, so on a marketplace install it sits in the versioned cache and the
-next update deletes whatever was appended, silently. Check `${CLAUDE_PLUGIN_ROOT}` before writing:
-if it is under `plugins/cache/`, say so and hand the user the entry to carry into the source
-repository instead. A log the update wipes is worse than no log, because the observation is gone
-*and* it was counted as recorded.
+next update deletes whatever was appended, silently. Run the location check in `SKILL.md` before
+writing: if this skill runs from under `plugins/cache/`, say so and hand the user the entry to
+carry into the source repository instead. A log the update wipes is worse than no log, because the
+observation is gone *and* it was counted as recorded.
 
 One entry:
 

@@ -19,6 +19,8 @@ For each increment in `04-roadmap.md`, in order:
 
    The task list and `04-roadmap.md` are not substitutes for each other, and it is easy to end up feeding only the first. The task list is scratch: it tracks this session's steps and dies with the conversation. The roadmap is the durable ledger, and it is what a future session or a new collaborator reads. Whenever the two disagree about where the work stands, the roadmap is the one that is wrong and the one that must be fixed — a perfectly maintained task list beside a roadmap that still says "not started" is the same failure as no record at all.
 7. **Verify it.** Run it, or say plainly that you did not. Never report an increment as done on the strength of the code looking right.
+
+   If the profile's safety rails forbid running tests unasked (`profile/code-style.md`), ask before running them — name the command and what it will prove — and if the answer is no, report the increment as unverified rather than done.
 8. **Update the docs** — see below.
 9. **Report and pause.** What landed, what you verified, what is next.
 

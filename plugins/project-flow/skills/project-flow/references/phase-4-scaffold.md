@@ -1,6 +1,6 @@
 # Phase 4 — Scaffold
 
-Goal: build the project's brain, so that any AI session in this repo — Claude Code, opencode, or anything else — starts already knowing what the last five phases established.
+Goal: build the project's brain, so that any AI session in this repo — Claude Code, opencode, or anything else — starts already knowing what the four phases before it established.
 
 **This phase writes no application code.** Not a boilerplate, not a `main.ts`, not a config file for a framework. Only context and tooling. Phase 5 writes code, after the user opens that gate.
 
@@ -8,8 +8,9 @@ Goal: build the project's brain, so that any AI session in this repo — Claude 
 
 | File | Language | Purpose |
 |---|---|---|
-| `CLAUDE.md` | English | The main context source — identity, rules, map of `docs/` |
+| `CLAUDE.md` | English | The main context source — identity, rules, pointer to `docs/README.md` |
 | `AGENTS.md` | English | Pointer file so non-Claude tools land on the same context |
+| `docs/README.md` | The documents' language | Index of everything under `docs/`, routed by task |
 | `.claude/agents/*.md` | English | Project-specific subagents — few, or none |
 | `.claude/skills/*/SKILL.md` | English | Only for genuinely repeated work |
 

@@ -6,7 +6,7 @@ The failure mode this phase exists to prevent is not "too few questions" — it 
 
 ## The checklist
 
-**Blocking** — the phase does not end until all six are answered.
+**Blocking** — the phase does not end until all seven (1–6 and 6b) are answered.
 
 | # | Item | What must be answered |
 |---|---|---|
@@ -149,7 +149,7 @@ For a small project, say so out loud and compress: fewer questions, no market re
 | `docs/product/01-brief.md` | `02-decisions.md` — decisions become a `## Kararlar` section at the end | Phases 1 and 3 |
 | `docs/product/03-mvp.md` | `04-roadmap.md` — the phased plan becomes a `## Yol haritası` section | Phases 3 and 5 |
 
-Record the choice in `00-state.md` as `Belge düzeni: kompakt` on the first line that mentions layout.
+Record the choice on the `Belge düzeni` line of `00-state.md` (`kompakt`, or `tam` for five files).
 Phases 3, 4 and 5 name `02-decisions.md` and `04-roadmap.md` directly; when the layout is compact,
 write to the absorbing file and its section instead, and say so once rather than silently. Do not
 invent a third shape — it is five files or these two, so that a reader who knows one project's
@@ -159,7 +159,7 @@ layout knows every project's.
 
 The phase ends with:
 
-- All six blocking items answered or explicitly assumed.
+- All seven blocking items (1–6 and 6b) answered or explicitly assumed.
 - Items 7–12 each carrying a filled row in the "Ek bilgiler" table — no blanks.
 - `01-brief.md` written, using the template's section set and no invented top-level sections.
 - `00-state.md` updated: phase, settled items, open items, assumption list.

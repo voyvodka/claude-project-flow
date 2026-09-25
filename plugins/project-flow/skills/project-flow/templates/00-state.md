@@ -11,6 +11,7 @@ parantez o fazın bitip bitmediğini söyler; ikisi olmadan yarım kalmış bir 
 **Sıradaki adım:** <tek cümle — bir sonraki sohbetin ilk yapacağı iş.
 Faz 5'te bu satır artımı **tarif etmez, işaret eder**: "Artım 3 · `04-roadmap.md`".
 İçeriği orada durur; iki yerde tutulursa biri bayatlar.>
+**Belge düzeni:** <tam (beş dosya) | kompakt — kompaktta kararlar ve yol haritası nerede duruyor>
 
 ## Tek cümlede proje
 
@@ -35,6 +36,10 @@ Faz 5'te bu satır artımı **tarif etmez, işaret eder**: "Artım 3 · `04-road
 | V1 | <varsayım> | <gerekçe> | <etki> |
 
 ## Faz geçmişi
+
+> Fazların süreç kayıtları "Not" sütununa yazılır: başlatılan ve biten araştırma kolları,
+> mevcut bir `CLAUDE.md` için birleştir / değiştir / yanına yaz seçimi, öneri yerine istek
+> üzerine kurulan araçlar. Yeni başlık açılmaz.
 
 | Faz | Durum | Not |
 |---|---|---|

@@ -11,6 +11,9 @@ Everything here is a **default, not a rule.** Phase 1 confirms it applies to the
 hand; Phase 2 tests it against the project's actual needs. A default that survives that
 scrutiny is a fast decision. A default that does not is exactly what research is for.
 
+The one exception is the safety rails in [`code-style.md`](code-style.md#safety-rails) — git,
+tests, migrations, shared databases. Those are rules, and no phase relaxes them on its own.
+
 **Read only what the project needs.** A desktop app does not need the .NET API conventions.
 
 > The stack files below are one developer's answers, kept as a worked example rather than as

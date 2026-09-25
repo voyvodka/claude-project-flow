@@ -1,4 +1,4 @@
-# project
+# project-flow
 
 One command — `/project` — that carries a project from "I have a rough idea" to working code.
 

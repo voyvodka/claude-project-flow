@@ -94,10 +94,10 @@ public sealed record ApiMeta
 ```
 
 `Code` is what the client branches on; `Message` is for humans and is localised **server-side** —
-see error localisation in [`dotnet-backend.md`](dotnet-backend.md). `Details` carries per-field
-validation failures, which is what lets a form put each error back on the field that caused it.
-`Params` exists so a message can be re-rendered in another language from its parts rather than
-its text.
+see "Response envelope" in [`dotnet-backend.md`](dotnet-backend.md#response-envelope).
+`Details` carries per-field validation failures, which is what lets a form put each error back on
+the field that caused it. `Params` exists so a message can be re-rendered in another language
+from its parts rather than its text.
 
 ## List contract
 
@@ -140,7 +140,7 @@ filtering on something the endpoint never meant to expose.
 
 Operators: `eq` `neq` `gt` `lt` `gte` `lte` `contains` `in` `between` `isNull` `notNull`.
 
-Two traps worth knowing before debugging an empty list:
+Three traps worth knowing before debugging an empty list:
 
 - **Filter against the right shape.** After `ProjectTo<Dto>` the filter runs on DTO properties, and
   a computed property is fair game. Before it, on entity columns. The two diverge silently.
