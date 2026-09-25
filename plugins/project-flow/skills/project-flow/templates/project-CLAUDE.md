@@ -44,6 +44,11 @@ an empty rule list is better than a list of generic advice.>
 
 Live list: `docs/product/00-state.md`.
 
+## Verification
+
+<The commands that prove a change works, and which of them a hook already runs. Delete this
+section until the project has one.>
+
 ## Out of scope
 
 > Deliberately excluded from the MVP. Do not helpfully add these.

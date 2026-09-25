@@ -37,7 +37,9 @@ Code drifting from documentation is the failure that undoes everything the first
   The test for whether something belongs here is not how large it felt while solving it. Ask instead: **does this constrain what a future developer may do, and would they know it from the code alone?** A deliberate exception to a rule the project otherwise enforces, a workaround with a boundary that must not be widened, a mechanism chosen over an obvious alternative for a non-obvious reason — all of these qualify, and all of them get skipped, because at the moment of solving they feel like implementation detail rather than decision.
 
   A comment in the code is not sufficient for these. Comments are found by people already reading that file; a decision that constrains the whole project has to be findable by someone who does not yet know which file to open. Write it in `02-decisions.md` before the increment closes, and reference it from the code if it helps.
-- `CLAUDE.md` — only when a convention or rule genuinely changed. Not a changelog.
+- `CLAUDE.md` — only when a convention or rule genuinely changed. Not a changelog. A rule that
+  applies to one area of the code goes in `.claude/rules/` instead (`phase-4-scaffold.md`), and a
+  check that must run every time goes in a hook, not in either.
 
 ### Reversing a decision
 

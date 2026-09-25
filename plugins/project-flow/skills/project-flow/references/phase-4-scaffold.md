@@ -13,6 +13,8 @@ Goal: build the project's brain, so that any AI session in this repo — Claude 
 | `docs/README.md` | The documents' language | Index of everything under `docs/`, routed by task |
 | `.claude/agents/*.md` | English | Project-specific subagents — few, or none |
 | `.claude/skills/*/SKILL.md` | English | Only for genuinely repeated work |
+| `.claude/rules/*.md` | English | Area-specific rules, loaded only when matching files are read — once `CLAUDE.md` would outgrow its budget |
+| `.claude/settings.json`, `.claude/hooks/` | English | Checks that must run every time — usually one Stop hook, often none |
 
 Start from `templates/project-CLAUDE.md` and `templates/project-AGENTS.md` (named with the
 prefix so they are not mistaken for this plugin's own context files), and from
@@ -28,6 +30,13 @@ never silently append either — a file with two "What this project is" sections
 version alone. Record which way it went in `00-state.md`, because the next session will otherwise
 propose the same overwrite again.
 
+**If the publication decision keeps AI tooling out of the repository**, everything in the table
+above stays on the owner's machine: list each path in `.git/info/exclude`, never in `.gitignore`.
+`.gitignore` is itself committed, so it would publish the very list it hides, and a rule written
+into it can stop matching on a rename without any error. Make "nothing about AI tooling is
+committed here" the first rule in `CLAUDE.md` — it covers commit messages and PR text as well as
+files — and note in `00-state.md` that a fresh clone carries none of this context.
+
 ## CLAUDE.md
 
 This is the file an AI reads first in every future session, so it is written for reading under a budget: dense, specific, and free of anything derivable from the code itself.
@@ -40,8 +49,17 @@ It covers:
 - **Rules and conventions** — the project's actual constraints. Only ones that bite.
 - **Standing assumptions** — the open `⚠️` list, and the instruction to ask the user rather than guess when work touches one.
 - **Out of scope** — from `03-mvp.md`. This is what stops a future session from helpfully building something that was deliberately cut.
+- **Verification** — the commands that prove a change works, and which of them a hook already runs. Omitted until a command exists.
 
 Do not restate what the code plainly shows. Directory listings, obvious framework conventions, and generic best practices are noise; they push the useful lines out of a reader's attention.
+
+**Budget: roughly 150 lines.** The whole file is read into every session, whatever the task, and
+every line in it competes with the task for attention. An `@path` import does not help — the
+imported file is loaded in full at the same moment. Where a rule applies to one area of the code
+only — a legacy module, the mobile client, the migrations folder — it goes in
+`.claude/rules/<area>.md` with a `paths:` list in its frontmatter, and loads only when a matching
+file is read. `CLAUDE.md` keeps what applies everywhere. A rule file whose frontmatter does not
+parse is dropped without an error, so read each one back once it is written.
 
 ## docs/README.md
 
@@ -68,6 +86,25 @@ everyone but its author.
 Per the user's decision, `CLAUDE.md` is the source and `AGENTS.md` points at it. Keep it minimal — a title, the one-line project identity, and an instruction to read `CLAUDE.md` and `docs/product/00-state.md` before doing anything.
 
 Duplicating content between the two files is the one thing to avoid: two copies drift, and a reader cannot tell which one is stale.
+
+## Checks that must run — hooks, not prose
+
+**A rule that says "run the typecheck before you finish" is advice; a hook is a check.** Written
+instructions of that kind are skipped exactly when the session is busiest, which is when they
+matter. Where Phase 2 or 3 settled a verification command, wire the fast part of it into the
+tooling rather than into `CLAUDE.md`:
+
+- **A Stop hook** in `.claude/settings.json` that runs the fast checks — typecheck, format, lint —
+  on the files the working tree changed, and blocks the end of the turn with the failure output.
+  Skip it when nothing relevant changed, remember a diff that already passed so the same diff is
+  not re-checked, and let the turn end if it blocks twice on an unchanged diff (`stop_hook_active`),
+  or a failure the session cannot fix becomes a loop.
+- **A git pre-push hook** for the slow suite, when there is one — skipped for pushes that carry no
+  code (docs only, branch deletions). A slow check that fires on every push gets bypassed.
+
+Then one line in `CLAUDE.md` saying what the hooks run, so a reader does not duplicate them in
+prose. Right-size it like everything else: a project with no verification command yet gets no
+hook, and a weekend script gets at most the Stop hook.
 
 ## Subagents and skills — the budget
 
@@ -96,6 +133,12 @@ Rough ceilings, to be undershot rather than met:
 Propose each one to the user with its justification and let them decline. "Might be useful later" is a decline. Something built in Phase 4 that no one uses in Phase 5 is pure cost — it is read into context on every session and pays back nothing.
 
 The user can overrule the budget and ask for tooling you judged unnecessary. Build it, and build it properly — a grudging subagent is worse than none. But **record in `00-state.md` that it was built on request rather than on recommendation.** Six months on, someone inheriting the repo sees three agent files and reasonably concludes they were required; that one clause is the difference between them trusting the tooling and being misled by it.
+
+**One writer.** A subagent this phase proposes reviews, audits or researches; it does not edit.
+Give it read-only tools (`Read`, `Grep`, `Glob`, plus `Bash` only when it must run a check) and let
+the main session make every change — two contexts editing the same files produce conflicts that
+neither can see. Set `model:` to the cheapest model that does the job: a review or search pass
+rarely needs the strongest one, and the fatal-class auditor above is the case that may.
 
 Skills are for repeated *procedures* with a fixed shape — a release checklist, a domain-specific review pass, a code-generation convention. Not for knowledge; knowledge belongs in `CLAUDE.md` or `docs/`.
 
