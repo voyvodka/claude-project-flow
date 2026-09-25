@@ -81,6 +81,9 @@ What it settles now rather than later:
 - **Dependency licences** — only worth checking when redistribution is on the table.
 - **Which documents ship** — `docs/product/` holds internal reasoning and may be in the working
   language rather than English.
+- **Whether the AI tooling ships** — `CLAUDE.md`, `AGENTS.md` and `.claude/` are committed by
+  default. Some owners do not want them in a public repository at all; if so, Phase 4 keeps them
+  local, and the answer has to exist before the first commit, not after it.
 
 "Undecided" is an acceptable answer, and it has a consequence worth stating: **build as though it
 will be published.** Keeping secrets out and identity correct costs nothing while private and is

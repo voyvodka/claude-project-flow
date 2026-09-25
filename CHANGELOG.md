@@ -11,6 +11,30 @@ history.
 
 ## [Unreleased]
 
+## [3.1.0] - 2026-09-25
+
+### Added
+
+- **Phase 4 wires verification into hooks instead of prose.** Where a verification command was
+  settled, the fast part becomes a Stop hook in `.claude/settings.json` that checks the changed
+  files and blocks the turn on failure, and the slow suite a git pre-push hook that skips pushes
+  carrying no code. `CLAUDE.md` gains an optional Verification section naming what the hooks run.
+  Three projects arrived at this independently after a written "run the checks" instruction; the
+  phase had no place for it.
+- **`CLAUDE.md` has a budget of roughly 150 lines, and area rules go to `.claude/rules/`.** A rule
+  that applies to one part of the code is written with a `paths:` list and loads only when a
+  matching file is read. Two large projects had to cut 300–480-line files by half or more to get
+  there after the fact. Phase 5 points new area rules the same way.
+- **The publication decision now covers the AI tooling.** Phase 3 asks whether `CLAUDE.md`,
+  `AGENTS.md` and `.claude/` ship; when they do not, Phase 4 keeps them out through
+  `.git/info/exclude` rather than `.gitignore`, which is committed and would publish the list.
+
+### Changed
+
+- **Proposed subagents are read-only, on the cheapest model that does the job.** The main session
+  is the only writer; an advisory agent gets `Read`, `Grep`, `Glob` and `Bash` only when it must
+  run a check.
+
 ## [3.0.3] - 2026-09-25
 
 ### Added
@@ -280,7 +304,8 @@ history.
 - First public release. The developer profile split: committed files became templates carrying the
   questions, while the answers moved to a gitignored `profile/local/` read in preference to them.
 
-[Unreleased]: https://github.com/voyvodka/claude-project-flow/compare/v3.0.3...HEAD
+[Unreleased]: https://github.com/voyvodka/claude-project-flow/compare/v3.1.0...HEAD
+[3.1.0]: https://github.com/voyvodka/claude-project-flow/compare/v3.0.3...v3.1.0
 [3.0.3]: https://github.com/voyvodka/claude-project-flow/compare/v3.0.2...v3.0.3
 [3.0.2]: https://github.com/voyvodka/claude-project-flow/compare/v3.0.1...v3.0.2
 [3.0.1]: https://github.com/voyvodka/claude-project-flow/compare/v3.0.0...v3.0.1

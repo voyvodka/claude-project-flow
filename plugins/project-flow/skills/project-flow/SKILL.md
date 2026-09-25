@@ -116,7 +116,8 @@ Phases are ordered but not rigid: if the user has already settled the stack, Pha
 
 ## Target file layout
 
-Everything this tool produces lives in the project folder and is meant to be committed.
+Everything this tool produces lives in the project folder and is meant to be committed — except
+the AI tooling, when the publication decision keeps it local (`phase-4-scaffold.md`).
 
 ```
 <project>/
@@ -137,7 +138,9 @@ Everything this tool produces lives in the project folder and is meant to be com
 │       └── devenv.md            development, testing, and deployment environment
 └── .claude/
     ├── agents/                  EN · project-specific subagents (few, or none)
-    └── skills/                  EN · only for genuinely repeated work
+    ├── skills/                  EN · only for genuinely repeated work
+    ├── rules/                   EN · area rules loaded by path, when CLAUDE.md outgrows its budget
+    └── settings.json, hooks/    EN · checks that must run every time (often none)
 ```
 
 `docs/product/` and `docs/research/` are deliberately separate: research is evidence with sources and goes stale; product docs are decisions and stay current.

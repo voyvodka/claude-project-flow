@@ -62,8 +62,10 @@ never silently: it says what it is skipping, why, and writes that into the state
 │   ├── product/              00-state · 01-brief · 02-decisions · 03-mvp · 04-roadmap
 │   └── research/             market · tech · devenv
 └── .claude/
-    ├── agents/               project-specific subagents — few, or none
-    └── skills/               only for genuinely repeated work
+    ├── agents/               project-specific subagents — few, or none, read-only
+    ├── skills/               only for genuinely repeated work
+    ├── rules/                area rules loaded by path, once CLAUDE.md outgrows its budget
+    └── settings.json, hooks/ checks that must run every time — often none
 ```
 
 All of it is meant to be committed. Someone who clones the repo — using Claude Code, opencode, or
