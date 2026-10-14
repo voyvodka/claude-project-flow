@@ -13,7 +13,7 @@ Goal: build the project's brain, so that any AI session in this repo — Claude 
 | `docs/README.md` | The documents' language | Index of everything under `docs/`, routed by task |
 | `.claude/agents/*.md` | English | Project-specific subagents — few, or none |
 | `.claude/skills/*/SKILL.md` | English | Only for genuinely repeated work |
-| `.claude/rules/*.md` | English | Area-specific rules, loaded only when matching files are read — once `CLAUDE.md` would outgrow its budget |
+| `.claude/rules/*.md` | English | Area-specific rules, loaded only when a matching file is read, written or edited — once `CLAUDE.md` would outgrow its budget |
 | `.claude/settings.json`, `.claude/hooks/` | English | Checks that must run every time — usually one Stop hook, often none |
 
 Start from `templates/project-CLAUDE.md` and `templates/project-AGENTS.md` (named with the
@@ -58,8 +58,10 @@ every line in it competes with the task for attention. An `@path` import does no
 imported file is loaded in full at the same moment. Where a rule applies to one area of the code
 only — a legacy module, the mobile client, the migrations folder — it goes in
 `.claude/rules/<area>.md` with a `paths:` list in its frontmatter, and loads only when a matching
-file is read. `CLAUDE.md` keeps what applies everywhere. A rule file whose frontmatter does not
-parse is dropped without an error, so read each one back once it is written.
+file is read, written or edited. `CLAUDE.md` keeps what applies everywhere. A rule file whose
+frontmatter does not parse is not dropped — Claude Code ignores the frontmatter and loads the rule
+into every session as if it had no `paths:`, without an error. Read each one back once it is
+written; `claude --debug` shows the parse error.
 
 ## docs/README.md
 

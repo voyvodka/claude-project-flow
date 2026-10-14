@@ -12,6 +12,14 @@ memory so the conversation does not have to.
 ## Install
 
 ```
+/plugin install project-flow --marketplace voyvodka/claude-plugins
+```
+
+That adds the catalog and installs the plugin in one command, on Claude Code 2.1.275 or later (from the
+shell, `claude plugin install project-flow --marketplace voyvodka/claude-plugins` needs 2.1.292).
+On an older version, register the catalog first:
+
+```
 /plugin marketplace add voyvodka/claude-plugins
 /plugin install project-flow@voyvodka
 ```
@@ -20,12 +28,8 @@ The plugin is listed in a small [catalog marketplace](https://github.com/voyvodk
 rather than being one itself, so a single registration covers every plugin from the same author and
 `/plugin marketplace update voyvodka` refreshes all of them at once.
 
-The `owner/repo` shorthand clones over SSH. Without an SSH key on the machine, use the HTTPS URL
-instead — it needs no credentials for a public repository:
-
-```
-/plugin marketplace add https://github.com/voyvodka/claude-plugins.git
-```
+The `owner/repo` shorthand clones over SSH when your key authenticates to GitHub and over HTTPS
+when it does not; `CLAUDE_CODE_PLUGIN_PREFER_HTTPS=1` skips the SSH check.
 
 Then, in any project folder:
 

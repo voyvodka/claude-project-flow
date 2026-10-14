@@ -11,6 +11,29 @@ history.
 
 ## [Unreleased]
 
+## [3.1.1] - 2026-10-14
+
+### Changed
+
+- **`/project` is a skill now, not a command file.** `commands/project.md` moved to
+  `skills/project/SKILL.md`; Claude Code documents command files as the older form and skills as the
+  one to use. The command name, arguments and tool grants are unchanged. It also carries
+  `disable-model-invocation: true`: the model reaches the phases through the `project-flow` skill,
+  so the entry point only needs to answer the user typing `/project`. The same field keeps it out
+  of subagent preloads and scheduled tasks.
+- READMEs lead with the one-step install, `/plugin install project-flow --marketplace
+  voyvodka/claude-plugins` (Claude Code 2.1.275 or later), and keep the two-step form for older
+  versions.
+- CI: `actions/setup-node` pinned to v7.1.0.
+
+### Fixed
+
+- **Phase 4 said a rule file with broken frontmatter is dropped. It is the opposite:** Claude Code
+  ignores frontmatter that does not parse and loads the rule into every session as if it had no
+  `paths:`. A malformed area rule becomes always-on context rather than a gap, which is the cost the
+  CLAUDE.md budget exists to avoid. Path-scoped rules also load when a matching file is written or
+  edited, not only read.
+
 ## [3.1.0] - 2026-09-25
 
 ### Added
@@ -304,7 +327,8 @@ history.
 - First public release. The developer profile split: committed files became templates carrying the
   questions, while the answers moved to a gitignored `profile/local/` read in preference to them.
 
-[Unreleased]: https://github.com/voyvodka/claude-project-flow/compare/v3.1.0...HEAD
+[Unreleased]: https://github.com/voyvodka/claude-project-flow/compare/v3.1.1...HEAD
+[3.1.1]: https://github.com/voyvodka/claude-project-flow/compare/v3.1.0...v3.1.1
 [3.1.0]: https://github.com/voyvodka/claude-project-flow/compare/v3.0.3...v3.1.0
 [3.0.3]: https://github.com/voyvodka/claude-project-flow/compare/v3.0.2...v3.0.3
 [3.0.2]: https://github.com/voyvodka/claude-project-flow/compare/v3.0.1...v3.0.2

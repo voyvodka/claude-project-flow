@@ -6,6 +6,14 @@ The problem it solves: an AI that starts building on a guess, and an AI that ask
 forever. It fixes both with a bounded checklist, evidence from real research, and a set of
 documents that hold the memory instead of the chat.
 
+## Install
+
+```
+/plugin install project-flow --marketplace voyvodka/claude-plugins
+```
+
+Claude Code 2.1.275 or later; the repository README covers older versions.
+
 ## Usage
 
 ```
@@ -76,17 +84,18 @@ and all code are always English.
 
 ```
 plugins/project-flow/
-├── commands/project.md                     thin entry point
-└── skills/project-flow/
-    ├── SKILL.md                            directives, state contract, routing
-    ├── profile/                            EDIT THIS — one file per stack, README indexes
-    ├── references/phase-0-detect.md        loaded one at a time, per phase
-    ├── references/phase-1-discover.md
-    ├── references/phase-2-research.md
-    ├── references/phase-3-decide.md
-    ├── references/phase-4-scaffold.md
-    ├── references/phase-5-build.md
-    └── templates/                          document skeletons
+└── skills/
+    ├── project/SKILL.md                    /project — thin entry point, user-invoked only
+    └── project-flow/
+        ├── SKILL.md                        directives, state contract, routing
+        ├── profile/                        EDIT THIS — one file per stack, README indexes
+        ├── references/phase-0-detect.md    loaded one at a time, per phase
+        ├── references/phase-1-discover.md
+        ├── references/phase-2-research.md
+        ├── references/phase-3-decide.md
+        ├── references/phase-4-scaffold.md
+        ├── references/phase-5-build.md
+        └── templates/                      document skeletons
 ```
 
 Research uses `general-purpose` subagents with prompts defined in `phase-2-research.md`,
