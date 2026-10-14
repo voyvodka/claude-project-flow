@@ -11,6 +11,8 @@ history.
 
 ## [Unreleased]
 
+## [3.1.1] - 2026-10-14
+
 ### Changed
 
 - **`/project` is a skill now, not a command file.** `commands/project.md` moved to
@@ -325,7 +327,8 @@ history.
 - First public release. The developer profile split: committed files became templates carrying the
   questions, while the answers moved to a gitignored `profile/local/` read in preference to them.
 
-[Unreleased]: https://github.com/voyvodka/claude-project-flow/compare/v3.1.0...HEAD
+[Unreleased]: https://github.com/voyvodka/claude-project-flow/compare/v3.1.1...HEAD
+[3.1.1]: https://github.com/voyvodka/claude-project-flow/compare/v3.1.0...v3.1.1
 [3.1.0]: https://github.com/voyvodka/claude-project-flow/compare/v3.0.3...v3.1.0
 [3.0.3]: https://github.com/voyvodka/claude-project-flow/compare/v3.0.2...v3.0.3
 [3.0.2]: https://github.com/voyvodka/claude-project-flow/compare/v3.0.1...v3.0.2
