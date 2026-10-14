@@ -13,7 +13,7 @@ Goal: build the project's brain, so that any AI session in this repo — Claude 
 | `docs/README.md` | The documents' language | Index of everything under `docs/`, routed by task |
 | `.claude/agents/*.md` | English | Project-specific subagents — few, or none |
 | `.claude/skills/*/SKILL.md` | English | Only for genuinely repeated work |
-| `.claude/rules/*.md` | English | Area-specific rules, loaded only when a matching file is read or edited — once `CLAUDE.md` would outgrow its budget |
+| `.claude/rules/*.md` | English | Area-specific rules, loaded only when a matching file is read, written or edited — once `CLAUDE.md` would outgrow its budget |
 | `.claude/settings.json`, `.claude/hooks/` | English | Checks that must run every time — usually one Stop hook, often none |
 
 Start from `templates/project-CLAUDE.md` and `templates/project-AGENTS.md` (named with the

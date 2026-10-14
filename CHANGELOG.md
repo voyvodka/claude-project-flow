@@ -17,7 +17,8 @@ history.
   `skills/project/SKILL.md`; Claude Code documents command files as the older form and skills as the
   one to use. The command name, arguments and tool grants are unchanged. It also carries
   `disable-model-invocation: true`: the model reaches the phases through the `project-flow` skill,
-  so the entry point only needs to answer the user typing `/project`.
+  so the entry point only needs to answer the user typing `/project`. The same field keeps it out
+  of subagent preloads and scheduled tasks.
 - READMEs lead with the one-step install, `/plugin install project-flow --marketplace
   voyvodka/claude-plugins` (Claude Code 2.1.275 or later), and keep the two-step form for older
   versions.
