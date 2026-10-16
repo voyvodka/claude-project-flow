@@ -2,13 +2,13 @@
 
 Goal: figure out what this folder already is, and tell the user where they stand. Costs seconds, prevents every kind of duplicated or contradictory work later.
 
-`SKILL.md` runs this phase whenever `docs/product/00-state.md` is missing, and it is never skipped then — even when the user opens with a clear new idea. A folder that looks empty may hold a `.git` history, a half-written brief, or someone else's abandoned attempt.
+`SKILL.md` runs this phase whenever `docs/product/00-state.md` is missing, and it is never skipped then — even when the user opens with a clear new idea. It also runs its Re-entry section, at the end, when the state file says the project is closed. A folder that looks empty may hold a `.git` history, a half-written brief, or someone else's abandoned attempt.
 
 ## Scan
 
 Look at, in this order:
 
-1. `docs/product/00-state.md` — if present, this is a resumption. It is authoritative.
+1. `docs/product/00-state.md` — if present, this is a resumption, or a closed project if `Aktif faz` says so. It is authoritative.
 2. `docs/product/` and `docs/research/` — which documents exist, how complete are they.
 3. `CLAUDE.md`, `AGENTS.md`, `README.md` — is there already a stated project identity.
 4. Manifests: `package.json`, `pyproject.toml`, `go.mod`, `Cargo.toml`, `*.csproj`, `composer.json`, `Gemfile`.

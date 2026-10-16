@@ -23,3 +23,15 @@
 > katlanılabilir kılan şeydir.
 
 - <fikir>
+
+<!-- MVP'den sonra açılan her tur aynı üç bölümü kendi başarı kriteriyle bu dosyanın sonuna ekler.
+     MVP'nin bölümleri olduğu gibi kalır; turun "Dışarıda" listesi MVP'ninkini kendiliğinden devralmaz.
+
+## Tur 2 — <tek satır amaç>
+
+**Başarı kriteri:** <bu turun kendi ölçülebilir cümlesi>
+
+### İçeride
+### Dışarıda
+### Sonrası
+-->
