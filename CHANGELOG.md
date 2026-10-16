@@ -11,6 +11,22 @@ from it and from git history.
 
 ## [Unreleased]
 
+### Added
+
+- `profile/macos-swift.md`: defaults and known traps for macOS-only native tools, indexed in the
+  profile README.
+
+### Changed
+
+- The tool never proposes waiving its own gates; a standing approval is recorded verbatim with its
+  scope and expiry.
+- Routing announces the project's phase on every invocation, including when it opens with a
+  concrete task.
+- The active phase reference is re-read after a context compaction.
+- `/project` pre-approves only the `Skill` tool.
+- Phase 5 lists increment steps in the reply when the task tools are unavailable.
+- Phase 4 notes that git worktrees lack local-only tooling and suggests a `.worktreeinclude`.
+
 ## [3.1.1] - 2026-10-14
 
 ### Changed

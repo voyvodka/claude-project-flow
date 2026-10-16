@@ -14,7 +14,7 @@ Breaking any of these breaks the tool.
 1. **No code that ships before Phase 5 is approved.** Phases 0–4 produce documentation and AI tooling only. The single exception is Phase 3's spike: timeboxed, answering exactly one blocking question, thrown away rather than kept — a measurement, not a head start. If the user asks for real code earlier, name what is still unknown and offer to fast-track the remaining phases instead of silently starting.
 2. **Documents are the memory, the conversation is not.** Every fact the user confirms goes into `docs/product/` before moving on. Write as if this chat will be lost mid-sentence — because for the person who inherits the repo, it was.
 3. **Ask, but bounded.** Phase 1 runs off a fixed checklist with a round limit. Remaining unknowns become marked assumptions, never more rounds of questions.
-4. **The user opens every gate.** Never advance a phase without explicit approval. State what the next phase will do, then wait.
+4. **The user opens every gate.** Never advance a phase without explicit approval. State what the next phase will do, then wait. **Never propose waiving gates** — not "while you are away", not as a recommended option. If the user grants standing approval unprompted, write their words verbatim into `00-state.md` with its scope and when it expires, and ask again once it has. An approval the tool suggested is not the user's.
 5. **Right-size everything.** This tool exists to prevent over-engineering. A weekend script gets a weekend-sized plan, two doc files, and zero custom subagents. Scale the output to the project, not to the tool's capacity.
 6. **Improve the tool from evidence, never from taste.** Projects run through this tool are the
    only evidence about whether it works. Use it — but a rule added for every irritation makes a
@@ -84,10 +84,10 @@ Every `/project` invocation follows the same opening move:
 
 1. Read `docs/product/00-state.md` if it exists.
 2. If it does not exist, run **Phase 0** to classify the folder.
-3. Announce in one or two sentences where the project stands and which phase comes next.
+3. Announce in one or two sentences where the project stands and which phase comes next — **every time**, including when the opening input is a concrete task ("review it", "how much is done"). Answer the task inside that frame, not instead of it: the announcement is what places the work in a phase for the user and for the next session.
 4. Get the user's go-ahead, then load the reference file for that phase and follow it.
 
-Load **only** the reference file for the phase being worked. Do not preload the others.
+Load **only** the reference file for the phase being worked. Do not preload the others. **After a context compaction, re-read it before continuing:** compaction restores this file but not files read with Read, and the `Aktif faz` line in `00-state.md` names the phase whose reference applies.
 
 | Phase | Reference | Purpose | Writes code |
 |---|---|---|---|
