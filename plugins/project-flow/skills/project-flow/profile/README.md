@@ -63,6 +63,7 @@ subject as **genuinely open** and ask, rather than inventing a server or an iden
 | [`cli-go.md`](cli-go.md) | Command-line tools |
 | [`mobile.md`](mobile.md) | Anything with a phone in it — **no default, read before assuming** |
 | [`desktop-tauri.md`](desktop-tauri.md) | Desktop applications |
+| [`macos-swift.md`](macos-swift.md) | **Only if the app is macOS-only and must feel native** — menu bar, notifications, Liquid Glass |
 | [`static-site-astro.md`](static-site-astro.md) | Documentation and marketing sites |
 | [`repo-layout.md`](repo-layout.md) | Phase 3, when deciding how the top level is arranged |
 | [`local-environment.md`](local-environment.md) | **Always** — git identity, machine limits, local containers |
@@ -97,6 +98,7 @@ of. Half-finished experiments are not a statement of preference.
 | API / backend service | .NET 10 layered solution | [`dotnet-backend.md`](dotnet-backend.md) |
 | Lightweight web service | Go | [`go-service.md`](go-service.md) |
 | Desktop | Tauri (Rust shell + React) | [`desktop-tauri.md`](desktop-tauri.md) |
+| macOS-only native tool | Swift (SwiftPM, SwiftUI + AppKit) | [`macos-swift.md`](macos-swift.md) |
 | Docs / marketing site | Astro | [`static-site-astro.md`](static-site-astro.md) |
 | Mobile | **No default — must be researched** | [`mobile.md`](mobile.md) |
 | CLI | Go, standard library, zero dependencies | [`cli-go.md`](cli-go.md) |

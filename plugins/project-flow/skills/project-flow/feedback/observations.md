@@ -29,10 +29,19 @@ and the reason it was turned down is the only thing that stops it.
 | Two of four research branches returned no summary, and the instruction forbade reading the files instead | structural, found by the tool itself | 2.2.1 | `phase-2-research.md` — the file is the deliverable, the summary a convenience |
 | "Success criteria" had no referent in a project that already shipped; phases ran against an outward goal the owner would not have chosen first | structural | 2.5.0 | `phase-1-discover.md` — item 4 splits when the MVP already shipped; `phase-0-detect.md` — what a codebase conceals |
 | The map of `docs/` lived in `CLAUDE.md`; a folder that outgrew the skeleton ended up with a map naming 9 of 48 files, two whole directories absent | duplication | 2.6.0 | `docs/README.md` — new `templates/docs-README.md`, written in `phase-4-scaffold.md`; `CLAUDE.md` now points at it |
-| Three projects ended up enforcing their verification with a Stop or pre-push hook rather than a written instruction; Phase 4 had no place for either | gap, seen three times | 3.1.0 | `phase-4-scaffold.md` — Checks that must run; untested in a Phase 4 run |
-| `CLAUDE.md` files of 300–480 lines in two large projects loaded every area's rules into every session; each was cut by half or more, the area rules moved to path-scoped `.claude/rules/` | structural, seen twice | 3.1.0 | `phase-4-scaffold.md` — CLAUDE.md budget; `phase-5-build.md`; untested in a Phase 4 run |
-| A public repository whose owner wanted no AI tooling in it had no path through Phase 4, which writes every file as committed | gap, seen once — applied on the owner's decision | 3.1.0 | `phase-3-decide.md` — publication list; `phase-4-scaffold.md` — `.git/info/exclude`; fired once when an existing project was re-checked against 3.1.0 (the answer reached its publication decision), not yet in a Phase 4 run |
-| Advisory subagents given edit tools and the strongest model by default; two projects settled on one writer with read-only consultants on a cheaper model | structural, seen twice | 3.1.0 | `phase-4-scaffold.md` — One writer; untested in a Phase 4 run |
+| Three projects ended up enforcing their verification with a Stop or pre-push hook rather than a written instruction; Phase 4 had no place for either | gap, seen three times | 3.1.0 | `phase-4-scaffold.md` — Checks that must run; fired in one Phase 4 run (a dashboard project) |
+| `CLAUDE.md` files of 300–480 lines in two large projects loaded every area's rules into every session; each was cut by half or more, the area rules moved to path-scoped `.claude/rules/` | structural, seen twice in one cross-project audit (September 2026); a third project's 857-line file was later cut to about 200 | 3.1.0 | `phase-4-scaffold.md` — CLAUDE.md budget; `phase-5-build.md`; fired in one Phase 4 run (a dashboard project) |
+| A public repository whose owner wanted no AI tooling in it had no path through Phase 4, which writes every file as committed | gap, seen once — applied on the owner's decision | 3.1.0 | `phase-3-decide.md` — publication list; `phase-4-scaffold.md` — `.git/info/exclude`; fired once when an existing project was re-checked against 3.1.0 (the answer reached its publication decision), then in one Phase 4 run (a dashboard project) |
+| Advisory subagents given edit tools and the strongest model by default; two projects settled on one writer with read-only consultants on a cheaper model | structural, seen twice | 3.1.0 | `phase-4-scaffold.md` — One writer; fired in one Phase 4 run (a dashboard project) |
+| The tool offered to approve its own gates while the user was away, as the recommended option, on a premise it invented | structural — breaks a prime directive | 3.2.0 | `SKILL.md` — prime directive 4: never propose waiving gates; standing approvals recorded verbatim with scope and expiry; untested in a run |
+| When the opening input was a concrete task, routing was skipped and no session said which phase the work belonged to | structural, seen in four sessions | 3.2.0 | `SKILL.md` — Routing step 3, the announcement is made every time; untested in a run |
+| A phase reference read with Read is not restored after context compaction; the session continued without its instructions | structural, documented platform behaviour | 3.2.0 | `SKILL.md` — Routing, re-read the active phase reference after compaction; untested in a run |
+| The entry skill pre-approved fourteen tools, but `allowed-tools` lapses after the turn it loads in, so later phases never had them | structural, documented platform behaviour | 3.2.0 | `skills/project/SKILL.md` — grants only `Skill`, the one tool that turn uses |
+| Phase 5 relied on the task tools, which are off by default for most users | structural, documented platform behaviour | 3.2.0 | `phase-5-build.md` — step 6 fallback when the task tools are absent; untested in a run |
+| Tooling kept local-only (ignored or excluded files) is missing from a git worktree | structural, documented platform behaviour | 3.2.0 | `phase-4-scaffold.md` — worktree note and `.worktreeinclude`; whether it copies files excluded through `.git/info/exclude` is untested |
+| After the MVP closed, routing sent every project back to Phase 5; new work in four projects was appended as increments with no questions or research, and each owner invented a different workaround | structural, seen in every project that outlived its MVP | 3.2.0 | `SKILL.md` — Routing step 2; `phase-0-detect.md` — Closed class and Re-entry: increment, round or maintenance; `phase-5-build.md` — MVP close; untested in a run |
+| State files and decision records grew without bound (a state file past 900 lines, a brief past 150 KB, a single decision file past 700 KB); header fields filled with paragraphs and dated sections turned the state file into a log; trimming by hand grew back | structural, seen in most projects past Phase 5 | 3.2.0 | `templates/00-state.md` and `templates/02-decisions.md` — caps in the file's own header; `phase-5-build.md` — archive instead of trim, five fields in Phase 5, compact promotion; `phase-0-detect.md` — Re-entry step 2 reshapes older projects; untested in a run |
+| A native macOS project found the desktop default inapplicable and its platform lessons had nowhere to go | gap, seen once — applied on the owner's decision | 3.2.0 | `profile/macos-swift.md`, indexed in `profile/README.md` |
 
 Two rows are worth more than their fix. The git identity rule was **correct, prominent and indexed
 as always-relevant, and still could not fire** — placement beat wording. And the `--fetch`
@@ -80,6 +89,78 @@ user constraint rather than a profile rule, which is a place nothing had specifi
   on-request clause under "Subagents and skills — the budget"
 - **Proposed change:** none yet — if a second project shows hooks built past the size table without
   the note, widen the on-request clause to cover everything in `.claude/` rather than repeating it
+- **Status:** logged
+
+### A native interface was called verified on a proxy
+
+- **Project:** a small single-user macOS menu-bar tool (September–October 2026)
+- **Class:** seen once, but Phase 1 has no item it could have been caught by
+- **What happened:** Increments were reported done on snapshots and passing tests. Snapshots render
+  neither the system's glass material nor motion, so the owner found the interface by using it:
+  "ui ı revize et çok kötü", "liquid glass ı native yapmadın mı". Five hours of rework followed,
+  recorded afterwards as new increments.
+- **Instruction involved:** `references/phase-5-build.md` step 7 — "run it, or say plainly that
+  you did not"; `references/phase-1-discover.md` — nothing asks what the interface must feel like
+- **Proposed change:** for projects with an interface, a Phase 1 item for the feel and visual bar,
+  and in Phase 5 no "verified" for a screen nobody looked at. `profile/macos-swift.md` now carries
+  the platform half of this.
+- **Status:** logged — needs a second project
+
+### The self-improvement check almost never runs
+
+- **Project:** nine sessions across four projects (September–October 2026)
+- **Class:** never fires
+- **What happened:** The check at the end of an increment ran in one session of nine. In one
+  project it was not raised at the close of any of 24 increments.
+- **Instruction involved:** `references/self-improvement.md`; `references/phase-5-build.md` —
+  increment close
+- **Proposed change:** a fixed field in the increment close-out rather than a paragraph of prose —
+  placement over wording, as with the git identity row above
+- **Status:** logged
+
+### Scope cut for the MVP hardened into a permanent ban
+
+- **Project:** a single-user dashboard (October 2026)
+- **Class:** seen once
+- **What happened:** Out-of-scope items from the brief were later treated as standing principles
+  rather than as the scope of one release. The owner: "kurallar ben söylediğim onayladığım sürece".
+- **Instruction involved:** `templates/01-brief.md` — out of scope; `references/phase-5-build.md` —
+  when the MVP is done
+- **Proposed change:** the out-of-scope list is reviewed with the owner when the MVP closes
+- **Status:** logged — partly touched in 3.2.0: a round's Phase 1 no longer carries the MVP's
+  out-of-scope list over (`phase-0-detect.md` — Re-entry), but nothing reviews it at MVP close
+
+### Machine-specific facts written into shared rules
+
+- **Project:** a repository shared by two developers (October 2026)
+- **Class:** seen once
+- **What happened:** Facts true only of one developer's machine landed in the committed rules; the
+  owner: "diğer geliştiriciler için yanıltıcı oluyor".
+- **Instruction involved:** `references/phase-4-scaffold.md` — CLAUDE.md
+- **Proposed change:** none yet — log only
+- **Status:** logged
+
+### Answers typed because the options did not fit
+
+- **Project:** one project's question rounds (October 2026)
+- **Class:** observation
+- **What happened:** 28% of `AskUserQuestion` answers were typed into "Other" rather than picked.
+  Not a failure by itself; a rising share would mean the options are being written before the
+  question is understood.
+- **Instruction involved:** `references/phase-1-discover.md` — question rounds
+- **Proposed change:** none yet — log only
+- **Status:** logged
+
+### Personal overrides could live in the plugin data directory
+
+- **Project:** none — a platform feature
+- **Class:** new capability, untested
+- **What happened:** `${CLAUDE_PLUGIN_DATA}` is a per-plugin directory that survives updates. It
+  could hold `profile/local/` and this file's local notes for marketplace installs, which today lose
+  them on every update (see `profile/README.md`).
+- **Instruction involved:** `profile/README.md` — Personal overrides
+- **Proposed change:** one trial first, including whether the variable is set when the plugin runs
+  from a `skills/` symlink rather than a marketplace install
 - **Status:** logged
 
 ## Rejected

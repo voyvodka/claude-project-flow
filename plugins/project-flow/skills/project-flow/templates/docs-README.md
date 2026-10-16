@@ -29,7 +29,8 @@ stops being trusted, and a set nobody trusts stops being read — at which point
 
 ## product/ — decisions, current
 
-The set is fixed. These files stay current rather than accumulating history.
+The set is fixed. These files stay current rather than accumulating history; what they outgrow
+moves to `archive/`. Leave out the last two rows until those folders exist.
 
 | File | Answers |
 |---|---|
@@ -38,6 +39,8 @@ The set is fixed. These files stay current rather than accumulating history.
 | [`02-decisions.md`](product/02-decisions.md) | Why it is built this way — each decision with what was rejected and what it cost |
 | [`03-mvp.md`](product/03-mvp.md) | What is in and out of scope, and what is parked |
 | [`04-roadmap.md`](product/04-roadmap.md) | The build order as increments, and the progress ledger |
+| `decisions/` | *Only once the decision record passes ~800 lines:* the decisions by topic, indexed by `02-decisions.md` |
+| `archive/` | *Only once something has been moved out:* the state log and closed rounds' roadmaps — history, not current |
 
 ## research/ — evidence, dated, goes stale
 

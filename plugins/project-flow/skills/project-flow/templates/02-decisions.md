@@ -6,6 +6,11 @@
 >
 > "Elenenler" satırı bu dosyanın en değerli kısmıdır: onsuz devralan kişi aynı elenen
 > seçeneği baştan değerlendirip aynı sonuca yavaşça varır.
+>
+> **Günlük değildir.** Tarihli başlık açılmaz; değişen kararın eski hali yanında bırakılmaz,
+> elenen seçenek olarak "Elenenler"e girer. Bir karar ~15 satırı geçmez. Dosya ~800 satırı
+> geçince konulara bölünür: `decisions/<konu>.md` dosyaları, bu dosya da karar başına bir
+> satırlık dizine döner (tarih · karar · dosya).
 
 ## <Konu>
 

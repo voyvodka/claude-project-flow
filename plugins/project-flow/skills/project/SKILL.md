@@ -3,7 +3,7 @@ name: project
 description: Start, resume, or advance a project — asks questions before writing anything, researches, records decisions in docs/, then builds in approved increments
 argument-hint: Optional rough description of the project idea
 disable-model-invocation: true
-allowed-tools: ["Read", "Glob", "Grep", "Bash(git status *)", "Bash(git log *)", "Bash(git diff *)", "Bash(ls *)", "AskUserQuestion", "Agent", "WebSearch", "Skill", "TaskCreate", "TaskUpdate", "TaskList", "TaskGet"]
+allowed-tools: ["Skill"]
 ---
 
 Load the `project-flow:project-flow` skill with the Skill tool now, then follow it exactly.

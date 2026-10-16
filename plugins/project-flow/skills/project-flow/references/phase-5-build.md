@@ -15,7 +15,7 @@ For each increment in `04-roadmap.md`, in order:
 5. **Mark it started before writing anything.** Set the increment to in-progress in `04-roadmap.md`, which is the ledger of record once Phase 5 begins. `00-state.md` **points** at the active increment rather than restating it — "Artım 3 · `04-roadmap.md`" and nothing more. Two files describing the same position is two files to keep in step, and the second one always loses.
 
    The ledger must never say "not started" while there is half-built work on disk. A session that dies mid-increment leaves a next session reading "not started" against a populated repository — and a running database, a created migration, and a half-finished module are far more dangerous to build on top of blindly than an empty folder is. Records that are only written on success cannot describe a failure, which is the moment they matter most.
-6. **Build it.** Use the task tools for the steps *within* an increment.
+6. **Build it.** Use the task tools for the steps *within* an increment when the session has them — on current models they are off unless `CLAUDE_CODE_ENABLE_TODO_TOOLS=1` is set; without them, list the steps in the reply instead.
 
    The task list and `04-roadmap.md` are not substitutes for each other, and it is easy to end up feeding only the first. The task list is scratch: it tracks this session's steps and dies with the conversation. The roadmap is the durable ledger, and it is what a future session or a new collaborator reads. Whenever the two disagree about where the work stands, the roadmap is the one that is wrong and the one that must be fixed — a perfectly maintained task list beside a roadmap that still says "not started" is the same failure as no record at all.
 7. **Verify it.** Run it, or say plainly that you did not. Never report an increment as done on the strength of the code looking right.
@@ -31,8 +31,10 @@ Do not chain increments without stopping. The pause between them is where the us
 Code drifting from documentation is the failure that undoes everything the first four phases built. After every increment:
 
 - `04-roadmap.md` — mark the increment done, with a one-line note on what actually shipped if it differs from the plan.
-- `00-state.md` — current position, what is next, any newly discovered unknown.
-- `02-decisions.md` — implementation nearly always forces decisions that planning did not anticipate. Record them in place, in the same format. A choice made while writing code is exactly as binding on the next person as one made in Phase 3.
+- `00-state.md` — current position, what is next, any newly discovered unknown. Rewrite it in
+  place; when it passes the size its own header states, move the oldest material to
+  `archive/state-log.md` rather than trimming, because a trimmed state file grows straight back.
+- `02-decisions.md` — implementation nearly always forces decisions that planning did not anticipate. Record them in place, in the same format — all five fields, `Elenenler` included, which is the one that lapses first once building starts. A choice made while writing code is exactly as binding on the next person as one made in Phase 3.
 
   The test for whether something belongs here is not how large it felt while solving it. Ask instead: **does this constrain what a future developer may do, and would they know it from the code alone?** A deliberate exception to a rule the project otherwise enforces, a workaround with a boundary that must not be widened, a mechanism chosen over an obvious alternative for a non-obvious reason — all of these qualify, and all of them get skipped, because at the moment of solving they feel like implementation detail rather than decision.
 
@@ -40,6 +42,11 @@ Code drifting from documentation is the failure that undoes everything the first
 - `CLAUDE.md` — only when a convention or rule genuinely changed. Not a changelog. A rule that
   applies to one area of the code goes in `.claude/rules/` instead (`phase-4-scaffold.md`), and a
   check that must run every time goes in a hook, not in either.
+
+**A compact project that outgrows its layout is promoted, not stretched.** When the brief's
+`## Kararlar` passes about 15 entries or 150 lines, it moves to `02-decisions.md`; when the
+`## Yol haritası` section of `03-mvp.md` outgrows it the same way, it moves to `04-roadmap.md`.
+Update the `Belge düzeni` line and `docs/README.md` in the same change.
 
 ### Reversing a decision
 
@@ -79,8 +86,8 @@ When the last increment lands:
    Do not write a public README for an internal project. The badges, the contributing section and
    the elaborate feature list are costume, and they make a working tool look like an abandoned
    product.
-3. Update `00-state.md` to "MVP complete", listing what shipped and what was deferred.
+3. Set `Aktif faz` to "5 Uygulama (MVP tamamlandı)" and record in `00-state.md` what shipped and what was deferred.
 4. Review the remaining assumptions — the ones never forced by any increment are now known unknowns for whoever continues.
 5. Move surviving "Later" items into a shape the next session can pick up.
 
-The project does not leave this tool at that point. A new feature re-enters at Phase 1 for a scoped round of questions, or at Phase 3 if the questions are already answered. `/project` reads `00-state.md` and routes accordingly — which is the whole reason that file exists.
+The project does not leave this tool at that point. The next `/project` finds it closed and follows the Re-entry section of `phase-0-detect.md`, which decides whether new work is an increment, a round or maintenance. A round closes the same way: steps 1, 3 and 4 against the round's own success criterion.

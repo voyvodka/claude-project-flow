@@ -14,7 +14,7 @@ Breaking any of these breaks the tool.
 1. **No code that ships before Phase 5 is approved.** Phases 0–4 produce documentation and AI tooling only. The single exception is Phase 3's spike: timeboxed, answering exactly one blocking question, thrown away rather than kept — a measurement, not a head start. If the user asks for real code earlier, name what is still unknown and offer to fast-track the remaining phases instead of silently starting.
 2. **Documents are the memory, the conversation is not.** Every fact the user confirms goes into `docs/product/` before moving on. Write as if this chat will be lost mid-sentence — because for the person who inherits the repo, it was.
 3. **Ask, but bounded.** Phase 1 runs off a fixed checklist with a round limit. Remaining unknowns become marked assumptions, never more rounds of questions.
-4. **The user opens every gate.** Never advance a phase without explicit approval. State what the next phase will do, then wait.
+4. **The user opens every gate.** Never advance a phase without explicit approval. State what the next phase will do, then wait. **Never propose waiving gates** — not "while you are away", not as a recommended option. If the user grants standing approval unprompted, write their words verbatim into `00-state.md` with its scope and when it expires, and ask again once it has. An approval the tool suggested is not the user's.
 5. **Right-size everything.** This tool exists to prevent over-engineering. A weekend script gets a weekend-sized plan, two doc files, and zero custom subagents. Scale the output to the project, not to the tool's capacity.
 6. **Improve the tool from evidence, never from taste.** Projects run through this tool are the
    only evidence about whether it works. Use it — but a rule added for every irritation makes a
@@ -72,6 +72,7 @@ initialising a repository is useless four phases after it was read.
 Contract:
 
 - It always records the **current phase**, what is **settled**, what is **open**, and every **outstanding assumption**.
+- It describes the present only and stays within the size stated in its own header; history goes to `archive/state-log.md`.
 - Every phase updates it before handing control back to the user.
 - On a fresh invocation it is read first — it is how `/project` knows whether this is a new project, a resumption, or a request to advance.
 - It is the first file a new collaborator (or a different AI tool) should read.
@@ -83,15 +84,15 @@ If `docs/product/00-state.md` disagrees with the conversation, the conversation 
 Every `/project` invocation follows the same opening move:
 
 1. Read `docs/product/00-state.md` if it exists.
-2. If it does not exist, run **Phase 0** to classify the folder.
-3. Announce in one or two sentences where the project stands and which phase comes next.
+2. If it does not exist, run **Phase 0** to classify the folder. If `Aktif faz` says the MVP or a round is complete, or reads `Bakım`, the project is **closed, not in Phase 5**: load `references/phase-0-detect.md` and follow its Re-entry section before anything else.
+3. Announce in one or two sentences where the project stands and which phase comes next — **every time**, including when the opening input is a concrete task ("review it", "how much is done"). Answer the task inside that frame, not instead of it: the announcement is what places the work in a phase for the user and for the next session.
 4. Get the user's go-ahead, then load the reference file for that phase and follow it.
 
-Load **only** the reference file for the phase being worked. Do not preload the others.
+Load **only** the reference file for the phase being worked. Do not preload the others. **After a context compaction, re-read it before continuing:** compaction restores this file but not files read with Read, and the `Aktif faz` line in `00-state.md` names the phase whose reference applies.
 
 | Phase | Reference | Purpose | Writes code |
 |---|---|---|---|
-| 0 · Detect | `references/phase-0-detect.md` | Classify the folder, find where we left off | No |
+| 0 · Detect | `references/phase-0-detect.md` | Classify the folder, find where we left off, route work after the MVP | No |
 | 1 · Discover | `references/phase-1-discover.md` | Bounded question rounds against a fixed checklist | No |
 | 2 · Research | `references/phase-2-research.md` | Subagent fan-out: market, tech, dev environment | No |
 | 3 · Decide | `references/phase-3-decide.md` | Turn findings into confirmed decisions and an MVP scope | No |
@@ -129,9 +130,11 @@ the AI tooling, when the publication decision keeps it local (`phase-4-scaffold.
 │   ├── product/
 │   │   ├── 00-state.md          where we are, what is open, standing assumptions
 │   │   ├── 01-brief.md          problem, users, main flow, success criteria, out of scope
-│   │   ├── 02-decisions.md      confirmed decisions, updated in place
+│   │   ├── 02-decisions.md      confirmed decisions, updated in place; an index once split
+│   │   ├── decisions/           only past ~800 lines: the decision record split by topic
 │   │   ├── 03-mvp.md            MVP scope and what comes after
-│   │   └── 04-roadmap.md        phased build plan and progress
+│   │   ├── 04-roadmap.md        phased build plan and progress
+│   │   └── archive/             history moved out of the files above: state-log.md, closed rounds
 │   └── research/
 │       ├── market.md            market and competitors
 │       ├── tech.md              stack candidates and the reasoning behind the pick

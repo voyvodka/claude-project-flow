@@ -35,7 +35,11 @@ above stays on the owner's machine: list each path in `.git/info/exclude`, never
 `.gitignore` is itself committed, so it would publish the very list it hides, and a rule written
 into it can stop matching on a rename without any error. Make "nothing about AI tooling is
 committed here" the first rule in `CLAUDE.md` — it covers commit messages and PR text as well as
-files — and note in `00-state.md` that a fresh clone carries none of this context.
+files — and note in `00-state.md` that a fresh clone carries none of this context. **A git worktree
+is such a clone:** a session started in one sees the main checkout's `.claude/skills`, `agents` and
+`commands`, but not the excluded `CLAUDE.md`, `.claude/rules/`, hooks or `docs/`. Say so in
+`CLAUDE.md`, and list those paths in a `.worktreeinclude` that is itself excluded, so worktree
+sessions get a copy.
 
 ## CLAUDE.md
 
