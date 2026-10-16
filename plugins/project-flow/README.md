@@ -128,8 +128,7 @@ to run from a clone rather than from a marketplace install.**
 ## Status
 
 The authoritative version is in `.claude-plugin/plugin.json`, and **from 2.7.0 onward the record
-is [`CHANGELOG.md`](../../CHANGELOG.md)** — it carries both what changed and why, so there is one
-history rather than two.
+is [`CHANGELOG.md`](../../CHANGELOG.md)** for what changed, and each pull request for why.
 
 This section is the pre-2.7.0 history, kept because the reasoning in it is still worth reading and
 predates the changelog. It is not maintained. It went stale twice in a single day before that was
