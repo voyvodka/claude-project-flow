@@ -31,8 +31,10 @@ Do not chain increments without stopping. The pause between them is where the us
 Code drifting from documentation is the failure that undoes everything the first four phases built. After every increment:
 
 - `04-roadmap.md` — mark the increment done, with a one-line note on what actually shipped if it differs from the plan.
-- `00-state.md` — current position, what is next, any newly discovered unknown.
-- `02-decisions.md` — implementation nearly always forces decisions that planning did not anticipate. Record them in place, in the same format. A choice made while writing code is exactly as binding on the next person as one made in Phase 3.
+- `00-state.md` — current position, what is next, any newly discovered unknown. Rewrite it in
+  place; when it passes the size its own header states, move the oldest material to
+  `archive/state-log.md` rather than trimming, because a trimmed state file grows straight back.
+- `02-decisions.md` — implementation nearly always forces decisions that planning did not anticipate. Record them in place, in the same format — all five fields, `Elenenler` included, which is the one that lapses first once building starts. A choice made while writing code is exactly as binding on the next person as one made in Phase 3.
 
   The test for whether something belongs here is not how large it felt while solving it. Ask instead: **does this constrain what a future developer may do, and would they know it from the code alone?** A deliberate exception to a rule the project otherwise enforces, a workaround with a boundary that must not be widened, a mechanism chosen over an obvious alternative for a non-obvious reason — all of these qualify, and all of them get skipped, because at the moment of solving they feel like implementation detail rather than decision.
 
@@ -40,6 +42,11 @@ Code drifting from documentation is the failure that undoes everything the first
 - `CLAUDE.md` — only when a convention or rule genuinely changed. Not a changelog. A rule that
   applies to one area of the code goes in `.claude/rules/` instead (`phase-4-scaffold.md`), and a
   check that must run every time goes in a hook, not in either.
+
+**A compact project that outgrows its layout is promoted, not stretched.** When the brief's
+`## Kararlar` passes about 15 entries or 150 lines, it moves to `02-decisions.md`; when the
+`## Yol haritası` section of `03-mvp.md` outgrows it the same way, it moves to `04-roadmap.md`.
+Update the `Belge düzeni` line and `docs/README.md` in the same change.
 
 ### Reversing a decision
 
@@ -79,8 +86,8 @@ When the last increment lands:
    Do not write a public README for an internal project. The badges, the contributing section and
    the elaborate feature list are costume, and they make a working tool look like an abandoned
    product.
-3. Update `00-state.md` to "MVP complete", listing what shipped and what was deferred.
+3. Set `Aktif faz` to "5 Uygulama (MVP tamamlandı)" and record in `00-state.md` what shipped and what was deferred.
 4. Review the remaining assumptions — the ones never forced by any increment are now known unknowns for whoever continues.
 5. Move surviving "Later" items into a shape the next session can pick up.
 
-The project does not leave this tool at that point. A new feature re-enters at Phase 1 for a scoped round of questions, or at Phase 3 if the questions are already answered. `/project` reads `00-state.md` and routes accordingly — which is the whole reason that file exists.
+The project does not leave this tool at that point. The next `/project` finds it closed and follows the Re-entry section of `phase-0-detect.md`, which decides whether new work is an increment, a round or maintenance. A round closes the same way: steps 1, 3 and 4 against the round's own success criterion.

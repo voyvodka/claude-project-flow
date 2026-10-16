@@ -25,6 +25,7 @@ Pick exactly one:
 |---|---|---|
 | **Empty** | No source, no docs, at most a `.git` or a README stub | Phase 1 |
 | **Resumption** | `00-state.md` exists — `SKILL.md` normally routes this before Phase 0 loads | The phase it names |
+| **Closed** | `Aktif faz` says the MVP or a round is complete, or reads `Bakım` | Re-entry, below — never Phase 5 by default |
 | **Docs without state** | Product docs exist but no `00-state.md` — an older run, or hand-written notes | Reconstruct `00-state.md` from what is there, then continue |
 | **Existing code** | Real source, no product docs — a project started outside this tool | Phase 1, seeded from the code |
 | **Foreign** | Someone else's repo, or clearly unrelated to a new project | Stop. Ask what the user actually wants |
@@ -70,3 +71,45 @@ Present these as "here is what I read from the code, correct me" rather than as 
 - What they want it to become — the quality bar, not the feature list.
 
 A working codebase is persuasive. It reads as settled, its decisions look deliberate, and its author's dissatisfaction with it appears in no file. A phase that seeds everything readable and asks nothing else will order the whole project against goals its owner would not have chosen.
+
+## Re-entry — after the MVP
+
+A closed project still gets new work, and without a route that work lands as increment after
+increment appended to a finished roadmap, with no question asked and no research done. This
+section is the route. It runs whenever `/project` finds the project closed.
+
+1. **Check the record against the code.** Compare `git log` since the state file's last update with
+   `04-roadmap.md`. Work that shipped without an increment, an MVP-close step left undone (the
+   success-criterion verdict, the README), a decision made in code and never written down — report
+   each one. They are fixed before new work starts, because the new work will be planned on top of
+   them.
+2. **Bring the documents to the current shape** — once per project, the first time it re-enters
+   after the templates changed. Dated sections in `00-state.md` go to `archive/state-log.md`, the
+   header fields go back to one line each, and a decision record past ~800 lines is split by topic
+   (the `02-decisions.md` template says how). This is the one exception to Phase 0 leaving the
+   documents alone: propose the moves, make them on approval, and delete nothing.
+3. **Ask what the new work is**, then name one of three modes and wait for the go-ahead:
+
+| Mode | When | What happens |
+|---|---|---|
+| **Increment** | It traces to an item in `03-mvp.md › Sonrası`, or fixes shipped behaviour, and it fits in one or two increments | Added to `04-roadmap.md`; Phase 5 resumes for it, and `Aktif faz` returns to its closed state when it lands |
+| **Round** | New capability, a changed goal, or anything that does not trace back — and always once two increments have been added since the last close | A numbered round runs the phases again, scoped to the new work |
+| **Maintenance** | No new capability; the project is kept working | `Aktif faz: Bakım`; `Sıradaki adım` names the next review date or the open defects |
+
+**A round** is the same process, sized to the change rather than to a new project:
+
+- Phase 1 asks only what the new work touches — its problem, its flow, its own success criterion,
+  what is out of scope for it. The MVP's out-of-scope list was the scope of one release, not a
+  standing principle; it does not carry over unless the user says it does.
+- Phase 2 runs only for a question the user cannot answer and the code does not settle. Phase 4
+  runs only if the tooling has to change.
+- Phase 3 records the round's decisions in the usual place and writes a `## Tur N` section in
+  `03-mvp.md`. The closed round's part of `04-roadmap.md` moves to `archive/roadmap-<round>.md`,
+  leaving one line that points at it, so the ledger shows only work that is still open.
+- Every phase row it reruns is added to the phase history as "(tur N)", and `Aktif faz` carries the
+  round: "3 Netleştirme — tur 2 (onay bekliyor)".
+- It closes like the MVP did (`phase-5-build.md`): a verdict against the round's own success
+  criterion, then `Aktif faz` reads "5 Uygulama — tur N (tur tamamlandı)" and the next
+  `/project` lands here again.
+- A standing approval the user gave for one round expires with it.
+

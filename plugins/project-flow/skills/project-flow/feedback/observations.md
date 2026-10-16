@@ -39,6 +39,8 @@ and the reason it was turned down is the only thing that stops it.
 | The entry skill pre-approved fourteen tools, but `allowed-tools` lapses after the turn it loads in, so later phases never had them | structural, documented platform behaviour | 3.2.0 | `skills/project/SKILL.md` — grants only `Skill`, the one tool that turn uses |
 | Phase 5 relied on the task tools, which are off by default for most users | structural, documented platform behaviour | 3.2.0 | `phase-5-build.md` — step 6 fallback when the task tools are absent; untested in a run |
 | Tooling kept local-only (ignored or excluded files) is missing from a git worktree | structural, documented platform behaviour | 3.2.0 | `phase-4-scaffold.md` — worktree note and `.worktreeinclude`; whether it copies files excluded through `.git/info/exclude` is untested |
+| After the MVP closed, routing sent every project back to Phase 5; new work in four projects was appended as increments with no questions or research, and each owner invented a different workaround | structural, seen in every project that outlived its MVP | 3.2.0 | `SKILL.md` — Routing step 2; `phase-0-detect.md` — Closed class and Re-entry: increment, round or maintenance; `phase-5-build.md` — MVP close; untested in a run |
+| State files and decision records grew without bound (a state file past 900 lines, a brief past 150 KB, a single decision file past 700 KB); header fields filled with paragraphs and dated sections turned the state file into a log; trimming by hand grew back | structural, seen in most projects past Phase 5 | 3.2.0 | `templates/00-state.md` and `templates/02-decisions.md` — caps in the file's own header; `phase-5-build.md` — archive instead of trim, five fields in Phase 5, compact promotion; `phase-0-detect.md` — Re-entry step 2 reshapes older projects; untested in a run |
 | A native macOS project found the desktop default inapplicable and its platform lessons had nowhere to go | gap, seen once — applied on the owner's decision | 3.2.0 | `profile/macos-swift.md`, indexed in `profile/README.md` |
 
 Two rows are worth more than their fix. The git identity rule was **correct, prominent and indexed
@@ -125,7 +127,8 @@ user constraint rather than a profile rule, which is a place nothing had specifi
 - **Instruction involved:** `templates/01-brief.md` — out of scope; `references/phase-5-build.md` —
   when the MVP is done
 - **Proposed change:** the out-of-scope list is reviewed with the owner when the MVP closes
-- **Status:** logged
+- **Status:** logged — partly touched in 3.2.0: a round's Phase 1 no longer carries the MVP's
+  out-of-scope list over (`phase-0-detect.md` — Re-entry), but nothing reviews it at MVP close
 
 ### Machine-specific facts written into shared rules
 

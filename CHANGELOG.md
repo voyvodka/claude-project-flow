@@ -18,6 +18,11 @@ from it and from git history.
 
 ### Changed
 
+- A project whose MVP or round has closed now routes to a re-entry step that checks the record and
+  sends new work to an increment, a new round or maintenance.
+- `00-state.md` and `02-decisions.md` templates carry size limits; history moves to `archive/`,
+  and a large decision record splits by topic.
+- A compact project that outgrows its two files is promoted to the five-file layout.
 - The tool never proposes waiving its own gates; a standing approval is recorded verbatim with its
   scope and expiry.
 - Routing announces the project's phase on every invocation, including when it opens with a

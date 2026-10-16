@@ -153,7 +153,8 @@ Record the choice on the `Belge düzeni` line of `00-state.md` (`kompakt`, or `t
 Phases 3, 4 and 5 name `02-decisions.md` and `04-roadmap.md` directly; when the layout is compact,
 write to the absorbing file and its section instead, and say so once rather than silently. Do not
 invent a third shape — it is five files or these two, so that a reader who knows one project's
-layout knows every project's.
+layout knows every project's. A compact project that outgrows its two files is promoted to five
+(`phase-5-build.md`).
 
 ## Gate
 
