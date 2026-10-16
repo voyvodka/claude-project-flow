@@ -14,23 +14,23 @@ from it and from git history.
 ### Added
 
 - `profile/macos-swift.md`: defaults and known traps for macOS-only native tools, indexed in the
-  profile README.
+  profile README (#14).
 
 ### Changed
 
 - A project whose MVP or round has closed now routes to a re-entry step that checks the record and
-  sends new work to an increment, a new round or maintenance.
+  sends new work to an increment, a new round or maintenance (#14).
 - `00-state.md` and `02-decisions.md` templates carry size limits; history moves to `archive/`,
-  and a large decision record splits by topic.
-- A compact project that outgrows its two files is promoted to the five-file layout.
+  and a large decision record splits by topic (#14).
+- A compact project that outgrows its two files is promoted to the five-file layout (#14).
 - The tool never proposes waiving its own gates; a standing approval is recorded verbatim with its
-  scope and expiry.
+  scope and expiry (#14).
 - Routing announces the project's phase on every invocation, including when it opens with a
-  concrete task.
-- The active phase reference is re-read after a context compaction.
-- `/project` pre-approves only the `Skill` tool.
-- Phase 5 lists increment steps in the reply when the task tools are unavailable.
-- Phase 4 notes that git worktrees lack local-only tooling and suggests a `.worktreeinclude`.
+  concrete task (#14).
+- The active phase reference is re-read after a context compaction (#14).
+- `/project` pre-approves only the `Skill` tool (#14).
+- Phase 5 lists increment steps in the reply when the task tools are unavailable (#14).
+- Phase 4 notes that git worktrees lack local-only tooling and suggests a `.worktreeinclude` (#14).
 
 ## [3.1.1] - 2026-10-14
 
