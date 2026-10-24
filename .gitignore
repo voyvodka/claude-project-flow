@@ -7,3 +7,6 @@
 **/profile/local/
 
 .DS_Store
+
+# Written by every `claude plugin eval` run; scores and traces, never committed.
+**/evals/results/
