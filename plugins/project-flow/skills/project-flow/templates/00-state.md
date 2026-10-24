@@ -18,7 +18,9 @@ tamamlanmış görünür. Konum yalnızca bu satırda tutulur — ikinci bir kon
 **Sıradaki adım:** <tek cümle, en fazla ~300 karakter — bir sonraki sohbetin ilk yapacağı iş.
 Faz 5'te bu satır artımı **tarif etmez, işaret eder**: "Artım 3 · `04-roadmap.md`".
 İçeriği orada durur; iki yerde tutulursa biri bayatlar.>
-**Belge düzeni:** <tam (beş dosya) | kompakt — kompaktta kararlar ve yol haritası nerede duruyor>
+**Belge düzeni:** <tam (beş dosya) | kompakt — kararlar `01-brief.md › Kararlar`, yol haritası `03-mvp.md › Yol haritası`>
+<Kompaktta satır bu eşlemeyi olduğu gibi taşır: Faz 1'den sonraki fazlar eşlemenin tanımlandığı
+dosyayı okumaz, onu bu satırdan öğrenir.>
 
 ## Tek cümlede proje
 

@@ -45,8 +45,8 @@ rules" is a fact.
 Note the fourth and fifth rows together: **two audiences is a base-controller problem, not a
 project-layout problem.** An admin surface and a tenant surface live perfectly well in one project
 with two base classes. Splitting them into separate assemblies is a build and deployment decision,
-and it brings its own cost — controller discovery across assemblies stops being automatic and has
-to be registered explicitly, which is a silent 404 when forgotten.
+and it brings its own cost — controller discovery across assemblies depends on conditions that fail
+silently as 404s, so each library is registered explicitly (see `dotnet-backend.md`).
 
 A small API is **one project with folders**, carrying the full envelope and conventions. That is
 not a lesser version of the shape; it is the same shape at the size the work is.

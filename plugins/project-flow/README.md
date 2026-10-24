@@ -47,6 +47,7 @@ but never silently.
 ├── CLAUDE.md                 EN · main context source
 ├── AGENTS.md                 EN · pointer for non-Claude tools
 ├── docs/
+│   ├── README.md             index of everything under docs/
 │   ├── product/              00-state · 01-brief · 02-decisions · 03-mvp · 04-roadmap
 │   └── research/             market · tech · devenv
 └── .claude/
@@ -56,9 +57,10 @@ but never silently.
     └── settings.json, hooks/ checks that must run every time — often none
 ```
 
-All of it is meant to be committed. Someone who clones the repo — using Claude Code, opencode,
-or anything else — reads `CLAUDE.md` and `docs/product/00-state.md` and continues from the
-same line of thought. That is the point of the whole thing.
+All of it is committed by default; the publication decision in Phase 3 can keep the AI tooling
+(`CLAUDE.md`, `AGENTS.md`, `.claude/`) on your machine only. Someone who clones the repo — using
+Claude Code, opencode, or anything else — reads `CLAUDE.md` and `docs/product/00-state.md` and
+continues from the same line of thought. That is the point of the whole thing.
 
 ## Design rules
 
@@ -84,6 +86,7 @@ and all code are always English.
 
 ```
 plugins/project-flow/
+├── evals/                                  behaviour cases for `claude plugin eval . --scaffold`
 └── skills/
     ├── project/SKILL.md                    /project — thin entry point, user-invoked only
     └── project-flow/

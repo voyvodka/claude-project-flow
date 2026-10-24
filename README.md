@@ -63,6 +63,7 @@ never silently: it says what it is skipping, why, and writes that into the state
 ├── CLAUDE.md                 main context source
 ├── AGENTS.md                 pointer for non-Claude tools
 ├── docs/
+│   ├── README.md             index of everything under docs/
 │   ├── product/              00-state · 01-brief · 02-decisions · 03-mvp · 04-roadmap
 │   └── research/             market · tech · devenv
 └── .claude/
@@ -72,9 +73,10 @@ never silently: it says what it is skipping, why, and writes that into the state
     └── settings.json, hooks/ checks that must run every time — often none
 ```
 
-All of it is meant to be committed. Someone who clones the repo — using Claude Code, opencode, or
-anything else — reads `CLAUDE.md` and `docs/product/00-state.md` and continues from the same line
-of thought. That handover is the point of the whole thing.
+All of it is committed by default; the publication decision in Phase 3 can keep the AI tooling
+(`CLAUDE.md`, `AGENTS.md`, `.claude/`) on your machine only. Someone who clones the repo — using
+Claude Code, opencode, or anything else — reads `CLAUDE.md` and `docs/product/00-state.md` and
+continues from the same line of thought. That handover is the point of the whole thing.
 
 ## The ideas it is built on
 

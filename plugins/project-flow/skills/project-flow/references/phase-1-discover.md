@@ -149,7 +149,9 @@ For a small project, say so out loud and compress: fewer questions, no market re
 | `docs/product/01-brief.md` | `02-decisions.md` — decisions become a `## Kararlar` section at the end | Phases 1 and 3 |
 | `docs/product/03-mvp.md` | `04-roadmap.md` — the phased plan becomes a `## Yol haritası` section | Phases 3 and 5 |
 
-Record the choice on the `Belge düzeni` line of `00-state.md` (`kompakt`, or `tam` for five files).
+Record the choice on the `Belge düzeni` line of `00-state.md` (`tam` for five files, or `kompakt`
+followed by the mapping exactly as the template writes it). The mapping goes on that line because
+the later phases never load this file and read the state file first.
 Phases 3, 4 and 5 name `02-decisions.md` and `04-roadmap.md` directly; when the layout is compact,
 write to the absorbing file and its section instead, and say so once rather than silently. Do not
 invent a third shape — it is five files or these two, so that a reader who knows one project's
