@@ -11,6 +11,8 @@ from it and from git history.
 
 ## [Unreleased]
 
+## [3.2.0] - 2026-10-24
+
 ### Added
 
 - `profile/macos-swift.md`: defaults and known traps for macOS-only native tools, indexed in the
@@ -218,7 +220,8 @@ from it and from git history.
 - First public release. The developer profile split into committed templates carrying the
   questions and a gitignored `profile/local/` holding the answers, read in preference.
 
-[Unreleased]: https://github.com/voyvodka/claude-project-flow/compare/v3.1.1...HEAD
+[Unreleased]: https://github.com/voyvodka/claude-project-flow/compare/v3.2.0...HEAD
+[3.2.0]: https://github.com/voyvodka/claude-project-flow/compare/v3.1.1...v3.2.0
 [3.1.1]: https://github.com/voyvodka/claude-project-flow/compare/v3.1.0...v3.1.1
 [3.1.0]: https://github.com/voyvodka/claude-project-flow/compare/v3.0.3...v3.1.0
 [3.0.3]: https://github.com/voyvodka/claude-project-flow/compare/v3.0.2...v3.0.3
