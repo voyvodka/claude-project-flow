@@ -11,6 +11,8 @@ from it and from git history.
 
 ## [Unreleased]
 
+## [3.2.1] - 2026-10-25
+
 ### Added
 
 - `evals/stale-state`: fails when a session corrects a stale state file before the user approves it (#17).
@@ -224,7 +226,8 @@ from it and from git history.
 - First public release. The developer profile split into committed templates carrying the
   questions and a gitignored `profile/local/` holding the answers, read in preference.
 
-[Unreleased]: https://github.com/voyvodka/claude-project-flow/compare/v3.2.0...HEAD
+[Unreleased]: https://github.com/voyvodka/claude-project-flow/compare/v3.2.1...HEAD
+[3.2.1]: https://github.com/voyvodka/claude-project-flow/compare/v3.2.0...v3.2.1
 [3.2.0]: https://github.com/voyvodka/claude-project-flow/compare/v3.1.1...v3.2.0
 [3.1.1]: https://github.com/voyvodka/claude-project-flow/compare/v3.1.0...v3.1.1
 [3.1.0]: https://github.com/voyvodka/claude-project-flow/compare/v3.0.3...v3.1.0
