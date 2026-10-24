@@ -20,7 +20,7 @@ Not a default for anything with real business logic — that is [`dotnet-backend
   applies here unchanged.
 - Single module, flat structure. Do not import the layered .NET shape into a project chosen
   precisely to avoid it.
-- **SQLite is the default store at this size** — the portfolio uses it. A file on disk needs no
+- **SQLite is the default store at this size** — a small personal site runs on it. A file on disk needs no
   container, no connection pool and no backup story beyond copying it, which is most of the reason
   to be at this size in the first place. Reach for PostgreSQL when concurrency, a second consumer,
   or real relational load arrives.

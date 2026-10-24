@@ -1,7 +1,9 @@
 # .NET Backend
 
 The default for any business backend or API. C# / .NET 10 is the daily language — the thing that
-can be written and, more importantly, *reviewed* at full speed.
+can be written and, more importantly, *reviewed* at full speed. It is the current LTS; .NET 11 is a
+short-term-support release (RC 2 as of 2026-10-24, Microsoft's `releases-index.json`), so a move to
+it is a decision with a support window attached, not a routine bump.
 
 Read [`code-style.md`](code-style.md) first; it carries the naming, comment and safety rules.
 
@@ -30,9 +32,13 @@ pressure.
 consumer there is nothing to version against. `Api.Client` references `Api.General`, because the
 base controllers live there.
 
-A controller-only class library is **not reliably discovered** by MVC. The host must register it
-explicitly: `AddControllers().AddApplicationPart(typeof(IApiClientAssemblyMarker).Assembly)`.
-Skipping this produces 404s on every route in that project, with no error at startup.
+MVC discovers controllers in the host's own assembly and the assemblies it references, directly or
+transitively. Discovery fails silently — 404s on every route in the library, no error at startup —
+when `applicationName` is not the root assembly, the reference is missing, or the root does not use
+the Web SDK (Microsoft Learn, *Application Parts in ASP.NET Core*, "Discovery in application parts",
+checked 2026-10-24). Register a controller-only library explicitly anyway:
+`AddControllers().AddApplicationPart(typeof(IApiClientAssemblyMarker).Assembly)`. It costs one line
+and turns the condition for discovery into a compile-time reference.
 
 ## Endpoints
 
@@ -63,7 +69,11 @@ Anything that touches the envelope needs localisation wired into it separately.
 ## Validation and mapping
 
 - **FluentValidation** in the validators project, grouped by area.
-- **AutoMapper** registered through DI, matching by name.
+- **AutoMapper** registered through DI, matching by name. It is no longer MIT: current releases are
+  under the Reciprocal Public License 1.5 or a commercial licence from Lucky Penny Software, and
+  NuGet asks for licence acceptance (16.2.0; repository `LICENSE.md` and the package's nuspec,
+  checked 2026-10-24). Check the terms against the project before adding it — a closed-source or
+  commercial project needs the commercial licence or a different mapper.
 - **Repositories and services** registered in one `ServiceRegistrationExtensions`, never ad hoc.
 - **Lists** use a generic `ListRequest` / `ListResponse` pair with a filter operator set
   (`eq/neq/gt/lt/gte/lte/contains/in/between/isNull/notNull`) and a **`Filterable` allow-list** —
@@ -153,8 +163,10 @@ Order in the middleware pipeline is load-bearing and easy to break silently:
 
 **CSP: never `'unsafe-inline'` on `script-src`.** A build that produces no inline scripts needs
 none; where backend-rendered HTML genuinely requires one, use a per-request nonce.
-`'unsafe-inline'` on `style-src` is accepted — CSS-in-JS and React `style=` attributes cannot
-carry a nonce.
+`'unsafe-inline'` on `style-src` is accepted, because React `style=` attributes cannot carry a
+nonce. Injected CSS-in-JS can when the library takes one — Ant Design's `ConfigProvider` has a
+`csp={{ nonce }}` prop (ant.design, ConfigProvider API, checked 2026-10-24) — so pass it where it
+exists; the exception is for the inline attributes, not for the stylesheets.
 
 Every anonymous or abuse-exposed endpoint — login, register, public surfaces, webhooks — carries
 an explicit rate-limit policy. Server-to-server callbacks disable it instead: turning a retry into

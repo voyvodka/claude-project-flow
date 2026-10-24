@@ -2,7 +2,7 @@
 
 **Go**, standard library first, single binary.
 
-Established by `repostat` (July 2026) — a read-only scanner reporting the status of local git
+Established by a real project (July 2026) — a read-only scanner reporting the status of local git
 repositories. 650 lines, two source files, **zero dependencies**: `go.mod` has no `require` block
 at all.
 

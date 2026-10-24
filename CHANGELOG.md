@@ -15,6 +15,8 @@ from it and from git history.
 
 - `profile/macos-swift.md`: defaults and known traps for macOS-only native tools, indexed in the
   profile README (#14).
+- `evals/`: six `claude plugin eval` cases covering detection, refusing early code, re-entry,
+  phase announcement, skill triggering and staying out of unrelated requests (#15).
 
 ### Changed
 
@@ -31,6 +33,12 @@ from it and from git history.
 - `/project` pre-approves only the `Skill` tool (#14).
 - Phase 5 lists increment steps in the reply when the task tools are unavailable (#14).
 - Phase 4 notes that git worktrees lack local-only tooling and suggests a `.worktreeinclude` (#14).
+- A state file that disagrees with the documents or the code is reported and corrected only on
+  approval; a conflict with what the user said is still fixed at once (#15).
+- A compact project's `Belge düzeni` line carries where decisions and the roadmap live (#15).
+- Profile defaults updated: React Router 8, .NET application-part discovery, CSS-in-JS nonces,
+  AutoMapper's licence, Next.js private folders and Astro hosting, each with source and date (#15).
+- READMEs say the AI tooling can stay local and list `docs/README.md` in the produced tree (#15).
 
 ## [3.1.1] - 2026-10-14
 
