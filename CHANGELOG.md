@@ -11,6 +11,10 @@ from it and from git history.
 
 ## [Unreleased]
 
+### Added
+
+- `evals/stale-state`: fails when a session corrects a stale state file before the user approves it (#17).
+
 ## [3.2.0] - 2026-10-24
 
 ### Added
