@@ -23,10 +23,9 @@ Router's own SSR mode covers the middle ground.
 Folders under `app/` are route segments, and colocation is the organising principle: files a route
 needs live in that route's folder rather than in a global directory split by kind.
 
-- **Private folders** — prefix with `_` to opt a folder and its subfolders out of routing.
-  Colocation is already safe without them: only `page` and `route` files become routes. They earn
-  their place by separating UI from routing logic and avoiding clashes with future file
-  conventions (nextjs.org, *Project structure*, updated 2026-07-21, checked 2026-10-24).
+- **Private folders** — prefix with `_` to keep a folder out of routing. Colocation is safe
+  without them, since only `page` and `route` files become routes; they separate UI from routing
+  logic.
 - **Route groups** — `(name)` folders organise without adding a URL segment. Use them to separate
   areas that share a layout.
 - **Route files** — `page.tsx`, `layout.tsx`, `loading.tsx`, `error.tsx`, `not-found.tsx` and

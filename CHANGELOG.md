@@ -11,6 +11,11 @@ from it and from git history.
 
 ## [Unreleased]
 
+### Changed
+
+- Profile examples trimmed back to worked-example scope: version notes, licence advice and dated citations removed from the .NET, Next.js, Astro and avoid files (#19).
+- Plugin README notes that `evals/` ships with the plugin on purpose (#19).
+
 ## [3.2.1] - 2026-10-25
 
 ### Added

@@ -7,12 +7,9 @@ Reference: a product marketing site. See "Reference implementations" in [`README
 ## Shape
 
 - Astro with TypeScript, Tailwind for styling, pnpm.
-- Static build. Where a page genuinely needs something dynamic, the host's own function runtime
-  — a `functions/` directory on Cloudflare Pages — rather than turning the whole site into an
-  application to serve one endpoint.
-- The custom domain is set the host's way: on GitHub Pages a `public/CNAME` file (Astro's GitHub
-  Pages deploy guide, checked 2026-10-24); on Cloudflare in its dashboard. Neither is an Astro
-  feature, and the two do not combine — pick the host first.
+- Static build; the host's function runtime where a page genuinely needs something dynamic,
+  rather than turning the whole site into an application to serve one endpoint.
+- The custom domain is set the host's way (`public/CNAME` on GitHub Pages).
 - Lighthouse configuration checked in — performance on a content site is a requirement, not a
   nice-to-have, and checking it in makes it measurable rather than aspirational.
 

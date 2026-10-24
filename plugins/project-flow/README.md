@@ -86,7 +86,8 @@ and all code are always English.
 
 ```
 plugins/project-flow/
-├── evals/                                  behaviour cases for `claude plugin eval . --scaffold`
+├── evals/                                  behaviour cases for `claude plugin eval . --scaffold`; shipped
+│                                           on purpose — the command reads a suite only below the plugin
 └── skills/
     ├── project/SKILL.md                    /project — thin entry point, user-invoked only
     └── project-flow/
