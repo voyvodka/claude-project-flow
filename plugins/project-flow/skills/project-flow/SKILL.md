@@ -77,7 +77,10 @@ Contract:
 - On a fresh invocation it is read first — it is how `/project` knows whether this is a new project, a resumption, or a request to advance.
 - It is the first file a new collaborator (or a different AI tool) should read.
 
-If `docs/product/00-state.md` disagrees with the conversation, the conversation is right and the file is stale — fix the file immediately.
+If `docs/product/00-state.md` disagrees with what the user said in this conversation, the user is
+right and the file is stale — fix the file immediately. If it disagrees with the disk instead — the
+brief, the roadmap, the code — report the gap and propose the correction; write it only on
+approval. Which of the two is current is the user's call, not this tool's.
 
 ## Routing
 
