@@ -31,8 +31,7 @@ combination at a specific time, and both halves of it have moved on since. Propo
 argument that acknowledges the history and says what changed.
 
 **Note carefully: this is about Next.js, not about server rendering.** A current project
-runs React Router in SSR mode (version 7 when this was written; 8 is current — 8.5.0 on npm,
-8.0.0 released 2026-06-17, checked 2026-10-24). Server rendering is in use and is not a problem — so do not
+runs React Router in SSR mode. Server rendering is in use and is not a problem — so do not
 answer an SEO or first-paint requirement by concluding that everything must be client-rendered.
 React Router's own SSR is the proven path here.
 
