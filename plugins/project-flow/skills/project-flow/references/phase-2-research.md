@@ -26,7 +26,7 @@ If a project raises a genuinely separate question — a regulatory constraint, a
 
 ## Subagent prompts
 
-Use `subagent_type: "general-purpose"`. Give each branch the brief, not a summary of the brief — paste the relevant parts of `01-brief.md` into the prompt. A subagent cannot see this conversation.
+Use `subagent_type: "general-purpose"` with `model: "sonnet"`; pass `"opus"` only for the stack-choice branch when the brief is large. Without an explicit model a branch inherits the main conversation's model. Give each branch the brief, not a summary of the brief — paste the relevant parts of `01-brief.md` into the prompt. A subagent cannot see this conversation.
 
 Every branch prompt must carry these instructions:
 
@@ -62,6 +62,8 @@ Rules:
   <mod>`) or the project's own release notes, and say which you used. A query
   that returns nothing relevant leaves the claim unverified rather than confirmed.
 - Report trade-offs, not a winner. The user decides in the next phase.
+- Do not spawn subagents of your own, verifiers included. Return the file
+  unverified; the main conversation verifies the merged result.
 
 Return to the caller: at most 10 lines. The 3 findings that change a decision,
 and any question the user now has to answer. Nothing else — the file holds the detail.
