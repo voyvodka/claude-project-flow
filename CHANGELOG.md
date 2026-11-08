@@ -11,6 +11,10 @@ from it and from git history.
 
 ## [Unreleased]
 
+### Changed
+
+- Phase 2 research branches run on an explicit `model: "sonnet"` (opus only for a large stack-choice brief) and no longer spawn subagents or verifiers of their own.
+
 ## [3.2.2] - 2026-10-25
 
 ### Changed
