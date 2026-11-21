@@ -91,7 +91,7 @@ Every `/project` invocation follows the same opening move:
 3. Announce in one or two sentences where the project stands and which phase comes next — **every time**, including when the opening input is a concrete task ("review it", "how much is done"). Answer the task inside that frame, not instead of it: the announcement is what places the work in a phase for the user and for the next session.
 4. Get the user's go-ahead, then load the reference file for that phase and follow it.
 
-Load **only** the reference file for the phase being worked. Do not preload the others. **After a context compaction, re-read it before continuing:** compaction restores this file but not files read with Read, and the `Aktif faz` line in `00-state.md` names the phase whose reference applies.
+Load **only** the reference file for the phase being worked. Do not preload the others. **After a context compaction, re-read it before continuing:** compaction re-attaches this file but re-reads no more than five recently modified files, so a phase reference may not come back, and the `Aktif faz` line in `00-state.md` names the phase whose reference applies.
 
 | Phase | Reference | Purpose | Writes code |
 |---|---|---|---|

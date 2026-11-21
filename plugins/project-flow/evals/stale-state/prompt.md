@@ -4,4 +4,4 @@ timeout_seconds: 600
 allowed_tools: [Read, Glob, Grep, Skill, Bash, Write, Edit]
 ---
 
-/project ne kadar bitti?
+/project-flow:project ne kadar bitti?
