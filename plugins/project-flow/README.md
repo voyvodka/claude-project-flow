@@ -25,6 +25,9 @@ Always the same command. It reads `docs/product/00-state.md` to work out whether
 new project, a resumption, or a request to advance — an empty folder, a half-finished plan,
 and an existing codebase all route correctly.
 
+If `/project` answers that it is not available, type `/project-flow:project`: the namespaced
+form always reaches this plugin, and the repository README says why the bare one may not.
+
 ## Phases
 
 | Phase | Does | Writes code |
@@ -86,8 +89,11 @@ and all code are always English.
 
 ```
 plugins/project-flow/
-├── evals/                                  behaviour cases for `claude plugin eval . --scaffold`; shipped
-│                                           on purpose — the command reads a suite only below the plugin
+├── evals/                                  behaviour cases for `claude plugin eval . --scaffold
+│                                           --allow-tools Write Edit Bash` — without the grant those
+│                                           tools are withheld and the no-write checks pass unasked;
+│                                           shipped on purpose — the command reads a suite only below
+│                                           the plugin
 └── skills/
     ├── project/SKILL.md                    /project — thin entry point, user-invoked only
     └── project-flow/

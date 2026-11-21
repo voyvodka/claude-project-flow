@@ -14,6 +14,13 @@ from it and from git history.
 ### Changed
 
 - Phase 2 research branches run on an explicit `model: "sonnet"` (opus only for a large stack-choice brief) and no longer spawn subagents or verifiers of their own.
+- READMEs name `/project-flow:project` as the form to use when `/project` is not available: Claude Code reserves that name for a built-in command (measured on 2.1.330).
+
+### Fixed
+
+- Eval cases invoke `/project-flow:project`; with the bare `/project` they ended in zero turns on Claude Code 2.1.330.
+- The eval command in the plugin README grants `Write Edit Bash`; without the grant the no-write and no-edit graders could not fail.
+- `SKILL.md` states what compaction restores as the current documentation does.
 
 ## [3.2.2] - 2026-10-25
 

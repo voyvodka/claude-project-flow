@@ -42,6 +42,11 @@ Always the same command. It reads `docs/product/00-state.md` to work out whether
 project, a resumption, or a request to advance — an empty folder, a half-finished plan, and an
 existing codebase all route correctly.
 
+If `/project` answers that it is not available, type `/project-flow:project` instead. The
+namespaced form always reaches this plugin; the bare name only does while no other command uses
+it, and Claude Code reserves `/project` for a built-in of its own (measured 2026-11-21 on 2.1.330
+in `claude -p`, where the bare name did not reach the plugin).
+
 ## The six phases
 
 | Phase | Does | Writes code |
