@@ -13,6 +13,8 @@ from it and from git history.
 
 ### Added
 
+- `plugin.json` declares `engines` (`claude-code >=2.1.310`). Claude Code 2.0.15 through 2.1.75 reject a manifest with that field; the README says so.
+- CI runs weekly as well as on push, so a new Claude Code release that stops loading the plugin is noticed.
 - `evals/direct-command`: the `/project-flow` command, typed directly, announces the folder's state and waits.
 
 ### Changed
