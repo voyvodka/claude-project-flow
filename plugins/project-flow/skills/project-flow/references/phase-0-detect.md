@@ -76,7 +76,7 @@ A working codebase is persuasive. It reads as settled, its decisions look delibe
 
 A closed project still gets new work, and without a route that work lands as increment after
 increment appended to a finished roadmap, with no question asked and no research done. This
-section is the route. It runs whenever `/project` finds the project closed.
+section is the route. It runs whenever `/project-flow` finds the project closed.
 
 1. **Check the record against the code.** Compare `git log` since the state file's last update with
    `04-roadmap.md`. Work that shipped without an increment, an MVP-close step left undone (the
@@ -110,6 +110,6 @@ section is the route. It runs whenever `/project` finds the project closed.
   round: "3 Netleştirme — tur 2 (onay bekliyor)".
 - It closes like the MVP did (`phase-5-build.md`): a verdict against the round's own success
   criterion, then `Aktif faz` reads "5 Uygulama — tur N (tur tamamlandı)" and the next
-  `/project` lands here again.
+  `/project-flow` lands here again.
 - A standing approval the user gave for one round expires with it.
 

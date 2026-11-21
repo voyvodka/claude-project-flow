@@ -1,6 +1,6 @@
 # project-flow
 
-One command — `/project` — that carries a project from "I have a rough idea" to working code.
+One command — `/project-flow` — that carries a project from "I have a rough idea" to working code.
 
 The problem it solves: an AI that starts building on a guess, and an AI that asks questions
 forever. It fixes both with a bounded checklist, evidence from real research, and a set of
@@ -17,16 +17,16 @@ Claude Code 2.1.275 or later; the repository README covers older versions.
 ## Usage
 
 ```
-/project                       # start, or resume wherever the folder left off
-/project a tool that does X    # start with a rough idea
+/project-flow                       # start, or resume wherever the folder left off
+/project-flow a tool that does X    # start with a rough idea
 ```
 
 Always the same command. It reads `docs/product/00-state.md` to work out whether this is a
 new project, a resumption, or a request to advance — an empty folder, a half-finished plan,
 and an existing codebase all route correctly.
 
-If `/project` answers that it is not available, type `/project-flow:project`: the namespaced
-form always reaches this plugin, and the repository README says why the bare one may not.
+`/project`, the command before 3.3.0, stays as an alias; the repository README says why it
+may not reach this plugin on a current Claude Code.
 
 ## Phases
 
@@ -95,7 +95,7 @@ plugins/project-flow/
 │                                           shipped on purpose — the command reads a suite only below
 │                                           the plugin
 └── skills/
-    ├── project/SKILL.md                    /project — thin entry point, user-invoked only
+    ├── project/SKILL.md                    /project — alias kept from before 3.3.0, user-invoked only
     └── project-flow/
         ├── SKILL.md                        directives, state contract, routing
         ├── profile/                        EDIT THIS — one file per stack, README indexes

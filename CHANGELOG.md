@@ -11,10 +11,14 @@ from it and from git history.
 
 ## [Unreleased]
 
+### Added
+
+- `evals/direct-command`: the `/project-flow` command, typed directly, announces the folder's state and waits.
+
 ### Changed
 
 - Phase 2 research branches run on an explicit `model: "sonnet"` (opus only for a large stack-choice brief) and no longer spawn subagents or verifiers of their own.
-- READMEs name `/project-flow:project` as the form to use when `/project` is not available: Claude Code reserves that name for a built-in command (measured on 2.1.330).
+- **The command is now `/project-flow`.** `/project` stays as an alias, but Claude Code reserves that name for a built-in command and the bare form may not reach the plugin (measured on 2.1.330); `/project-flow:project` always reaches the alias.
 
 ### Fixed
 

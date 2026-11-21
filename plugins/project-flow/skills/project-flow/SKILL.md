@@ -1,11 +1,12 @@
 ---
 name: project-flow
-description: Drives a project from a rough idea to shipped code through six approval-gated phases — detect where the folder stands, interrogate the idea with a bounded checklist, research market and stack via subagents, lock decisions into docs/, scaffold AI tooling, then implement in increments. Use when the user runs /project, or asks to start, scope, plan, or resume a project in a folder.
+description: Drives a project from a rough idea to shipped code through six approval-gated phases — detect where the folder stands, interrogate the idea with a bounded checklist, research market and stack via subagents, lock decisions into docs/, scaffold AI tooling, then implement in increments. Use when the user runs /project-flow or /project, or asks to start, scope, plan, or resume a project in a folder.
+argument-hint: Optional rough description of the project idea
 ---
 
 # Project Flow
 
-One command (`/project`) that carries a project from "I have a rough idea" to working code without guessing at any step.
+One command (`/project-flow`) that carries a project from "I have a rough idea" to working code without guessing at any step.
 
 ## Prime directives
 
@@ -74,7 +75,7 @@ Contract:
 - It always records the **current phase**, what is **settled**, what is **open**, and every **outstanding assumption**.
 - It describes the present only and stays within the size stated in its own header; history goes to `archive/state-log.md`.
 - Every phase updates it before handing control back to the user.
-- On a fresh invocation it is read first — it is how `/project` knows whether this is a new project, a resumption, or a request to advance.
+- On a fresh invocation it is read first — it is how `/project-flow` knows whether this is a new project, a resumption, or a request to advance.
 - It is the first file a new collaborator (or a different AI tool) should read.
 
 If `docs/product/00-state.md` disagrees with what the user said in this conversation, the user is
@@ -84,7 +85,7 @@ approval. Which of the two is current is the user's call, not this tool's.
 
 ## Routing
 
-Every `/project` invocation follows the same opening move:
+Every `/project-flow` invocation follows the same opening move:
 
 1. Read `docs/product/00-state.md` if it exists.
 2. If it does not exist, run **Phase 0** to classify the folder. If `Aktif faz` says the MVP or a round is complete, or reads `Bakım`, the project is **closed, not in Phase 5**: load `references/phase-0-detect.md` and follow its Re-entry section before anything else.
