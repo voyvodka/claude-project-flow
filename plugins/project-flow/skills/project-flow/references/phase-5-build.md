@@ -90,4 +90,4 @@ When the last increment lands:
 4. Review the remaining assumptions — the ones never forced by any increment are now known unknowns for whoever continues.
 5. Move surviving "Later" items into a shape the next session can pick up.
 
-The project does not leave this tool at that point. The next `/project` finds it closed and follows the Re-entry section of `phase-0-detect.md`, which decides whether new work is an increment, a round or maintenance. A round closes the same way: steps 1, 3 and 4 against the round's own success criterion.
+The project does not leave this tool at that point. The next `/project-flow` finds it closed and follows the Re-entry section of `phase-0-detect.md`, which decides whether new work is an increment, a round or maintenance. A round closes the same way: steps 1, 3 and 4 against the round's own success criterion.

@@ -34,18 +34,18 @@ when it does not; `CLAUDE_CODE_PLUGIN_PREFER_HTTPS=1` skips the SSH check.
 Then, in any project folder:
 
 ```
-/project                       # start, or resume wherever the folder left off
-/project a tool that does X    # start with a rough idea
+/project-flow                       # start, or resume wherever the folder left off
+/project-flow a tool that does X    # start with a rough idea
 ```
 
 Always the same command. It reads `docs/product/00-state.md` to work out whether this is a new
 project, a resumption, or a request to advance — an empty folder, a half-finished plan, and an
 existing codebase all route correctly.
 
-If `/project` answers that it is not available, type `/project-flow:project` instead. The
-namespaced form always reaches this plugin; the bare name only does while no other command uses
-it, and Claude Code reserves `/project` for a built-in of its own (measured 2026-11-21 on 2.1.330
-in `claude -p`, where the bare name did not reach the plugin).
+`/project` was the command before 3.3.0 and stays as an alias, but do not rely on it: a plugin
+skill's bare name only works while no other command uses it, and Claude Code reserves `/project`
+for a built-in of its own (measured 2026-11-21 on 2.1.330 in `claude -p`, where `/project` did not
+reach the plugin). `/project-flow:project` reaches the alias whatever else is installed.
 
 ## The six phases
 

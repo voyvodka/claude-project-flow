@@ -1,6 +1,6 @@
 ---
 name: project
-description: Start, resume, or advance a project — asks questions before writing anything, researches, records decisions in docs/, then builds in approved increments
+description: Alias of /project-flow, kept from before 3.3.0. Start, resume, or advance a project — asks questions before writing anything, researches, records decisions in docs/, then builds in approved increments
 argument-hint: Optional rough description of the project idea
 disable-model-invocation: true
 allowed-tools: ["Skill"]
