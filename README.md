@@ -24,6 +24,11 @@ On an older version, register the catalog first:
 /plugin install project-flow@voyvodka
 ```
 
+The manifest declares `engines`: `claude-code >=2.1.310`, the oldest version the plugin was run
+on. Claude Code reads that field from 2.1.323; versions 2.0.15 through 2.1.75 reject a manifest
+that carries it with an `Unrecognized key` error, so the plugin does not load there
+([plugins reference](https://code.claude.com/docs/en/plugins-reference), read 2026-11-21).
+
 The plugin is listed in a small [catalog marketplace](https://github.com/voyvodka/claude-plugins)
 rather than being one itself, so a single registration covers every plugin from the same author and
 `/plugin marketplace update voyvodka` refreshes all of them at once.

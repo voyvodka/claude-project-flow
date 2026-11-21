@@ -16,5 +16,8 @@
     "research",
     "documentation",
     "scaffolding"
-  ]
+  ],
+  "engines": {
+    "claude-code": ">=2.1.310"
+  }
 }
