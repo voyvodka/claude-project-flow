@@ -11,22 +11,24 @@ from it and from git history.
 
 ## [Unreleased]
 
+## [3.3.0] - 2026-11-21
+
 ### Added
 
-- `plugin.json` declares `engines` (`claude-code >=2.1.310`). Claude Code 2.0.15 through 2.1.75 reject a manifest with that field; the README says so.
-- CI runs weekly as well as on push, so a new Claude Code release that stops loading the plugin is noticed.
-- `evals/direct-command`: the `/project-flow` command, typed directly, announces the folder's state and waits.
+- `plugin.json` declares `engines` (`claude-code >=2.1.310`). Claude Code 2.0.15 through 2.1.75 reject a manifest with that field; the README says so (#24).
+- CI runs weekly as well as on push, so a new Claude Code release that stops loading the plugin is noticed (#24).
+- `evals/direct-command`: the `/project-flow` command, typed directly, announces the folder's state and waits (#23).
 
 ### Changed
 
-- Phase 2 research branches run on an explicit `model: "sonnet"` (opus only for a large stack-choice brief) and no longer spawn subagents or verifiers of their own.
-- **The command is now `/project-flow`.** `/project` stays as an alias, but Claude Code reserves that name for a built-in command and the bare form may not reach the plugin (measured on 2.1.330); `/project-flow:project` always reaches the alias.
+- Phase 2 research branches run on an explicit `model: "sonnet"` (opus only for a large stack-choice brief) and no longer spawn subagents or verifiers of their own (#21).
+- **The command is now `/project-flow`.** `/project` stays as an alias, but Claude Code reserves that name for a built-in command and the bare form may not reach the plugin (measured on 2.1.330); `/project-flow:project` always reaches the alias (#23).
 
 ### Fixed
 
-- Eval cases invoke `/project-flow:project`; with the bare `/project` they ended in zero turns on Claude Code 2.1.330.
-- The eval command in the plugin README grants `Write Edit Bash`; without the grant the no-write and no-edit graders could not fail.
-- `SKILL.md` states what compaction restores as the current documentation does.
+- Eval cases invoke `/project-flow:project`; with the bare `/project` they ended in zero turns on Claude Code 2.1.330 (#22).
+- The eval command in the plugin README grants `Write Edit Bash`; without the grant the no-write and no-edit graders could not fail (#22).
+- `SKILL.md` states what compaction restores as the current documentation does (#22).
 
 ## [3.2.2] - 2026-10-25
 
@@ -250,7 +252,8 @@ from it and from git history.
 - First public release. The developer profile split into committed templates carrying the
   questions and a gitignored `profile/local/` holding the answers, read in preference.
 
-[Unreleased]: https://github.com/voyvodka/claude-project-flow/compare/v3.2.2...HEAD
+[Unreleased]: https://github.com/voyvodka/claude-project-flow/compare/v3.3.0...HEAD
+[3.3.0]: https://github.com/voyvodka/claude-project-flow/compare/v3.2.2...v3.3.0
 [3.2.2]: https://github.com/voyvodka/claude-project-flow/compare/v3.2.1...v3.2.2
 [3.2.1]: https://github.com/voyvodka/claude-project-flow/compare/v3.2.0...v3.2.1
 [3.2.0]: https://github.com/voyvodka/claude-project-flow/compare/v3.1.1...v3.2.0
