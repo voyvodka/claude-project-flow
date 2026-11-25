@@ -377,8 +377,7 @@ cmd_send() {
   target=$(header Target); route=$(header Route); title=$(sed -n 's/^Title: //p' "$p" | head -n1)
   awk '/^=== Body ===$/{b=1; next} /^=== Diff ===$/{exit} b' "$p" > "$WORKDIR/body.md"
 
-  # "<digest> <epoch>", written by hooks/report-guard.sh when the user typed a message right after a
-  # reply holding this preview, and removed by the hook at the next prompt.
+  # "<digest> <epoch>" from hooks/report-guard.sh; the hook removes it again at the next prompt.
   if [ "$route" != "issue link that you open and submit yourself (no diff is sent)" ]; then
     if [ ! -f "$WORKDIR/consent" ]; then
       [ -f "$WORKDIR/consent-refused" ] \

@@ -325,7 +325,6 @@ new_workdir; mkdir -p "$P/pf-report.inside/src/plugins/project-flow"; echo x > "
 check "a report workdir inside the project is not scanned as project files (rc=$rc)" '[ $rc = 0 ]'
 rm -rf "$P/pf-report.inside"
 
-# Round-3 review cases.
 new_workdir; "$REPORT" prepare --workdir "$W" --project "$P" >/dev/null
 "$REPORT" preview --workdir "$W" --project "$P" > "$T/preview"; D=$(sed -n 's/^Digest: //p' "$T/preview")
 post_preview "$T/preview"; user_prompt "yes"

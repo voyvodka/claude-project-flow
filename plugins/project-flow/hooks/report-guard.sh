@@ -12,8 +12,7 @@ mkdir -p "$state" 2>/dev/null || exit 0
 pending="$state/pending-$sid"
 granted="$state/granted-$sid"
 
-# The transcript stores text as JSON strings. prepare refuses control characters other than tab,
-# so backslash, quote and tab are the only escapes. Trailing blanks are ignored on both sides.
+# prepare refuses control characters other than tab, so these are the only JSON escapes needed.
 json_escape() { sed 's/[[:space:]]*$//; s/\\/\\\\/g; s/"/\\"/g; s/	/\\t/g'; }
 
 case "$(field hook_event_name)" in
@@ -43,8 +42,7 @@ case "$(field hook_event_name)" in
     refuse() { printf '%s\n' "$1" > "$workdir/consent-refused"; exit 0; }
     transcript=$(field transcript_path)
     [ -f "$transcript" ] || refuse "the session transcript could not be read, so it is unknown what the user was shown"
-    # Main-conversation assistant text rows written after the preview's tool result: what the user
-    # read before replying. Thinking, tool calls and request records are not text the user saw.
+    # Only assistant text rows count: thinking, tool calls and request records are not what the user saw.
     shown=$(mktemp "${TMPDIR:-/tmp}/pf-shown.XXXXXX") || exit 0
     awk -v d="Digest: $digest" '
       !index($0, "\"isSidechain\":false") { next }
