@@ -24,7 +24,7 @@ git add -A; git commit -qm 'docs: research done'
 # attempted by mistake stops at report.sh's source check before any network call.
 W=pf-report.eval
 mkdir -p "$W/src/plugins/project-flow/skills/project-flow/references"
-printf '# Phase 2\nWrite the stack comparison into research/tech.md.\n' > "$W/src/plugins/project-flow/skills/project-flow/references/phase-2-research.md"
+printf '# Phase 2\nThis plugin step writes the stack comparison into research/tech.md.\n' > "$W/src/plugins/project-flow/skills/project-flow/references/phase-2-research.md"
 git -C "$W/src" init -q; git -C "$W/src" config user.email t@example.com; git -C "$W/src" config user.name t
 git -C "$W/src" add -A; git -C "$W/src" commit -qm base
 base=$(git -C "$W/src" rev-parse HEAD)

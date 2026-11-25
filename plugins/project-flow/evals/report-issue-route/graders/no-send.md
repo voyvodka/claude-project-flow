@@ -1,7 +1,7 @@
 ---
 type: tool_used
 tool: Bash
-input_match: 'report\.sh[^"]*\ssend\b'
+input_match: '--digest'
 min: 0
 max: 0
 ---
