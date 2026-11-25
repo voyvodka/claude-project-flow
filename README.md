@@ -164,8 +164,9 @@ from your own GitHub account (through a fork if you cannot push here). Without a
 get a prefilled issue link to submit yourself instead. What leaves is limited to files under
 `plugins/project-flow/` and an abstract description; a mechanical scrub refuses home-directory
 paths, e-mail addresses and your project's directory and file names (and, as best effort, user,
-host and git names and similar) before anything is shown, and the send step refuses to run until
-a plugin hook has seen you type a reply to that exact preview.
+host and git names and similar) before anything is shown. On the pull-request route the send step
+refuses to run until a plugin hook has seen you type a reply right after a message that showed the
+whole preview; on the issue route nothing is sent for you — you get a link and submit it yourself.
 The flow is `plugins/project-flow/skills/project-flow/references/defect-report.md`; its checks are
 tested in `tests/report-test.sh`.
 

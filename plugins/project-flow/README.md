@@ -118,7 +118,8 @@ Research and defect-report fixes use `general-purpose` subagents with prompts de
 `phase-2-research.md` and `defect-report.md`, rather than plugin-level agent definitions — those
 would register globally in every project, which is a cost this plugin does not need to impose.
 The one global piece is `hooks/`: it runs a short shell check on each prompt and after each Bash
-call, to record that the user replied to a report preview — the consent `report.sh send` requires.
+call, to record that the user replied right after seeing a whole report preview — the consent
+`report.sh send` requires.
 
 ## Developer profile
 

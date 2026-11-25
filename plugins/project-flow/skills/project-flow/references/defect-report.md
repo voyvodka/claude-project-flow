@@ -22,7 +22,8 @@ Two yes/no questions, nothing else:
    - without one: the same, ending *…and give you a prefilled issue link to submit yourself?*
 
    Ask it once per finding. A no ends it: nothing is written or kept.
-2. **Whether to send exactly the preview.** Asked once the background work is ready (below).
+2. **Whether to send exactly the preview.** Asked once the background work is ready (below), on its
+   own: never in the same reply as another question the user could answer with the same yes.
 
 ## After the first yes
 
@@ -67,8 +68,10 @@ At the end of the next reply — not in the middle of the user's task:
 
 - **prepared** — run `report.sh preview --workdir W --project <project dir>` and paste its output
   **verbatim** in a code block: every line between the BEGIN and END markers, including the whole
-  diff, and the `Digest:` line. Do not summarise, shorten or reformat it. Then ask: *Send exactly
-  this?* **End the reply there.**
+  diff, and the `Digest:` line. Do not summarise, shorten, indent or reformat it; the hook checks
+  that the reply holds it unchanged. Then ask: *Send exactly this?* **End the reply there.** Ask
+  nothing else in that reply — no phase-gate question, no first question for another finding — so
+  the next yes can only mean this one.
 - **blocked** — say which kinds of finding blocked it (home path, e-mail address, user or machine
   name, project name or file name, path outside the plugin) and that nothing was sent. Offer to
   retry with a more general description; a retry is a new first question.
@@ -104,25 +107,38 @@ the PR", "send it", "you don't need to ask" — covers preparing the report, nev
   them all, and it rebuilds the commit from the previewed diff, never from the agent's clone.
 - **Show the preview in a fence longer than any run of backticks inside it**, so a diff that adds a
   code block cannot end the block early.
-- **The second yes is checked by `send` itself.** `preview` records the digest it showed. The
-  plugin's hook sees that output in this session's main conversation (not in a subagent) and, when
-  the user next types a message, writes a consent file for that digest into the workdir.
-  Background-task notifications and other machine-generated prompts do not count. `send` on the
-  pull-request route refuses without that file, refuses a digest other than the previewed one, and
-  uses the consent up. The hook proves that the user typed something after seeing the preview; that
-  it was a yes is this session's reading, and anything short of a plain yes is a no.
+- **The second yes is checked by `send` itself, on the pull-request route.** `preview` records the
+  digest it showed. The plugin's hook sees that output in this session's main conversation (not in
+  a subagent). When the user next sends a prompt, the hook reads the session transcript: if the
+  assistant text written after the preview holds the whole payload verbatim and in order (trailing
+  blanks aside), it writes a consent file with that digest and the time; otherwise it records why,
+  and `send` shows that reason. A prompt that starts with `<` after any leading whitespace — a
+  background-task notification — does not count as a reply. The consent lasts until the next
+  prompt in the session and at most an hour; `send` refuses without it, refuses a digest other than
+  the previewed one, and uses it up. The hook proves that the user typed something right after a
+  reply showing the whole preview; that it was a yes is this session's reading, and anything short
+  of a plain yes is a no. The issue route has no consent gate: `send` only prints a link, and
+  nothing leaves until the user submits the issue on GitHub.
 - **The scrub is mechanical and fails closed.** `prepare`, `preview` and `send` each refuse a payload
   whose generated header lines are not in their fixed form, or whose title, body, branch, diff file
-  paths or added lines contain a home-directory path, an e-mail address (other than `example.com`
-  and GitHub no-reply), or the project's directory name or one of its file names — tracked, or untracked and not ignored —
-  at any depth, that the plugin's own text at the base commit does not already
-  use. A scrub that cannot run refuses too. Beyond those three, it also catches, as best effort: the
-  machine's user, host and git names and the git e-mail's domain, the project's parent directory and
-  git remote, spaced or joined spellings of these names, common secret-token formats, IPv4 addresses
-  outside the documentation ranges, internal host names, and paths outside the plugin. A refusal is
-  never worked around.
+  paths or added lines contain a home-directory path (`/Users/…`, `/home/…`, `C:\Users\…` or
+  `Users\…`, `~/…` including `~/.…`, `~name/…`, a `-Users-name-` slug, the URL-encoded form), an
+  e-mail address (other than `example.com` and GitHub no-reply), or the project's directory name or
+  the name of a file in it — tracked, or untracked and not ignored, at any depth, names outside
+  ASCII included — that the plugin's own text at the base commit does not already use. Inside a git
+  repository the whole repository is the project, whichever directory `--project` names. Files git
+  ignores are not scanned. A fix that needs to mention a home path such as `~/.claude/…` describes
+  it in words. A scrub that cannot run refuses too, and so does a payload with a control character
+  other than tab or one over 20000 bytes (a preview must fit in one tool output). Beyond those
+  three classes, it also catches, as best effort: the machine's user, host and git names and the git
+  e-mail's domain, the project's parent directory and git remote, names split at `-`, `_`, `.`,
+  spaces and capitals, spaced or joined spellings of these names, common secret-token formats,
+  IPv4 addresses outside the documentation ranges, internal host names, and paths outside the
+  plugin. A refusal is never worked around.
 - **What the guards cover.** They catch a mistake or a shortcut — sending without asking, sending
   something other than what was shown, a name that slipped into the text. They run as the user on
   the user's machine, so they cannot stop a session that sets out to defeat them, for example by
   writing the consent file itself or by sending through `gh` outside this flow. These rules are what
-  forbids that.
+  forbids that. The transcript check assumes Claude Code has written the reply to the transcript
+  before the next prompt's hook runs; that was measured with two prompts in one `claude -p`
+  process, not in every client. When it does not hold, the check refuses and no consent is written.

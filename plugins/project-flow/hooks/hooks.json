@@ -1,5 +1,5 @@
 {
-  "description": "Defect reports: records that the user replied to a report preview, which report.sh send requires",
+  "description": "Defect reports: records that the user replied right after a message showing the whole report preview, which report.sh send requires",
   "hooks": {
     "UserPromptSubmit": [
       {
