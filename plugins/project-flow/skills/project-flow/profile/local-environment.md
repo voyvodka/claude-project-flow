@@ -1,7 +1,7 @@
 # Local Environment
 
 The development machine. Read this before proposing anything that has to run locally, and before
-the first commit of a personal project.
+the first commit of a new project.
 
 Distinct from [`infrastructure.md`](infrastructure.md), which is where things are *hosted*.
 
@@ -11,25 +11,26 @@ Distinct from [`infrastructure.md`](infrastructure.md), which is where things ar
 
 ## Git identity — the rule that bites
 
-Record here which identity a **personal** project must commit under, and whether the machine's
-global git config already carries a different one.
+Record here which identity new projects commit under, and whether the machine's global git
+config already carries a different one.
 
-This matters more than it looks. A machine used for both work and personal projects usually has
-the workplace identity in the global config, and that is normally correct — it is right for the
-majority of repositories on it. But it means a personal repository picks up a work address unless
-told otherwise, and an internal address is often not even deliverable: the commits carry an author
-nobody can reach and that no forge will link to an account.
+This matters more than it looks. When the global config holds an identity meant for other
+repositories, a new repository picks it up unless told otherwise — and an address that belongs to
+another context is often not even deliverable: the commits carry an author nobody can reach and
+that no forge will link to an account.
 
-**So a personal project sets its identity locally, in the repository, at `git init` time:**
+**When the project needs an identity other than the global one, set it locally, in the repository,
+at `git init` time:**
 
 ```
-git config user.name  "<personal name>"
-git config user.email "<personal email>"
+git config user.name  "<name>"
+git config user.email "<email>"
 ```
 
-Local, not global. **Never change the global config.**
+Local, not global: the global config serves the machine's other repositories, so leave it as it
+is unless the user asks.
 
-Get this wrong and the first commits of a personal project carry a work address into a repository
+Get this wrong and the first commits carry the wrong address into a repository
 that may end up public. Rewriting author history afterwards is possible and unpleasant, so it is
 worth doing at initialisation rather than discovering later.
 
@@ -53,12 +54,8 @@ If the machine already hosts shared development services — databases, object s
 interfaces — list them here, and note that they are **development infrastructure for several
 projects at once**, not part of any one project.
 
-Two consequences:
-
-- **A shared development database is read-only in practice.** Even with full permissions, another
-  project's data is in there.
-- **A new project should bring its own container rather than borrowing an existing one**, on its
-  own port and with its own name. Sharing one Postgres instance across projects is how a migration
-  in one drops a table in another.
+The consequence: **a new project brings its own container rather than borrowing an existing
+one**, on its own port and with its own name. Sharing one Postgres instance across projects is how
+a migration in one drops a table in another.
 
 Check what is actually up before assuming anything is available — this list drifts.
