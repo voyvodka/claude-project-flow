@@ -12,7 +12,7 @@ For each increment in `04-roadmap.md`, in order:
 2. **Check the assumptions it depends on.** If it touches a standing `⚠️`, ask the user now. This is precisely the moment the assumption list was built for.
 3. **Get approval to start.** For the first increment this is a real decision point; later ones can be lighter once a rhythm is established, but never silent.
 4. **If a repository is being initialised here rather than in Phase 4**, the same rule applies: re-read `profile/local-environment.md` first and set what it requires. See `phase-4-scaffold.md`.
-5. **Mark it started before writing anything.** Set the increment to in-progress in `04-roadmap.md`, which is the ledger of record once Phase 5 begins. `00-state.md` **points** at the active increment rather than restating it — "Artım 3 · `04-roadmap.md`" and nothing more. Two files describing the same position is two files to keep in step, and the second one always loses.
+5. **Mark it started before writing anything.** Set the increment to in-progress in `04-roadmap.md`, which is the ledger of record once Phase 5 begins. `00-state.md` **points** at the active increment rather than restating it — "Increment 3 · `04-roadmap.md`" and nothing more. Two files describing the same position is two files to keep in step, and the second one always loses.
 
    The ledger must never say "not started" while there is half-built work on disk. A session that dies mid-increment leaves a next session reading "not started" against a populated repository — and a running database, a created migration, and a half-finished module are far more dangerous to build on top of blindly than an empty folder is. Records that are only written on success cannot describe a failure, which is the moment they matter most.
 6. **Build it.** Use the task tools for the steps *within* an increment when the session has them — on current models they are off unless `CLAUDE_CODE_ENABLE_TODO_TOOLS=1` is set; without them, list the steps in the reply instead.
@@ -34,7 +34,7 @@ Code drifting from documentation is the failure that undoes everything the first
 - `00-state.md` — current position, what is next, any newly discovered unknown. Rewrite it in
   place; when it passes the size its own header states, move the oldest material to
   `archive/state-log.md` rather than trimming, because a trimmed state file grows straight back.
-- `02-decisions.md` — implementation nearly always forces decisions that planning did not anticipate. Record them in place, in the same format — all five fields, `Elenenler` included, which is the one that lapses first once building starts. A choice made while writing code is exactly as binding on the next person as one made in Phase 3.
+- `02-decisions.md` — implementation nearly always forces decisions that planning did not anticipate. Record them in place, in the same format — all five fields, `Rejected` included, which is the one that lapses first once building starts. A choice made while writing code is exactly as binding on the next person as one made in Phase 3.
 
   The test for whether something belongs here is not how large it felt while solving it. Ask instead: **does this constrain what a future developer may do, and would they know it from the code alone?** A deliberate exception to a rule the project otherwise enforces, a workaround with a boundary that must not be widened, a mechanism chosen over an obvious alternative for a non-obvious reason — all of these qualify, and all of them get skipped, because at the moment of solving they feel like implementation detail rather than decision.
 
@@ -44,9 +44,9 @@ Code drifting from documentation is the failure that undoes everything the first
   check that must run every time goes in a hook, not in either.
 
 **A compact project that outgrows its layout is promoted, not stretched.** When the brief's
-`## Kararlar` passes about 15 entries or 150 lines, it moves to `02-decisions.md`; when the
-`## Yol haritası` section of `03-mvp.md` outgrows it the same way, it moves to `04-roadmap.md`.
-Update the `Belge düzeni` line and `docs/README.md` in the same change.
+`## Decisions` passes about 15 entries or 150 lines, it moves to `02-decisions.md`; when the
+`## Roadmap` section of `03-mvp.md` outgrows it the same way, it moves to `04-roadmap.md`.
+Update the `Document layout` line and `docs/README.md` in the same change.
 
 ### Reversing a decision
 
@@ -86,7 +86,7 @@ When the last increment lands:
    Do not write a public README for an internal project. The badges, the contributing section and
    the elaborate feature list are costume, and they make a working tool look like an abandoned
    product.
-3. Set `Aktif faz` to "5 Uygulama (MVP tamamlandı)" and record in `00-state.md` what shipped and what was deferred.
+3. Set `Active phase` to "5 Build (MVP complete)" and record in `00-state.md` what shipped and what was deferred.
 4. Review the remaining assumptions — the ones never forced by any increment are now known unknowns for whoever continues.
 5. Move surviving "Later" items into a shape the next session can pick up.
 

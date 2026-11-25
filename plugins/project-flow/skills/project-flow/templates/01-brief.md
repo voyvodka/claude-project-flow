@@ -1,57 +1,57 @@
-# Proje Özeti
+# Project Brief
 
-> Keşif fazının çıktısı. Neyi neden yaptığımızı anlatır; nasıl yapacağımızı anlatmaz.
+> The output of discovery. Says what we are building and why; not how.
 
-**Son güncelleme:** <TARİH>
+**Last updated:** <DATE>
 
 ## 1. Problem
 
-<Hangi gerçek sorun, kimin sorunu, şu anda nasıl çözülüyor.>
+<Which real problem, whose problem, how it is solved today.>
 
-## 2. Hedef kullanıcı
+## 2. Target users
 
-<Kim, kabaca kaç kişi, onlara nasıl ulaşılıyor.>
+<Who, roughly how many, how they are reached.>
 
-## 3. Ana akış
+## 3. Main flow
 
-<Kullanıcının yaptığı 1 numaralı iş, baştan sona. Adım adım.>
+<The user's number-one task, start to finish. Step by step.>
 
-1. <adım>
-2. <adım>
+1. <step>
+2. <step>
 
-## 4. Başarı kriteri
+## 4. Success criterion
 
-<"MVP çalıştı" ne demek — ölçülebilir tek cümle.>
+<What "the MVP worked" means — one measurable sentence.>
 
-## 5. Kapsam dışı
+## 5. Out of scope
 
-> MVP'de kesinlikle olmayacaklar. Bu liste, sonradan "bunu da ekleyelim" baskısına karşı
-> tek savunma hattıdır.
+> What the MVP will definitely not do. This list is the only defence against "let's add this too"
+> later.
 
-- <özellik> — <neden dışarıda>
+- <feature> — <why it is out>
 
-## 6. Kısıtlar
+## 6. Constraints
 
-| Kısıt | Değer |
+| Constraint | Value |
 |---|---|
-| Süre | |
-| Bütçe | |
-| Ekip | |
-| Zorunlu teknolojiler | |
-| Mevcut yetkinlik | <ekibin tam hızla çalıştığı teknolojiler; kodu kim ya da ne yazıyor> |
-| Teknoloji yığını | <kullanıcı belirtti: … / mevcut koddan doğrulandı: … / açık — araştırılacak> |
+| Time | |
+| Budget | |
+| Team | |
+| Mandatory technologies | |
+| Existing skill | <technologies the team works in at full speed; who or what writes the code> |
+| Stack | <user-supplied: … / confirmed from existing code: … / open — to be researched> |
 
-## Ek bilgiler
+## Additional details
 
-> Engelleyici olmayan maddeler. Bu tablonun satırları sabittir ve **hiçbiri boş kalmaz**:
-> ya cevap yazılır, ya `⚠️ VARSAYIM` işaretlenir, ya da "yok / uygulanmaz" gerekçesiyle
-> kapatılır. Boş satır, cevaplanmamış demektir — ve boşluk ancak satır varsa görünür.
+> Non-blocking items. The rows of this table are fixed and **none stays empty**: each holds an
+> answer, a `⚠️ ASSUMPTION` marker, or "none / not applicable" with the reason. An empty row means
+> unanswered — and a gap is only visible when there is a row to be empty.
 
-| Konu | Durum |
+| Topic | Status |
 |---|---|
-| Veri ve dış entegrasyonlar | |
-| Ölçek beklentisi | |
-| Dağıtım hedefi | |
-| Kimlik ve yetki (roller) | |
-| Para modeli | |
-| Bakım | |
+| Data and external integrations | |
+| Expected scale | |
+| Delivery target | |
+| Identity and permissions (roles) | |
+| Revenue model | |
+| Maintenance | |

@@ -8,7 +8,7 @@ Goal: figure out what this folder already is, and tell the user where they stand
 
 Look at, in this order:
 
-1. `docs/product/00-state.md` — if present, this is a resumption, or a closed project if `Aktif faz` says so. It is authoritative.
+1. `docs/product/00-state.md` — if present, this is a resumption, or a closed project if `Active phase` says so. It is authoritative.
 2. `docs/product/` and `docs/research/` — which documents exist, how complete are they.
 3. `CLAUDE.md`, `AGENTS.md`, `README.md` — is there already a stated project identity.
 4. Manifests: `package.json`, `pyproject.toml`, `go.mod`, `Cargo.toml`, `*.csproj`, `composer.json`, `Gemfile`.
@@ -25,7 +25,7 @@ Pick exactly one:
 |---|---|---|
 | **Empty** | No source, no docs, at most a `.git` or a README stub | Phase 1 |
 | **Resumption** | `00-state.md` exists — `SKILL.md` normally routes this before Phase 0 loads | The phase it names |
-| **Closed** | `Aktif faz` says the MVP or a round is complete, or reads `Bakım` | Re-entry, below — never Phase 5 by default |
+| **Closed** | `Active phase` says the MVP or a round is complete, or reads `Maintenance` | Re-entry, below — never Phase 5 by default |
 | **Docs without state** | Product docs exist but no `00-state.md` — an older run, or hand-written notes | Reconstruct `00-state.md` from what is there, then continue |
 | **Existing code** | Real source, no product docs — a project started outside this tool | Phase 1, seeded from the code |
 | **Foreign** | Someone else's repo, or clearly unrelated to a new project | Stop. Ask what the user actually wants |
@@ -41,7 +41,7 @@ Give the user a short, concrete read — never a wall of findings:
 
 Example shape:
 
-> Klasörde 01-brief ve market araştırması var, karar dosyası boş. Stack seçilmemiş. Sıradaki adım Faz 2 — teknoloji araştırması. Başlayalım mı?
+> The folder has a brief and market research; the decisions file is empty and no stack is chosen. Next step: Phase 2, tech research. Shall we start?
 
 Then wait for approval.
 
@@ -51,7 +51,7 @@ For "docs without state" and "existing code", write `docs/product/00-state.md` f
 
 Two rules while reconstructing:
 
-- Anything inferred from code rather than confirmed by the user is written as `⚠️ VARSAYIM` (or `⚠️ ASSUMPTION` in an English-language project), never as a settled fact. Inferring the stack from `package.json` is safe; inferring *why* that stack was chosen is not.
+- Anything inferred from code rather than confirmed by the user is written as `⚠️ ASSUMPTION` (in the document's language), never as a settled fact. Inferring the stack from `package.json` is safe; inferring *why* that stack was chosen is not.
 - Do not modify existing product docs during Phase 0. Detect, record, and report. Corrections happen in the phase that owns those documents, with the user present.
 
 ## Existing code
@@ -92,9 +92,9 @@ section is the route. It runs whenever `/project-flow` finds the project closed.
 
 | Mode | When | What happens |
 |---|---|---|
-| **Increment** | It traces to an item in `03-mvp.md › Sonrası`, or fixes shipped behaviour, and it fits in one or two increments | Added to `04-roadmap.md`; Phase 5 resumes for it, and `Aktif faz` returns to its closed state when it lands |
+| **Increment** | It traces to an item in `03-mvp.md › Later`, or fixes shipped behaviour, and it fits in one or two increments | Added to `04-roadmap.md`; Phase 5 resumes for it, and `Active phase` returns to its closed state when it lands |
 | **Round** | New capability, a changed goal, or anything that does not trace back — and always once two increments have been added since the last close | A numbered round runs the phases again, scoped to the new work |
-| **Maintenance** | No new capability; the project is kept working | `Aktif faz: Bakım`; `Sıradaki adım` names the next review date or the open defects |
+| **Maintenance** | No new capability; the project is kept working | `Active phase: Maintenance`; `Next step` names the next review date or the open defects |
 
 **A round** is the same process, sized to the change rather than to a new project:
 
@@ -103,13 +103,13 @@ section is the route. It runs whenever `/project-flow` finds the project closed.
   standing principle; it does not carry over unless the user says it does.
 - Phase 2 runs only for a question the user cannot answer and the code does not settle. Phase 4
   runs only if the tooling has to change.
-- Phase 3 records the round's decisions in the usual place and writes a `## Tur N` section in
+- Phase 3 records the round's decisions in the usual place and writes a `## Round N` section in
   `03-mvp.md`. The closed round's part of `04-roadmap.md` moves to `archive/roadmap-<round>.md`,
   leaving one line that points at it, so the ledger shows only work that is still open.
-- Every phase row it reruns is added to the phase history as "(tur N)", and `Aktif faz` carries the
-  round: "3 Netleştirme — tur 2 (onay bekliyor)".
+- Every phase row it reruns is added to the phase history as "(round N)", and `Active phase` carries the
+  round: "3 Decide — round 2 (awaiting approval)".
 - It closes like the MVP did (`phase-5-build.md`): a verdict against the round's own success
-  criterion, then `Aktif faz` reads "5 Uygulama — tur N (tur tamamlandı)" and the next
+  criterion, then `Active phase` reads "5 Build — round N (round complete)" and the next
   `/project-flow` lands here again.
 - A standing approval the user gave for one round expires with it.
 

@@ -1,63 +1,63 @@
-# Durum
+# State
 
-> Bu dosya projenin nerede olduğunun tek kaynağıdır. Yeni bir sohbete veya yeni bir kişiye
-> devrederken ilk okunacak dosya budur. Her faz sonunda güncellenir.
+> The single source of where this project stands. The first file to read when handing over to a
+> new conversation or a new person. Updated at the end of every phase.
 >
-> **Yalnızca bugünü anlatır, yerinde yeniden yazılır.** Tarihli başlık açılmaz; olup biten git'te
-> ve `archive/state-log.md`'de durur. Sınır: ~120 satır, ~10 KB, en fazla ~10 açık konu. Aşınca
-> eski kısım arşive taşınır — kırpmak yetmez, kırpılan dosya geri büyür. Varsayımlar ve faz
-> geçmişi bu sınırın dışındadır.
+> **Describes the present only, rewritten in place.** No dated headings; what happened lives in git
+> and in `archive/state-log.md`. Limit: ~120 lines, ~10 KB, at most ~10 open items. Past that, the
+> oldest part moves to the archive — trimming is not enough, a trimmed file grows back.
+> Assumptions and the phase history sit outside this limit.
 
-**Son güncelleme:** <TARİH>
-**Aktif faz:** <0 Tanıma | 1 Keşif | 2 Araştırma | 3 Netleştirme | 4 Tesisat | 5 Uygulama | Bakım>
-<Tek satır. Faz numarasının ardına durumu parantez içinde ekle — "5 Uygulama (onay bekliyor)",
-"2 Araştırma (yarıda kaldı)", "5 Uygulama (MVP tamamlandı)". MVP'den sonraki bir turda turu da
-yaz: "1 Keşif — tur 2 (devam ediyor)", "5 Uygulama — tur 2 (tur tamamlandı)". Faz numarası nerede
-olduğumuzu, parantez o fazın bitip bitmediğini söyler; ikisi olmadan yarım kalmış bir faz
-tamamlanmış görünür. Konum yalnızca bu satırda tutulur — ikinci bir konum satırı açılmaz.>
-**Sıradaki adım:** <tek cümle, en fazla ~300 karakter — bir sonraki sohbetin ilk yapacağı iş.
-Faz 5'te bu satır artımı **tarif etmez, işaret eder**: "Artım 3 · `04-roadmap.md`".
-İçeriği orada durur; iki yerde tutulursa biri bayatlar.>
-**Belge düzeni:** <tam (beş dosya) | kompakt — kararlar `01-brief.md › Kararlar`, yol haritası `03-mvp.md › Yol haritası`>
-<Kompaktta satır bu eşlemeyi olduğu gibi taşır: Faz 1'den sonraki fazlar eşlemenin tanımlandığı
-dosyayı okumaz, onu bu satırdan öğrenir.>
+**Last updated:** <DATE>
+**Active phase:** <0 Detect | 1 Discover | 2 Research | 3 Decide | 4 Scaffold | 5 Build | Maintenance>
+<One line. Follow the phase number with its status in parentheses — "5 Build (awaiting approval)",
+"2 Research (interrupted)", "5 Build (MVP complete)". In a round after the MVP, add the round:
+"1 Discover — round 2 (in progress)", "5 Build — round 2 (round complete)". The phase number says
+where we are, the parentheses say whether that phase is finished; without both, an interrupted
+phase looks complete. The position lives on this line only — never open a second position line.>
+**Next step:** <one sentence, at most ~300 characters — the first thing the next conversation does.
+In Phase 5 this line **points at** the increment rather than describing it: "Increment 3 ·
+`04-roadmap.md`". The content lives there; kept in two places, one goes stale.>
+**Document layout:** <full (five files) | compact — decisions `01-brief.md › Decisions`, roadmap `03-mvp.md › Roadmap`>
+<In compact, the line carries this mapping as written: phases after Phase 1 do not read the file
+that defines the mapping, and learn it from this line.>
 
-## Tek cümlede proje
+## The project in one sentence
 
-<Ne yapıyoruz, kimin için.>
+<What we are building, and for whom.>
 
-## Netleşenler
+## Settled
 
-| Konu | Durum | Nerede |
+| Topic | Status | Where |
 |---|---|---|
-| <konu> | <karar> | `docs/product/02-decisions.md` |
+| <topic> | <decision> | `docs/product/02-decisions.md` |
 
-## Açık konular
+## Open
 
-- [ ] <cevaplanmamış soru — kimden cevap bekliyor. Kapanan madde silinir: karar olduysa
-  `02-decisions.md`'ye, iş olduysa `04-roadmap.md`'ye geçer.>
+- [ ] <unanswered question — whose answer it waits on. A closed item is deleted: a decision moves
+  to `02-decisions.md`, work moves to `04-roadmap.md`.>
 
-## Varsayımlar
+## Assumptions
 
-> Silinmezler. Uygulama sırasında bu varsayıma dayanan bir yere dokunulduğunda kullanıcıya sorulur.
+> Never deleted. When implementation touches something resting on an assumption, ask the user.
 
-| ID | Varsayım | Neden varsayıldı | Yanlışsa ne kırılır |
+| ID | Assumption | Why it was assumed | What breaks if it is wrong |
 |---|---|---|---|
-| V1 | <varsayım> | <gerekçe> | <etki> |
+| A1 | <assumption> | <reason> | <impact> |
 
-## Faz geçmişi
+## Phase history
 
-> Fazların süreç kayıtları "Not" sütununa yazılır: başlatılan ve biten araştırma kolları,
-> mevcut bir `CLAUDE.md` için birleştir / değiştir / yanına yaz seçimi, öneri yerine istek
-> üzerine kurulan araçlar. Yeni başlık açılmaz.
+> Process notes for each phase go in the "Note" column: research branches launched and finished,
+> the merge / replace / write-beside choice for an existing `CLAUDE.md`, tooling built on request
+> rather than on recommendation. No new headings.
 
-| Faz | Durum | Not |
+| Phase | Status | Note |
 |---|---|---|
-| 0 Tanıma | <tamam / atlandı / bekliyor> | <atlandıysa neden> |
-| 1 Keşif | | |
-| 2 Araştırma | | |
-| 3 Netleştirme | | |
-| 4 Tesisat | | |
-| 5 Uygulama | | |
+| 0 Detect | <done / skipped / waiting> | <if skipped, why> |
+| 1 Discover | | |
+| 2 Research | | |
+| 3 Decide | | |
+| 4 Scaffold | | |
+| 5 Build | | |
 
-<MVP'den sonra açılan her tur, yeniden yürüdüğü fazlar için "(tur 2)" ekli satırlarla devam eder.>
+<Each round opened after the MVP continues with rows marked "(round 2)" for the phases it reruns.>

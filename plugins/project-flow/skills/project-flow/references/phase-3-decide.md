@@ -34,35 +34,33 @@ Each entry carries what a stranger needs to not undo it by accident:
 ```
 ## <Topic>
 
-**Karar:** <what was chosen>
-**Neden:** <one or two sentences — the reason that actually decided it>
-**Elenenler:** <what was rejected, and the specific reason>
-**Kabul edilen bedel:** <what this gives up — "—" if genuinely nothing>
-**Bağlı olduğu varsayım:** <assumption ID — "—" if it rests on none>
-**Kaynak:** <research file or link — optional>
+**Decision:** <what was chosen>
+**Why:** <one or two sentences — the reason that actually decided it>
+**Rejected:** <what was rejected, and the specific reason>
+**Accepted cost:** <what this gives up — "—" if genuinely nothing>
+**Rests on:** <assumption ID — "—" if it rests on none>
+**Source:** <research file or link — optional>
 ```
 
 **Five fields are required, plus an optional Source.** Every entry carries the first five, and a
 field with nothing to say gets "—" rather than being dropped or left blank: an entry resting on no
-assumption says so. `Kaynak` is the one line that may be omitted, when the decision rests on no
+assumption says so. `Source` is the one line that may be omitted, when the decision rests on no
 research file or link.
 
 **The labels are written in the document's own language, not copied from here** — the general rule
-is under "Language" in `SKILL.md`. The block above is shown in Turkish because the templates are
-written in Turkish; in an English-language project the fields are `Decision` / `Why` / `Rejected` /
-`Accepted cost` / `Rests on`, plus the optional `Source`. The same goes for the literal values used
-below: `yok` is `none` in an English document.
+is under "Language" in `SKILL.md`, and a Turkish document takes the labels in
+`references/turkish-keys.md`. The same goes for the literal values used below, such as `none`.
 
-A stack decision says in its **Neden** line where the stack came from: named by the user, kept
+A stack decision says in its **Why** line where the stack came from: named by the user, kept
 from the existing code, or chosen from research — and for the last, the requirement in the brief
 that decided it. A reader who later wants to reopen the choice needs to know which of the three
 they are arguing with.
 
-The "Elenenler" line is the one that earns its keep on handover. Without it the next person re-evaluates the same rejected option and reaches the same conclusion, slowly. It is never left blank: if there genuinely was no alternative, write "yok" and the reason. An alternative folded into the **Neden** sentence does not count — it has to be findable where a reader looks for it.
+The **Rejected** line is the one that earns its keep on handover. Without it the next person re-evaluates the same rejected option and reaches the same conclusion, slowly. It is never left blank: if there genuinely was no alternative, write "none" and the reason. An alternative folded into the **Why** sentence does not count — it has to be findable where a reader looks for it.
 
-**Kabul edilen bedel** matters just as much and is easier to skip. Most real decisions give something up: offline access, a segment, an integration, a performance ceiling. Naming it tells the next reader the downside was seen and chosen, not missed — which is the difference between them trusting the decision and reopening it. When a decision costs nothing, write "—" rather than leaving the line off.
+**Accepted cost** matters just as much and is easier to skip. Most real decisions give something up: offline access, a segment, an integration, a performance ceiling. Naming it tells the next reader the downside was seen and chosen, not missed — which is the difference between them trusting the decision and reopening it. When a decision costs nothing, write "—" rather than leaving the line off.
 
-When a decision changes later, rewrite the entry in place and note the reversal in the **Neden** line — "önce X seçilmişti, Y nedeniyle değişti". The point is that the current file always reads as current truth.
+When a decision changes later, rewrite the entry in place and note the reversal in the **Why** line — "X was chosen first; changed because of Y". The point is that the current file always reads as current truth.
 
 ## Will this be published?
 

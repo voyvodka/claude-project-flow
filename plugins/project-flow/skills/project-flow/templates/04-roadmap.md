@@ -1,33 +1,33 @@
-# Yol Haritası
+# Roadmap
 
-> MVP'nin, her biri gösterilebilir bir şeyle biten parçalara bölünmüş hali.
-> Aynı zamanda ilerleme defteridir — uygulama fazı buradan işaretler.
+> The MVP broken into increments, each ending in something demonstrable. Also the progress
+> ledger — the build phase checks items off here.
 >
-> MVP'den sonra açılan bir turda burada yalnızca o turun parçaları durur; kapanan turunki
-> `archive/roadmap-<tur>.md`'ye taşınır ve yerinde tek satırlık bir işaret kalır. Numaralar
-> turlar boyunca devam eder, böylece "Artım 7" her zaman tek bir parçayı gösterir.
+> In a round opened after the MVP, only that round's increments stay here; a closed round's move to
+> `archive/roadmap-<round>.md`, leaving a one-line pointer in their place. Numbers continue across
+> rounds, so "Increment 7" always names exactly one increment.
 >
-> Sıralama bağımlılığa ve riske göredir: planı geçersiz kılma ihtimali en yüksek parça,
-> yön değiştirmenin hâlâ ucuz olduğu yerde, en başta durur.
+> Ordered by dependency and risk: the increment most likely to invalidate the plan comes first,
+> while changing course is still cheap.
 
-## Parçalar
+## Increments
 
-### 1. <ad>
+### 1. <name>
 
-- **Ne teslim eder:** <gösterilebilir çıktı>
-- **Bağımlılık:** <yok | parça no>
-- **Nasıl doğrulanır:** <çalıştığını nasıl bileceğiz>
-- **Durum:** ⬜ bekliyor
-- **Not:** <tamamlandığında, plandan sapma varsa buraya>
+- **Delivers:** <demonstrable output>
+- **Depends on:** <none | increment no.>
+- **How it is verified:** <how we will know it works>
+- **Status:** ⬜ waiting
+- **Note:** <when done, any deviation from the plan>
 
-### 2. <ad>
+### 2. <name>
 
-- **Ne teslim eder:**
-- **Bağımlılık:**
-- **Nasıl doğrulanır:**
-- **Durum:** ⬜ bekliyor
-- **Not:**
+- **Delivers:**
+- **Depends on:**
+- **How it is verified:**
+- **Status:** ⬜ waiting
+- **Note:**
 
 ---
 
-Durum işaretleri: ⬜ bekliyor · 🔄 devam ediyor · ✅ tamam · ⏸️ durduruldu
+Status markers: ⬜ waiting · 🔄 in progress · ✅ done · ⏸️ paused

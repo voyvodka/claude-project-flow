@@ -1,37 +1,37 @@
-# MVP Kapsamı
+# MVP Scope
 
-**Başarı kriteri:** <01-brief.md'den birebir kopyalanır — her madde buna bağlanmalı>
+**Success criterion:** <copied verbatim from 01-brief.md — every item must trace to it>
 
-## İçeride
+## In
 
-> Başarı kriterini karşılayan en küçük set. Her madde kritere izlenebilmeli;
-> izlenemiyorsa MVP değildir.
+> The smallest set that meets the success criterion. Every item traces to the criterion; one that
+> does not is not MVP.
 
-| # | Ne | Başarı kriterine katkısı |
+| # | What | Contribution to the success criterion |
 |---|---|---|
 | 1 | | |
 
-## Dışarıda
+## Out
 
-| Ne | Neden dışarıda |
+| What | Why it is out |
 |---|---|
 | | |
 
-## Sonrası
+## Later
 
-> MVP'den sonra düşünülecek gerçek fikirler. Bu listenin var olması, kapsamı kesmeyi
-> katlanılabilir kılan şeydir.
+> Real ideas to consider after the MVP. Having this list is what makes cutting scope bearable.
 
-- <fikir>
+- <idea>
 
-<!-- MVP'den sonra açılan her tur aynı üç bölümü kendi başarı kriteriyle bu dosyanın sonuna ekler.
-     MVP'nin bölümleri olduğu gibi kalır; turun "Dışarıda" listesi MVP'ninkini kendiliğinden devralmaz.
+<!-- Each round opened after the MVP appends the same three sections, with its own success
+     criterion, at the end of this file. The MVP's sections stay as they are; a round's "Out" list
+     does not inherit the MVP's on its own.
 
-## Tur 2 — <tek satır amaç>
+## Round 2 — <one-line goal>
 
-**Başarı kriteri:** <bu turun kendi ölçülebilir cümlesi>
+**Success criterion:** <this round's own measurable sentence>
 
-### İçeride
-### Dışarıda
-### Sonrası
+### In
+### Out
+### Later
 -->
