@@ -153,11 +153,23 @@ with you.
 ## It reviews itself
 
 At every phase gate the tool asks whether anything went wrong **because of how it is written**,
-separates structural failures from circumstantial ones, and logs them. The bar for acting is
-evidence from a real project, not taste, and the preferred fix is to remove the cause rather than
-add a reminder. It proposes changes; it never applies them to itself without approval.
+separates structural failures from circumstantial ones, and offers to report them. The bar for
+acting is evidence from a real project, not taste, and the preferred fix is to remove the cause
+rather than add a reminder. It never edits its own install.
 
-`plugins/project-flow/skills/project-flow/feedback/observations.md` is that ledger.
+A report is two yes/no questions at a gate. On the first yes a background agent clones this
+repository, makes the fix and builds the report while you keep working; once it is ready you see
+the exact title, body and diff that would be sent, and on the second yes the pull request opens
+from your own GitHub account (through a fork if you cannot push here). Without a `gh` session you
+get a prefilled issue link to submit yourself instead. What leaves is limited to files under
+`plugins/project-flow/` and an abstract description; a mechanical scrub refuses home-directory
+paths, e-mail addresses, user, host and git names, and your project's directory and file names
+before anything is shown, and a plugin hook refuses to send until you have answered the preview.
+The flow is `plugins/project-flow/skills/project-flow/references/defect-report.md`; its checks are
+tested in `tests/report-test.sh`.
+
+`feedback/observations.md` is the maintainer's ledger of those findings; it sits outside the
+plugin directory, so installs do not receive it.
 [`CHANGELOG.md`](CHANGELOG.md) records what changed in each version from 2.7.0 on, and each pull
 request carries the reasoning behind its change; the frozen `Status` section of
 `plugins/project-flow/README.md` keeps the reasoning behind earlier versions. The ledger and that
@@ -176,6 +188,9 @@ keep their Turkish keys.
 
 ```
 plugins/project-flow/              the plugin — see its own README for detail
+feedback/observations.md           the maintainer's findings ledger; not shipped
+tests/report-test.sh               checks for the defect-report script and hook; run in CI
+.github/ISSUE_TEMPLATE/            the form a defect-report issue link opens
 ```
 
 ## Licence
