@@ -19,16 +19,16 @@ Breaking: the profile no longer carries stack defaults or safety rails, and the 
 
 - `evals/stack-open` and `evals/stack-user-named`: with no technology named, the next question leaves the stack open; with one named, it is taken as given (#27).
 - `evals/new-turkish-project`: a new Turkish project's first state file uses the Turkish keys. The existing Turkish fixtures (`mid-concrete-task`, `stale-state`, `closed-reentry`) now cover projects written with the old keys (#30).
-- `evals/old-turkish-keys-kept`: an answer written into a project started with the Turkish keys keeps those keys (#32).
-- `references/turkish-keys.md` covers every fixed label of the pre-4.0.0 Turkish templates: table headers, roadmap fields and status markers, phase-history statuses, brief rows, stack values and the internal README headings (#32).
+- `evals/old-turkish-keys-kept`: an answer written into a project started with the Turkish keys keeps those keys; it checks the files on disk, not the reply (#32, #33).
+- `references/turkish-keys.md` covers every fixed label of the pre-4.0.0 Turkish templates: table headers, roadmap fields, status markers and their label, the decisions index columns, phase-history statuses, brief rows, stack values and the internal README headings (#32, #33).
 
 ### Changed
 
 - Routing asks for the go-ahead as a yes-or-no question about the next phase and stops there; without the removed rails, empty-folder runs had started Phase 1 by asking for the idea (#29).
 - **No default stack.** The stack is the one the user names, the one the project's code already uses, or — when neither exists — candidates Phase 2 derives from the brief and current sources. Phase 1 asks about existing skill as an open question, and Phase 3 records where the stack came from. The profile's stack files (.NET, React, Next.js, Go, Tauri, Swift, Astro, mobile) and its defaults table are removed; `avoid.md` is an empty template; `code-style.md` no longer prefers a package manager or language (#27).
 - **Templates and the phase files are in English.** Documents still follow the user's language; a Turkish document takes its wording from the new `references/turkish-keys.md`. Projects started before this release keep their Turkish keys (`Aktif faz`, `Belge düzeni`, `Bakım`, `Elenenler`, `⚠️ VARSAYIM`), which are read as the English ones and kept when writing; renaming them is left to the user (#30).
-- The profile states its defaults as defaults: `code-style.md` is confirmed in Phase 1 like the rest, prefers the latest stable release by default rather than always, and drops the controller-action exemption; `local-environment.md` no longer frames git identity as work versus personal or forbids touching the global config (#32).
-- `feedback/observations.md` and the frozen `Status` section of the plugin README keep their findings without verbatim quotes, project names, sizes, session counts or the security detail of the trial project (#32).
+- The profile states its defaults as defaults: `code-style.md` is confirmed in Phase 1 like the rest, prefers the latest stable release by default rather than always, and drops the controller-action exemption; `local-environment.md` no longer frames git identity as work versus personal or forbids touching the global config (#32, #33).
+- `feedback/observations.md` and the frozen `Status` section of the plugin README keep their findings without verbatim quotes, project names, sizes, counts from the trial projects, or the trial project's security details (#32, #33).
 
 ### Removed
 

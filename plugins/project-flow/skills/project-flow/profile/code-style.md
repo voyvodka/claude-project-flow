@@ -5,7 +5,7 @@ section is a default Phase 1 confirms, and a project's own rules or the user's w
 
 ## Language
 
-**Code, identifiers, comments and commit messages are English.** That one holds everywhere.
+**Code, identifiers, comments and commit messages are English** by default.
 
 Documents follow the language rule in `SKILL.md` › Language.
 

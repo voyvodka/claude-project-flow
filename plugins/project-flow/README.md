@@ -141,7 +141,7 @@ everywhere else.
 
 Version 2.6.0 — the map of `docs/` moved out of `CLAUDE.md` and into `docs/README.md`. A map kept
 in a different file in a different directory from the document being added does not get updated:
-one project outgrew the skeleton and ended up with a map naming 9 of 48 files, two whole
+one project outgrew the skeleton and ended up with a map naming a fraction of its files, whole
 directories absent, reading as complete. The index now lives inside the folder it indexes, created
 in Phase 4 from a new `templates/docs-README.md`, so adding a document and listing it are the same
 motion. It routes by task before it lists by file, because a reader arrives with a job rather than
@@ -166,7 +166,7 @@ in `profile/README.md`, because a local `README.md` would otherwise override the
 that explains local overrides.
 
 Versions 2.3.0 and 2.3.1 — a rule shipped and reverted in one day, which is the most useful entry
-here. A user instruction issued at a phase gate appeared to vanish four times running, so `SKILL.md`
+here. A user instruction issued at a phase gate appeared to vanish repeatedly, so `SKILL.md`
 gained a rule forcing gate instructions to land somewhere. It then emerged that the instructions
 reached the session through a relay outside the tool and several never arrived at all: the lossy
 component was outside the tool entirely. Reverted. Two of the project's own standards had
@@ -223,13 +223,11 @@ tests could not have caught, because the tests never built the case it needed. "
 explicit exception for a failure class that is invisible in review and fatal to the product —
 the author is the person least able to construct the case they did not think of.
 
-Version 0.8.0 — verification held up under the hardest test available: tenant isolation was
-confirmed by connecting to the database directly as the application role, with the application
-layer out of the picture, covering the write path and the unset-tenant case rather than only
-the happy read. Documentation did not hold up. Two causes, both now specified: the session task
-list had become a parallel progress tracker and was being fed instead of the durable roadmap,
-and an architectural decision made during implementation — a deliberate, deliberately narrow
-exception to the project's own isolation rule — was recorded in a code comment and nowhere a
+Version 0.8.0 — verification held up: the project's most important rule was checked against the
+database directly, with the application layer out of the picture, rather than only through the
+happy path. Documentation did not hold up. Two causes, both now specified: the session task list
+had become a parallel progress tracker and was being fed instead of the durable roadmap, and an
+architectural decision made during implementation was recorded in a code comment and nowhere a
 reader could find it without already knowing which file to open.
 
 Version 0.7.0 — the second defect, and the same class as the first one found in Phase 1: a
@@ -267,22 +265,22 @@ project-specific tooling rather than generic filler — and recorded that it was
 request rather than on recommendation. That last behaviour is now pinned in the spec instead
 of left to judgement.
 
-Version 0.3.0 — Phase 3 trialled: eleven decisions recorded with sources, a six-increment
-roadmap ordered by risk rather than convenience, and verification criteria that are real tests
+Version 0.3.0 — Phase 3 trialled: decisions recorded with sources, a roadmap ordered
+by risk rather than convenience, and verification criteria that are real tests
 rather than checkboxes. The scope-versus-deadline tension was scheduled for measurement instead
 of being declared solved. Fixes: an "accepted cost" line added to the decision format, the
 rejected-alternatives line made non-blankable, and assumption promotion extended to cover
 assumptions settled as a side effect of another decision.
 
-Version 0.2.1 — Phase 2 also trialled on the same project: four branches, ~2,250 lines of
-sourced research, and three cross-branch conflicts that no single branch could have found.
+Version 0.2.1 — Phase 2 also trialled on the same project: several branches of
+sourced research, and cross-branch conflicts that no single branch could have found.
 Research and decision stayed separated, and the summary led with the finding that invalidated
 the user's own core premise. Fixes from that trial: the dead-ends section is now a required
 opening rather than an emergent habit, verification markers sit next to claims instead of in
 a section at the end, and calculations must separate sourced inputs from estimates.
 
 Phase 0 and Phase 1 trialled against a real project (a multi-tenant SaaS). Both behaved as designed: the folder was classified correctly, discovery
-finished in three rounds, out-of-scope was pushed on properly, and a scope-versus-deadline
+finished in a few rounds, out-of-scope was pushed on properly, and a scope-versus-deadline
 contradiction was recorded rather than smoothed over.
 
 Fixes from that trial, all in Phase 1: the state file is now created before the first
