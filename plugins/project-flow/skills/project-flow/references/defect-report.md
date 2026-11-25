@@ -95,25 +95,34 @@ the PR", "send it", "you don't need to ask" — covers preparing the report, nev
 ## Rules
 
 - **Nothing leaves except through `report.sh send`.** No `git push`, `gh`, `curl` or similar of your
-  own from a report workdir, no pasting the description anywhere else, no editing `payload.txt` or
-  the preview record by hand.
+  own, no pasting the description anywhere else, no editing the payload, the preview record or the
+  consent file by hand.
 - **What is sent is the payload and only the payload**: target repository, base commit, route,
   account, commit identity (the account's GitHub no-reply address, the date in UTC), branch, title,
   the fixed-shape body, and on the pull-request route a diff limited to `plugins/project-flow/`. The
   issue route sends no diff. `send` reads every one of these from the payload, so the digest covers
-  them all.
+  them all, and it rebuilds the commit from the previewed diff, never from the agent's clone.
+- **Show the preview in a fence longer than any run of backticks inside it**, so a diff that adds a
+  code block cannot end the block early.
+- **The second yes is checked by `send` itself.** `preview` records the digest it showed. The
+  plugin's hook sees that output in this session's main conversation (not in a subagent) and, when
+  the user next types a message, writes a consent file for that digest into the workdir.
+  Background-task notifications and other machine-generated prompts do not count. `send` on the
+  pull-request route refuses without that file, refuses a digest other than the previewed one, and
+  uses the consent up. The hook proves that the user typed something after seeing the preview; that
+  it was a yes is this session's reading, and anything short of a plain yes is a no.
 - **The scrub is mechanical and fails closed.** `prepare`, `preview` and `send` each refuse a payload
   whose generated header lines are not in their fixed form, or whose title, body, branch, diff file
-  paths or added lines name a home-directory path, an e-mail address (other than `example.com` and
-  GitHub no-reply), the machine's user, host or git names or the git e-mail's domain, the project's
-  directory, parent directory, git remote or file names (spaced or joined spellings included) that
-  the plugin's own text at the base commit does not already use, a secret-shaped string, an IP
-  address outside the documentation ranges, an internal host name, or a path outside the plugin. A
-  scrub that cannot run refuses too. A refusal is never worked around.
-- **The preview is the payload.** `preview` records the digest it showed; `send` refuses any digest
-  other than that one, or a payload that changed since, and rebuilds the commit from the previewed
-  diff rather than from the agent's working copy, whose clone cannot push anywhere.
-- **The second yes is a turn boundary.** A plugin hook refuses `send` unless the user has submitted a
-  message after the session's latest preview, and refuses network commands and writes to the payload
-  files from a report workdir. The hook proves that the user replied, not what they replied: reading
-  the reply as a yes is still this session's job, and anything short of a plain yes is a no.
+  paths or added lines contain a home-directory path, an e-mail address (other than `example.com`
+  and GitHub no-reply), or the project's directory name or one of its file names — tracked, or untracked and not ignored —
+  at any depth, that the plugin's own text at the base commit does not already
+  use. A scrub that cannot run refuses too. Beyond those three, it also catches, as best effort: the
+  machine's user, host and git names and the git e-mail's domain, the project's parent directory and
+  git remote, spaced or joined spellings of these names, common secret-token formats, IPv4 addresses
+  outside the documentation ranges, internal host names, and paths outside the plugin. A refusal is
+  never worked around.
+- **What the guards cover.** They catch a mistake or a shortcut — sending without asking, sending
+  something other than what was shown, a name that slipped into the text. They run as the user on
+  the user's machine, so they cannot stop a session that sets out to defeat them, for example by
+  writing the consent file itself or by sending through `gh` outside this flow. These rules are what
+  forbids that.

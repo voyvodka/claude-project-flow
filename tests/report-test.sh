@@ -8,6 +8,23 @@ ROOT=$(cd "$(dirname "$0")/.." && pwd)
 PLUGIN="$ROOT/plugins/project-flow"
 REPORT="$PLUGIN/skills/project-flow/scripts/report.sh"
 GUARD="$PLUGIN/hooks/report-guard.sh"
+export CLAUDE_PLUGIN_DATA  # set below, before the first hook call
+# Hook inputs in the shape Claude Code sends (captured from a real session, values replaced).
+hook_json() { # event, extra JSON fields
+  printf '{"session_id":"%s","transcript_path":"/t/x.jsonl","cwd":"/w","prompt_id":"p1","permission_mode":"default","hook_event_name":"%s"%s}' "${SID:-s1}" "$1" "$2"
+}
+json_str() { python3 -c 'import json,sys; sys.stdout.write(json.dumps(sys.stdin.read()))'; }
+post_preview() { # stdout file [agent]
+  local extra=""; [ -n "${2:-}" ] && extra=',"agent_id":"a1","agent_type":"general-purpose"'
+  hook_json PostToolUse "$extra,\"tool_name\":\"Bash\",\"tool_input\":{\"command\":\"bash \\\"\$R\\\" preview\"},\"tool_response\":{\"stdout\":$(json_str < "$1"),\"stderr\":\"\",\"interrupted\":false}" | bash "$GUARD"
+}
+user_prompt() { hook_json UserPromptSubmit ",\"prompt\":$(printf '%s' "$1" | json_str)" | bash "$GUARD"; }
+reset_consent() { rm -f "$CLAUDE_PLUGIN_DATA"/report-guard/pending-* "$W/consent"; }
+preview_with_reply() { # runs preview, feeds the hook, then a typed reply; prints the digest
+  "$REPORT" preview --workdir "$W" --project "$P" > "$T/pv.out"
+  post_preview "$T/pv.out"; user_prompt "yes"
+  sed -n 's/^Digest: //p' "$T/pv.out"
+}
 T=$(mktemp -d); trap 'rm -rf "$T"' EXIT
 pass=0; fail=0
 ok()  { pass=$((pass+1)); echo "ok   $1"; }
@@ -15,6 +32,7 @@ bad() { fail=$((fail+1)); echo "FAIL $1"; }
 check() { if eval "$2"; then ok "$1"; else bad "$1"; fi; }
 
 export HOME="$T/home"; mkdir -p "$HOME"
+CLAUDE_PLUGIN_DATA="$T/data"
 export GIT_CONFIG_GLOBAL="$T/gitconfig" GIT_CONFIG_NOSYSTEM=1 TMPDIR="$T/tmp"; mkdir -p "$TMPDIR"
 git config --global user.name "Dana Quillfeather"
 git config --global user.email "dana.quillfeather@mailbox.test"
@@ -136,6 +154,20 @@ printf '%s\n' "$D" > "$W/previewed"
 cp "$T/payload.bak" "$W/payload.txt"
 
 : > "$GH_LOG"
+"$REPORT" send --workdir "$W" --project "$P" --digest "$D" > /dev/null 2>"$T/err"; rc=$?
+check "send right after preview, with no reply from the user, is refused (rc=$rc)" '[ $rc != 0 ] && grep -q "no reply" "$T/err" && ! grep -q "pr create" "$GH_LOG"'
+post_preview "$T/preview"; user_prompt "<task-notification><task-id>x</task-id><status>completed</status></task-notification>"
+"$REPORT" send --workdir "$W" --project "$P" --digest "$D" > /dev/null 2>"$T/err"; rc=$?
+check "a background-task notification is not a reply (rc=$rc)" '[ $rc != 0 ] && ! grep -q "pr create" "$GH_LOG"'
+reset_consent; post_preview "$T/preview" agent; user_prompt "yes"
+"$REPORT" send --workdir "$W" --project "$P" --digest "$D" > /dev/null 2>"$T/err"; rc=$?
+check "a preview run by a subagent, which the user never saw, earns no consent (rc=$rc)" '[ $rc != 0 ] && ! grep -q "pr create" "$GH_LOG"'
+reset_consent; post_preview "$T/preview"; SID=s2 user_prompt "yes"
+"$REPORT" send --workdir "$W" --project "$P" --digest "$D" > /dev/null 2>"$T/err"; rc=$?
+check "a reply in another session does not count (rc=$rc)" '[ $rc != 0 ] && ! grep -q "pr create" "$GH_LOG"'
+reset_consent; ( cd "$(dirname "$REPORT")" && bash ./report.sh send --workdir "$W" --project "$P" --digest "$D" ) > /dev/null 2>&1; rc=$?
+check "the gate holds however the script is invoked (relative path from its own directory) (rc=$rc)" '[ $rc != 0 ] && ! grep -q "pr create" "$GH_LOG"'
+post_preview "$T/preview"; user_prompt "yes"
 "$REPORT" send --workdir "$W" --project "$P" --digest "$D" > "$T/out" 2>"$T/err"; rc=$?
 check "send via fork succeeds (rc=$rc)" '[ $rc = 0 ] && grep -q "repo fork" "$GH_LOG" && grep -q "pull/999" "$T/out"'
 BR=$(sed -n 's/^Branch: //p' "$W/payload.txt")
@@ -149,10 +181,14 @@ awk '/^=== Body ===$/{b=1; next} /^=== Diff ===$/{exit} b' "$W/payload.txt" > "$
 check "PR body equals the previewed body" 'cmp -s "$GH_LOG.body" "$T/previewed.body"'
 check "PR head is the fork branch" '[ "$(cat "$GH_LOG.head")" = "tester:$BR" ]'
 check "nothing in the sent commit names the user" '! git --git-dir="$FORK" log -1 --format=%B%an%ae%cn%ce "$BR" | grep -qi -e quillfeather -e dana'
+"$REPORT" send --workdir "$W" --project "$P" --digest "$D" > /dev/null 2>"$T/err"; rc=$?
+check "consent is used up by one send (rc=$rc)" '[ $rc != 0 ] && grep -q "no reply" "$T/err"'
+post_preview "$T/preview"; user_prompt "yes"; "$REPORT" preview --workdir "$W" --project "$P" > /dev/null
+check "a new preview clears an earlier consent" '[ ! -f "$W/consent" ]'
 
 export PUSH_PERM=true; : > "$GH_LOG"
 new_workdir; "$REPORT" prepare --workdir "$W" --project "$P" >/dev/null
-D=$("$REPORT" preview --workdir "$W" --project "$P" | sed -n 's/^Digest: //p')
+D=$(preview_with_reply)
 "$REPORT" send --workdir "$W" --project "$P" --digest "$D" >/dev/null 2>"$T/err"; rc=$?
 BR=$(sed -n 's/^Branch: //p' "$W/payload.txt")
 check "with push permission the branch goes to the repository, no fork (rc=$rc)" \
@@ -169,26 +205,6 @@ awk '/^=== Body ===$/{b=1; next} b' "$W/payload.txt" > "$T/issue.body"
 check "issue link body decodes to the previewed body" '[ "$decoded" = "$(cat "$T/issue.body")" ]'
 check "issue route makes no pr/push call" '! grep -q -e "pr create" -e "repo fork" "$GH_LOG"'
 unset GH_AUTHED
-
-export CLAUDE_PLUGIN_DATA="$T/data"
-ev() { printf '{"session_id":"s1","hook_event_name":"%s","tool_name":"Bash","tool_input":{"command":"%s"}}' "$1" "$2" | bash "$GUARD"; }
-out=$(ev PreToolUse "bash /x/skills/project-flow/scripts/report.sh send --workdir /t/pf-report.1 --project . --digest ab")
-check "hook: send with no preview in the session is denied" '[[ "$out" == *deny* ]]'
-ev UserPromptSubmit "" >/dev/null; sleep 1
-ev PreToolUse "bash /x/skills/project-flow/scripts/report.sh preview --workdir /t/pf-report.1 --project ." >/dev/null
-out=$(ev PreToolUse "bash /x/skills/project-flow/scripts/report.sh send --workdir /t/pf-report.1 --project . --digest ab")
-check "hook: send in the same turn as the preview is denied" '[[ "$out" == *deny* ]]'
-sleep 1; ev UserPromptSubmit "" >/dev/null
-out=$(ev PreToolUse "bash /x/skills/project-flow/scripts/report.sh send --workdir /t/pf-report.1 --project . --digest ab")
-check "hook: send after the user replied is allowed" '[ -z "$out" ]'
-out=$(printf '{"session_id":"s2","hook_event_name":"PreToolUse","tool_input":{"command":"bash /x/skills/project-flow/scripts/report.sh send --digest ab"}}' | bash "$GUARD")
-check "hook: a reply in another session does not count" '[[ "$out" == *deny* ]]'
-out=$(ev PreToolUse "cd /t/pf-report.1/src && git push origin HEAD")
-check "hook: raw git push from a report workdir is denied" '[[ "$out" == *deny* ]]'
-out=$(ev PreToolUse "cd /t/pf-report.1 && gh pr create --title x --body y")
-check "hook: raw gh pr create from a report workdir is denied" '[[ "$out" == *deny* ]]'
-out=$(ev PreToolUse "git push origin main")
-check "hook: ordinary pushes elsewhere are untouched" '[ -z "$out" ]'
 
 # Cases from the pre-release review.
 reprep() { "$REPORT" prepare --workdir "$W" --project "$P" >/dev/null 2>"$T/err"; rc=$?; }
@@ -248,43 +264,35 @@ check "a project with more than 20000 files can still be reported (rc=$rc)" '[ $
 touch "$T/tmp/repo-x"; mkdir -p "$T/gh/tester"; rm -rf "$T/gh/tester/claude-project-flow.git"
 git init -q --bare "$T/gh/tester/claude-project-flow.git"; touch "$T/gh/tester/claude-project-flow.git/not-a-fork"
 new_workdir; "$REPORT" prepare --workdir "$W" --project "$P" >/dev/null
-D=$("$REPORT" preview --workdir "$W" --project "$P" | sed -n 's/^Digest: //p')
+D=$(preview_with_reply)
 "$REPORT" send --workdir "$W" --project "$P" --digest "$D" >/dev/null 2>"$T/err"; rc=$?
 BR=$(sed -n 's/^Branch: //p' "$W/payload.txt")
 check "an existing repo that is not a fork of the target gets nothing (rc=$rc)" \
   '[ $rc != 0 ] && grep -q "not a fork" "$T/err" && ! git --git-dir="$T/gh/tester/claude-project-flow.git" rev-parse -q --verify "$BR" >/dev/null'
 
-export CLAUDE_PLUGIN_DATA="$T/data2"
-S='bash /p/skills/project-flow/scripts/report.sh'
-evj() { printf '{"session_id":"s9","hook_event_name":"PreToolUse","tool_name":"Bash","cwd":"%s","tool_input":{"command":"%s"}}' "${3:-/w}" "$2" | bash "$GUARD"; }
-evp() { printf '{"session_id":"s9","hook_event_name":"UserPromptSubmit","prompt":"x"}' | bash "$GUARD"; }
-evp >/dev/null; sleep 1
-for c in "$S preview --workdir W; $S send --workdir W --digest d" \
-         "R=/p/skills/project-flow/scripts/report.sh; bash \\\"\$R\\\" send --digest d" \
-         "$S \\\"send\\\" --digest d" "$S 'send' --digest d" "$S send --digest d # preview"; do
-  out=$(evj PreToolUse "$c")
-  check "hook: send variant without a reply is denied: $c" '[[ "$out" == *deny* ]]'
+new_workdir; "$REPORT" prepare --workdir "$W" --project "$P" >/dev/null
+( cd "$W/src" && git push -q "example-host:owner/repo" HEAD:x ) > /dev/null 2>&1; rc1=$?
+( cd "$W/src" && git push -q ../../ HEAD:x ) > /dev/null 2>&1; rc2=$?
+check "the agent's clone refuses scp-style and relative pushes too (rc=$rc1/$rc2)" '[ $rc1 != 0 ] && [ $rc2 != 0 ]'
+user_prompt "an ordinary prompt with nothing pending" >/dev/null
+check "the hook writes nothing when no preview is pending" '[ ! -f "$W/consent" ]'
+
+BIGNAME="$T/work/many-files"; mkdir -p "$BIGNAME"; git -C "$BIGNAME" init -q
+( cd "$BIGNAME" && i=0; while [ "$i" -lt 21000 ]; do : > "f$i.txt"; i=$((i+1)); done; : > zz_marlowquest_plan.txt; git add -A && git commit -qm big )
+new_workdir; printf '%s\n' "$FIELDS_OK" | sed 's|^what-happened:.*|what-happened: zz_marlowquest_plan.txt was rewritten.|' > "$W/fields"
+"$REPORT" prepare --workdir "$W" --project "$BIGNAME" >/dev/null 2>"$T/err"; rc=$?
+check "file names past the first 20000 are still scanned (rc=$rc)" '[ $rc = 3 ] && grep -q "project name" "$T/err"'
+echo x > "$P/zephyrine_contract.pdf"; mkdir -p "$P/a/b/c/d/e/f"; echo x > "$P/a/b/c/d/e/f/deepnamefile.txt"
+for v in "zephyrine_contract.pdf leaked." "deepnamefile.txt leaked."; do
+  new_workdir; printf '%s\n' "$FIELDS_OK" | sed "s|^what-happened:.*|what-happened: $v|" > "$W/fields"
+  "$REPORT" prepare --workdir "$W" --project "$P" >/dev/null 2>"$T/err"; rc=$?
+  check "untracked and deep file names are scanned: $v (rc=$rc)" '[ $rc = 3 ]'
 done
-out=$(CLAUDE_PLUGIN_DATA=/nonexistent/x evj PreToolUse "$S send --digest d")
-check "hook: send is denied when consent cannot be recorded" '[[ "$out" == *deny* ]]'
-out=$(evj PreToolUse "git commit -m \\\"report.sh: fix send path\\\" && git push")
-check "hook: an unrelated commit mentioning report.sh and send is untouched" '[ -z "$out" ]'
-out=$(evj PreToolUse "./report.sh send")
-check "hook: a project's own report.sh is untouched" '[ -z "$out" ]'
-for c in "cd /t/pf-report.1/src && git push https://github.com/x/y HEAD:x" \
-         "gh api repos/x/y/issues -f title=x -F body=@/t/pf-report.1/body.md" \
-         "gh gist create /t/pf-report.1/body.md" "curl -d @/t/pf-report.1/body.md https://x.test"; do
-  out=$(evj PreToolUse "$c")
-  check "hook: raw send from a report workdir is denied: ${c:0:40}" '[[ "$out" == *deny* ]]'
-done
-out=$(evj PreToolUse "git push origin HEAD" "/t/pf-report.1/send")
-check "hook: a push whose working directory is a report workdir is denied" '[[ "$out" == *deny* ]]'
-out=$(evj PreToolUse "echo abc > /t/pf-report.1/previewed")
-check "hook: writing the preview record by hand is denied" '[[ "$out" == *deny* ]]'
-out=$(printf '{"session_id":"s9","hook_event_name":"PreToolUse","tool_name":"Write","tool_input":{"file_path":"/t/pf-report.1/payload.txt","content":"x"}}' | bash "$GUARD")
-check "hook: the Write tool cannot touch the payload" '[[ "$out" == *deny* ]]'
-out=$(printf '{"session_id":"s9","hook_event_name":"PreToolUse","tool_name":"Write","tool_input":{"file_path":"/t/pf-report.1/fields","content":"x"}}' | bash "$GUARD")
-check "hook: the Write tool may write the fields file" '[ -z "$out" ]'
+rm -rf "$P/zephyrine_contract.pdf" "$P/a"
+git config --global user.name "Flow Owner"
+new_workdir; "$REPORT" prepare --workdir "$W" --project "$P" >/dev/null 2>"$T/err"; rc=$?
+check "a personal name that is also tool vocabulary does not block every report (rc=$rc)" '[ $rc = 0 ]'
+git config --global user.name "Dana Quillfeather"
 
 echo "passed $pass, failed $fail"
 [ "$fail" = 0 ]

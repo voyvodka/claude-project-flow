@@ -1,5 +1,5 @@
 {
-  "description": "Defect reports: a report is sent only after the user has replied to its preview",
+  "description": "Defect reports: records that the user replied to a report preview, which report.sh send requires",
   "hooks": {
     "UserPromptSubmit": [
       {
@@ -8,9 +8,9 @@
         ]
       }
     ],
-    "PreToolUse": [
+    "PostToolUse": [
       {
-        "matcher": "Bash|Write|Edit|MultiEdit|NotebookEdit",
+        "matcher": "Bash",
         "hooks": [
           { "type": "command", "command": "bash \"${CLAUDE_PLUGIN_ROOT}/hooks/report-guard.sh\"" }
         ]

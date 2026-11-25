@@ -80,7 +80,8 @@ personal_terms() {
     git config --global user.email 2>/dev/null || true
     git -C "$PROJECT" config user.name 2>/dev/null || true
     git -C "$PROJECT" config user.email 2>/dev/null || true
-  } | awk '{ print; n = split($0, w, /[^A-Za-z0-9._-]+|@/); for (i = 1; i <= n; i++) print w[i] }' \
+  } | awk '{ print; n = split($0, w, /[^A-Za-z0-9._-]+|@/); for (i = 1; i <= n; i++) print w[i]
+             n = split($0, w, /[^A-Za-z0-9]+/); for (i = 1; i <= n; i++) if (length(w[i]) >= 4) print w[i] }' \
     | lower | sed 's/^[._-]*//; s/[._-]*$//' | awk 'length($0) >= 3' \
     | { grep -Ev "$GENERIC_ACCOUNTS" || true; } | sort -u
 }
@@ -91,14 +92,14 @@ project_terms() {
     basename "$(dirname "$PROJECT")"
     git -C "$PROJECT" remote -v 2>/dev/null | awk '{ print $2 }' | tr ':/' '\n' | sed 's/\.git$//'
     if git -C "$PROJECT" rev-parse --git-dir >/dev/null 2>&1; then
-      git -C "$PROJECT" ls-files 2>/dev/null | awk 'NR <= 20000'
+      git -C "$PROJECT" ls-files --cached --others --exclude-standard 2>/dev/null
     else
-      (cd "$PROJECT" && find . -maxdepth 5 \( -name .git -o -name node_modules \) -prune -o -print 2>/dev/null | awk 'NR <= 20000')
+      (cd "$PROJECT" && find . \( -name .git -o -name node_modules \) -prune -o -print 2>/dev/null)
     fi
   } | tr '/' '\n' | awk '
       length($0) && $0 != "." && $0 != ".." { print; s = $0
         while (sub(/\.[^.]*$/, "", s)) print s
-        n = split($0, part, /[-_.]+/); if (n > 1) for (i = 1; i <= n; i++) if (length(part[i]) >= 5) print part[i] }' \
+        n = split($0, part, /[-_.]+/); if (n > 1) for (i = 1; i <= n; i++) if (length(part[i]) >= 4) print part[i] }' \
     | lower | awk 'length($0) >= 3' | sort -u
 }
 
@@ -170,7 +171,8 @@ scrub() {
   # Names match as whole words and, when longer, with separators removed (spaced or joined spellings).
   vocabulary > "$tmp/vocab" && [ -s "$tmp/vocab" ] || echo "could not read the plugin source at the base commit" >> "$err"
   squash < "$tmp/vocab" | sort -u > "$tmp/vocab-squashed"
-  personal_terms > "$tmp/personal" || echo "could not list user and machine names" >> "$err"
+  personal_terms > "$tmp/personal-all" || echo "could not list user and machine names" >> "$err"
+  comm -23 "$tmp/personal-all" "$tmp/vocab" > "$tmp/personal" || echo "could not compare user and machine names" >> "$err"
   project_terms > "$tmp/project-all" || echo "could not list the project's files" >> "$err"
   comm -23 "$tmp/project-all" "$tmp/vocab" > "$tmp/project" || echo "could not compare project names" >> "$err"
   local kind list
@@ -221,11 +223,14 @@ cmd_clone() {
   local source="$repo.git" target=${repo#https://github.com/}
   local w; w=$(mktemp -d "${TMPDIR:-/tmp}/pf-report.XXXXXX")
   git clone -q --template= "$source" "$w/src" || die "could not clone $source"
-  # The background agent works in this clone; every push URL it could name is rewritten to nothing.
+  # The background agent works in this clone; push URLs are rewritten and a pre-push hook refuses.
   local prefix
   for prefix in https:// http:// ssh:// git@ git:// file:// /; do
     git -C "$w/src" config --add url."push-disabled-use-report-send:".pushInsteadOf "$prefix"
   done
+  mkdir -p "$w/src/.git/hooks"
+  printf '#!/bin/sh\necho "pushing from a report clone is disabled; report.sh send pushes" >&2\nexit 1\n' > "$w/src/.git/hooks/pre-push"
+  chmod +x "$w/src/.git/hooks/pre-push"
   {
     echo "source=$source"
     echo "target=$target"
@@ -315,11 +320,13 @@ cmd_preview() {
   [ -f "$WORKDIR/payload.txt" ] || die "no payload — run prepare first"
   run_scrub "the payload names something personal or project-specific (listed above); nothing was shown or sent."
   local d; d=$(payload_digest)
+  rm -f "$WORKDIR/consent"
   printf '%s\n' "$d" > "$WORKDIR/previewed"
   echo "----- BEGIN PREVIEW: this is exactly what will be sent -----"
   cat "$WORKDIR/payload.txt"
   echo "----- END PREVIEW -----"
   echo "Digest: $d"
+  echo "Workdir: $WORKDIR"
 }
 
 urlencode() {
@@ -347,6 +354,13 @@ cmd_send() {
   local p="$WORKDIR/payload.txt" target route title
   target=$(header Target); route=$(header Route); title=$(sed -n 's/^Title: //p' "$p" | head -n1)
   awk '/^=== Body ===$/{b=1; next} /^=== Diff ===$/{exit} b' "$p" > "$WORKDIR/body.md"
+
+  # Written by hooks/report-guard.sh only when the user typed a message after this preview.
+  if [ "$route" != "issue link that you open and submit yourself (no diff is sent)" ]; then
+    [ -f "$WORKDIR/consent" ] && [ "$(cat "$WORKDIR/consent")" = "$DIGEST" ] \
+      || die "no reply from the user is recorded since this preview. End the reply with the preview and the yes/no question; send only after the user answers yes."
+    rm -f "$WORKDIR/consent"
+  fi
 
   case "$route" in
     "issue link"*)
