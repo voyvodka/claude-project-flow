@@ -11,6 +11,10 @@ from it and from git history.
 
 ## [Unreleased]
 
+### Fixed
+
+- The brief template's existing-skill row no longer asks whether the profile applies, and a stack row records whether the stack is user-supplied, confirmed from code or open, which Phase 2 reads. `infrastructure.md` no longer assumes a paid-for server exists.
+
 ### Changed
 
 - **No default stack.** The stack is the one the user names, the one the project's code already uses, or — when neither exists — candidates Phase 2 derives from the brief and current sources. Phase 1 asks about existing skill as an open question, and Phase 3 records where the stack came from. The profile's stack files (.NET, React, Next.js, Go, Tauri, Swift, Astro, mobile) and its defaults table are removed; `avoid.md` is an empty template; `code-style.md` no longer prefers a package manager or language.

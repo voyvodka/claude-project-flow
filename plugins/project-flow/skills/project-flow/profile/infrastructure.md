@@ -104,9 +104,9 @@ slow build with warnings, not an error.
 
 ## What this means for research
 
-A managed provider is not competing against zero — it is competing against a server that is
-already running and already paid for. Managed services have to earn their monthly cost against a
-marginal cost of nothing.
+Where a server is already running and paid for, a managed provider is not competing against
+zero — it is competing against that server, and has to earn its monthly cost against a marginal
+cost of nothing. Where nothing exists yet, compare the options on equal terms.
 
 That is a real hurdle, and it is not automatically decisive: managed services buy back operating
 time, and time is the scarcer resource for a solo developer. Automatic backups, point-in-time

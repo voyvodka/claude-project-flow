@@ -73,7 +73,9 @@ Three answers to expect:
 - **No preference, or "you tell me"** — the stack is open. Record that, and Phase 2's tech
   branch researches it.
 
-Write the outcome into `01-brief.md` under constraints. Phase 2's tech branch reads it from there.
+Write the outcome into the constraints table of `01-brief.md`: existing skill in its own row, and
+the stack row as user-supplied, confirmed from the code, or open. Phase 2's tech branch reads it
+from there.
 
 Record **who or what writes the code** alongside it. If an AI writes most of it, the human's
 own fluency stops being the only thing that matters and stack selection gains a criterion it
