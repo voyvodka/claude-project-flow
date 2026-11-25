@@ -11,7 +11,7 @@ from it and from git history.
 
 ## [Unreleased]
 
-## [4.0.0] - 2026-11-25
+## [4.0.0] - 2026-11-26
 
 Breaking: the profile no longer carries stack defaults or safety rails, and the templates are English. Projects written with the earlier Turkish keys keep working.
 
