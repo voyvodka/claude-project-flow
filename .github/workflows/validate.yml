@@ -69,8 +69,7 @@ jobs:
           done
           exit $fail
 
-      # A defect report leaves the user's machine, so its privacy checks are tested rather than
-      # trusted: the scrub, preview-equals-payload, the digest, and the hook's turn boundary.
+      # A defect report leaves the user's machine, so its privacy checks are tested, not trusted.
       - name: Defect-report script and hook
         run: |
           shellcheck plugins/project-flow/skills/project-flow/scripts/report.sh \

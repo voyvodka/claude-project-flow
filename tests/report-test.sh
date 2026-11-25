@@ -1,9 +1,7 @@
 #!/usr/bin/env bash
 # shellcheck disable=SC2016,SC2034  # check() evaluates its condition strings later
-# Deterministic checks for skills/project-flow/scripts/report.sh and hooks/report-guard.sh.
-# No network: github.com URLs are rewritten to local bare repositories through a private git
-# config, and `gh` is a stub that records what it was asked to do. Every name, path and address
-# below is invented.
+# No network: github.com URLs resolve to local bare repos via a private git config, and gh is a stub.
+# Every name, path and address below is invented.
 set -uo pipefail
 export LC_ALL=C
 ROOT=$(cd "$(dirname "$0")/.." && pwd)
@@ -16,7 +14,6 @@ ok()  { pass=$((pass+1)); echo "ok   $1"; }
 bad() { fail=$((fail+1)); echo "FAIL $1"; }
 check() { if eval "$2"; then ok "$1"; else bad "$1"; fi; }
 
-# --- isolated environment ----------------------------------------------------------------
 export HOME="$T/home"; mkdir -p "$HOME"
 export GIT_CONFIG_GLOBAL="$T/gitconfig" GIT_CONFIG_NOSYSTEM=1 TMPDIR="$T/tmp"; mkdir -p "$TMPDIR"
 git config --global user.name "Dana Quillfeather"
@@ -24,14 +21,12 @@ git config --global user.email "dana.quillfeather@mailbox.test"
 git config --global init.defaultBranch main
 git config --global url."file://$T/gh/".insteadOf "https://github.com/"
 
-# Source repository: a copy of this plugin at plugins/project-flow, as on GitHub.
 mkdir -p "$T/seed/plugins" && cp -R "$PLUGIN" "$T/seed/plugins/project-flow"
 rm -rf "$T/seed/plugins/project-flow/evals/results"
 git -C "$T/seed" init -q && git -C "$T/seed" add -A && git -C "$T/seed" commit -qm seed
 mkdir -p "$T/gh/voyvodka" "$T/gh/tester"
 git clone -q --bare "$T/seed" "$T/gh/voyvodka/claude-project-flow.git"
 
-# gh stub: PUSH_PERM decides the route; every call is logged.
 mkdir -p "$T/bin"
 cat > "$T/bin/gh" <<'GH'
 #!/usr/bin/env bash
@@ -51,7 +46,6 @@ chmod +x "$T/bin/gh"
 export PATH="$T/bin:$PATH" GH_LOG="$T/gh.log" GH_ROOT="$T/gh"
 : > "$GH_LOG"
 
-# A user project with identifying names.
 P="$T/work/harbor-ledger"; mkdir -p "$P/src"
 echo x > "$P/src/tidewatch_billing.py"; echo x > "$P/README.md"
 git -C "$P" init -q && git -C "$P" add -A && git -C "$P" commit -qm init
@@ -68,16 +62,13 @@ new_workdir() {
   printf '\n<!-- clarified -->\n' >> "$W/src/plugins/project-flow/skills/project-flow/references/phase-5-build.md"
 }
 
-# 1. clone: push disabled in the agent's clone
 new_workdir
 check "clone disables push in the agent's working copy" \
   '[ "$(git -C "$W/src" remote get-url --push origin)" = push-disabled-use-report-send ]'
 
-# 2. clean payload passes; README.md (tool vocabulary) is not treated as a project name
 "$REPORT" prepare --workdir "$W" --project "$P" >/dev/null 2>"$T/err"; rc=$?
 check "clean report prepares (rc=$rc)" '[ $rc = 0 ]'
 
-# 3. scrub cases: each one must block prepare with exit 3 and name its class
 scrub_case() { # name, field-line-replacement, expected finding text
   new_workdir
   printf '%s\n' "$FIELDS_OK" | sed "s|^what-happened:.*|what-happened: $2|" > "$W/fields"
@@ -95,22 +86,18 @@ scrub_case "project directory"    "The harbor-ledger project lost a step."      
 scrub_case "project file name"    "tidewatch_billing.py was rewritten."          "project name"
 scrub_case "secret-shaped token"  "Token ghp_abcdefghijklmnopqrstuvwxyz0123 leaked." "secret"
 
-# 4. a diff that touches a file outside the plugin is refused
 new_workdir; echo "x" > "$W/src/OUTSIDE.md"
 "$REPORT" prepare --workdir "$W" --project "$P" >/dev/null 2>"$T/err"; rc=$?
 check "scrub blocks a change outside plugins/project-flow (rc=$rc)" '[ $rc = 3 ] && grep -q "outside the plugin" "$T/err"'
 
-# 5. an added diff line carrying a home path is caught even though the fields are clean
 new_workdir; printf 'see /Users/dquill/x\n' >> "$W/src/plugins/project-flow/README.md"
 "$REPORT" prepare --workdir "$W" --project "$P" >/dev/null 2>"$T/err"; rc=$?
 check "scrub reads added diff lines (rc=$rc)" '[ $rc = 3 ] && grep -q "home path" "$T/err"'
 
-# 6. example.com and noreply addresses are allowed
 new_workdir; printf '%s\n' "$FIELDS_OK" | sed 's|^what-happened:.*|what-happened: A fixture used t@example.com as its git address.|' > "$W/fields"
 "$REPORT" prepare --workdir "$W" --project "$P" >/dev/null 2>&1; rc=$?
 check "reserved example.com address passes (rc=$rc)" '[ $rc = 0 ]'
 
-# 7. preview: verbatim payload + digest; a tampered payload is re-scrubbed
 new_workdir; "$REPORT" prepare --workdir "$W" --project "$P" >/dev/null
 "$REPORT" preview --workdir "$W" --project "$P" > "$T/preview"
 D=$(sed -n 's/^Digest: //p' "$T/preview")
@@ -118,7 +105,6 @@ sed -n '/^----- BEGIN PREVIEW/,/^----- END PREVIEW/p' "$T/preview" | sed '1d;$d'
 check "preview prints the payload byte for byte" 'cmp -s "$T/shown" "$W/payload.txt"'
 check "preview shows the noreply commit identity, not the git config" 'grep -q "4242+tester@users.noreply.github.com" "$T/shown" && ! grep -qi quillfeather "$T/shown"'
 
-# 8. send refuses without the digest, and with a stale digest
 "$REPORT" send --workdir "$W" --project "$P" >/dev/null 2>&1; rc=$?
 check "send without --digest is refused (rc=$rc)" '[ $rc != 0 ] && ! grep -q "pr create" "$GH_LOG"'
 cp "$W/payload.txt" "$T/payload.bak"; sed -i.x 's/^Title: .*/Title: Gate question skipped after a resumed phase, edited/' "$W/payload.txt"
@@ -130,7 +116,6 @@ sed -i.x 's|^\*\*Proposed change:\*\* |&Reported from /Users/dquill/x. |' "$W/pa
 check "send re-scrubs a payload edited after preview, even with its own digest (rc=$rc)" '[ $rc = 3 ] && ! grep -q "pr create" "$GH_LOG"'
 cp "$T/payload.bak" "$W/payload.txt"
 
-# 9. send through a fork: pushed commit equals the preview, identity is noreply, date is UTC
 : > "$GH_LOG"
 "$REPORT" send --workdir "$W" --project "$P" --digest "$D" > "$T/out" 2>"$T/err"; rc=$?
 check "send via fork succeeds (rc=$rc)" '[ $rc = 0 ] && grep -q "repo fork" "$GH_LOG" && grep -q "pull/999" "$T/out"'
@@ -146,7 +131,6 @@ check "PR body equals the previewed body" 'cmp -s "$GH_LOG.body" "$T/previewed.b
 check "PR head is the fork branch" '[ "$(cat "$GH_LOG.head")" = "tester:$BR" ]'
 check "nothing in the sent commit names the user" '! git --git-dir="$FORK" log -1 --format=%B%an%ae%cn%ce "$BR" | grep -qi -e quillfeather -e dana'
 
-# 10. owner route: push permission pushes a branch to the repository itself, no fork
 export PUSH_PERM=true; : > "$GH_LOG"
 new_workdir; "$REPORT" prepare --workdir "$W" --project "$P" >/dev/null
 D=$("$REPORT" preview --workdir "$W" --project "$P" | sed -n 's/^Digest: //p')
@@ -156,7 +140,6 @@ check "with push permission the branch goes to the repository, no fork (rc=$rc)"
   '[ $rc = 0 ] && ! grep -q "repo fork" "$GH_LOG" && git --git-dir="$T/gh/voyvodka/claude-project-flow.git" rev-parse -q --verify "$BR" >/dev/null'
 unset PUSH_PERM
 
-# 11. fallback C: no gh session -> issue route, link carries exactly the previewed body, no network call
 export GH_AUTHED=0; : > "$GH_LOG"
 new_workdir; "$REPORT" prepare --workdir "$W" --project "$P" >/dev/null
 check "without a gh session the route is the issue link" 'grep -q "^Route: issue link" "$W/payload.txt" && ! grep -q "=== Diff ===" "$W/payload.txt"'
@@ -168,7 +151,6 @@ check "issue link body decodes to the previewed body" '[ "$decoded" = "$(cat "$T
 check "issue route makes no pr/push call" '! grep -q -e "pr create" -e "repo fork" "$GH_LOG"'
 unset GH_AUTHED
 
-# 12. hook: turn boundary between preview and send
 export CLAUDE_PLUGIN_DATA="$T/data"
 ev() { printf '{"session_id":"s1","hook_event_name":"%s","tool_name":"Bash","tool_input":{"command":"%s"}}' "$1" "$2" | bash "$GUARD"; }
 out=$(ev PreToolUse "bash /x/report.sh send --workdir /t/pf-report.1 --project . --digest ab")

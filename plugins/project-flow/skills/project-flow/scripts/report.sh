@@ -1,14 +1,5 @@
 #!/usr/bin/env bash
-# Turns a tool-defect report into a pull request (or a prefilled issue link) without letting
-# anything personal leave the machine. See references/defect-report.md for the flow.
-#
-#   report.sh clone                                         -> prints a new workdir
-#   report.sh prepare --workdir W --project P [--route pr|issue]
-#   report.sh preview --workdir W --project P               -> prints the exact payload + digest
-#   report.sh send    --workdir W --project P --digest D    -> sends exactly the previewed payload
-#
-# Every command that reads the payload re-runs the scrub, and send refuses any payload whose
-# digest differs from the one the user was shown. Bash 3.2 compatible (stock macOS).
+# Defect report: clone | prepare | preview | send. Flow and consent rules: references/defect-report.md.
 set -euo pipefail
 export LC_ALL=C
 
@@ -28,8 +19,7 @@ sha256() {
   else shasum -a 256 | cut -c1-64; fi
 }
 
-# User and global git config can change diff output (noprefix, mnemonic prefixes, colour,
-# external diff drivers), and the preview must match what send rebuilds byte for byte.
+# User git config (noprefix, colour, diff drivers) would make send's rebuilt diff differ from the preview.
 plain_git() {
   git -c diff.noprefix=false -c diff.mnemonicPrefix=false -c color.ui=false \
       -c core.hooksPath=/dev/null -c commit.gpgsign=false -c core.autocrlf=false "$@"
@@ -109,14 +99,12 @@ project_terms() {
   done | tr '[:upper:]' '[:lower:]' | awk 'length($0) >= 3' | sort -u
 }
 
-# Prints one line per finding; returns 1 when anything was found.
 scrub() {
   local payload=$1 tmp; tmp=$(mktemp -d)
   local plugin_path; plugin_path=$(meta_get "$WORKDIR" plugin)
   local login; login=$(sed -n 's/^Login: //p' "$WORKDIR/meta.route" 2>/dev/null | tr '[:upper:]' '[:lower:]' || true)
 
-  # What leaves and is new: everything above the diff, plus the diff's added lines. Context and
-  # removed lines are already public in the source repository.
+  # Diff context and removed lines are already public in the source repo; only added lines are new.
   awk '/^=== Diff ===$/{d=1; next} !d{print; next}
        /^diff --git /{h=1; next} /^@@/{h=0; next} h{next} /^\+/{print}' "$payload" > "$tmp/scan"
 
@@ -132,8 +120,7 @@ scrub() {
   grep -Eno 'gh[pousr]_[A-Za-z0-9]{20,}|github_pat_[A-Za-z0-9_]+|sk-ant-[A-Za-z0-9_-]+|sk-[A-Za-z0-9]{32,}|AKIA[0-9A-Z]{16}|xox[abpr]-[A-Za-z0-9-]+|-----BEGIN [A-Z ]*PRIVATE KEY' "$tmp/scan" \
     | sed 's/^\(.*:\).*/secret-shaped string: line \1 (value withheld)/' >> "$findings" || true
 
-  # The account that sends and the target repository are public by design and named in the
-  # payload's own header lines.
+  # The sending account and target repo are public by design and named in the header lines.
   local target; target=$(meta_get "$WORKDIR" target | tr '[:upper:]' '[:lower:]')
   personal_terms | grep -Fvx -e "$login" -e "${target%%/*}" -e "${target#*/}" > "$tmp/personal" || true
   if [ -s "$tmp/personal" ]; then
@@ -175,7 +162,7 @@ cmd_clone() {
   local source="$repo.git" target=${repo#https://github.com/}
   local w; w=$(mktemp -d "${TMPDIR:-/tmp}/pf-report.XXXXXX")
   git clone -q --template= "$source" "$w/src" || die "could not clone $source"
-  # The fix is made here by a background agent; it must not be able to push.
+  # The background agent works in this clone and must not be able to push.
   git -C "$w/src" remote set-url --push origin "push-disabled-use-report-send"
   local base_branch; base_branch=$(git -C "$w/src" symbolic-ref --short HEAD)
   {
@@ -326,7 +313,7 @@ cmd_send() {
   local now; now=$(gh api user --jq .login) || die "gh is not signed in"
   [ "$now" = "$login" ] || die "the signed-in GitHub account changed since prepare; run prepare and preview again"
 
-  # Built from the payload, not from the agent's working tree: what was shown is what is sent.
+  # Rebuilt from the previewed diff, never from the agent's working tree.
   awk '/^=== Diff ===$/{d=1; next} d' "$p" > "$WORKDIR/send.patch"
   rm -rf "$WORKDIR/send"
   git clone -q --template= "$source" "$WORKDIR/send"
