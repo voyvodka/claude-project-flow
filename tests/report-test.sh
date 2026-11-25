@@ -86,6 +86,13 @@ scrub_case "project directory"    "The harbor-ledger project lost a step."      
 scrub_case "project file name"    "tidewatch_billing.py was rewritten."          "project name"
 scrub_case "secret-shaped token"  "Token ghp_abcdefghijklmnopqrstuvwxyz0123 leaked." "secret"
 
+new_workdir; "$REPORT" prepare --workdir "$W" --project "$P" >/dev/null 2>&1
+TMPDIR=/nonexistent/tmp "$REPORT" preview --workdir "$W" --project "$P" > "$T/out" 2>"$T/err"; rc=$?
+check "scrub fails closed when it cannot run (rc=$rc)" '[ $rc != 0 ] && ! grep -q "BEGIN PREVIEW" "$T/out" && grep -q "could not run" "$T/err"'
+new_workdir; printf '%s\n' "$FIELDS_OK" | sed 's|^what-happened:.*|what-happened: It read /home/dquill/x first.|' > "$W/fields"
+TMPDIR=/nonexistent/tmp "$REPORT" prepare --workdir "$W" --project "$P" >/dev/null 2>&1; rc=$?
+check "prepare with a broken scrub does not pass a dirty payload (rc=$rc)" '[ $rc != 0 ]'
+
 new_workdir; echo "x" > "$W/src/OUTSIDE.md"
 "$REPORT" prepare --workdir "$W" --project "$P" >/dev/null 2>"$T/err"; rc=$?
 check "scrub blocks a change outside plugins/project-flow (rc=$rc)" '[ $rc = 3 ] && grep -q "outside the plugin" "$T/err"'

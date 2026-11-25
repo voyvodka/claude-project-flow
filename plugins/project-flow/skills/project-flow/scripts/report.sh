@@ -99,57 +99,72 @@ project_terms() {
   done | tr '[:upper:]' '[:lower:]' | awk 'length($0) >= 3' | sort -u
 }
 
+# Callers run scrub inside `if !`, where bash ignores `set -e`, so every step checks itself and
+# any failure is reported as a finding: the scrub fails closed.
 scrub() {
-  local payload=$1 tmp; tmp=$(mktemp -d)
-  local plugin_path; plugin_path=$(meta_get "$WORKDIR" plugin)
-  local login; login=$(sed -n 's/^Login: //p' "$WORKDIR/meta.route" 2>/dev/null | tr '[:upper:]' '[:lower:]' || true)
+  local payload=$1 tmp
+  tmp=$(mktemp -d "${TMPDIR:-/tmp}/pf-scrub.XXXXXX" 2>/dev/null) && [ -d "$tmp" ] \
+    || { echo "scrub could not run: no temporary directory (set TMPDIR to a writable directory)"; return 2; }
+  local findings="$tmp/findings" err="$tmp/errors"
+  { : > "$findings" && : > "$err"; } || { echo "scrub could not run: temporary directory is not writable"; rm -rf "$tmp"; return 2; }
+  # grep exits 1 for "no match", which is fine; 2 or more is an error.
+  hits() { local rc; "$@"; rc=$?; [ $rc -le 1 ] || echo "grep failed ($rc)" >> "$err"; return 0; }
+
+  local plugin_path login target
+  plugin_path=$(meta_get "$WORKDIR" plugin)
+  [ -n "$plugin_path" ] || echo "meta has no plugin path" >> "$err"
+  login=$(sed -n 's/^Login: //p' "$WORKDIR/meta.route" 2>/dev/null | tr '[:upper:]' '[:lower:]')
+  target=$(meta_get "$WORKDIR" target | tr '[:upper:]' '[:lower:]')
 
   # Diff context and removed lines are already public in the source repo; only added lines are new.
   awk '/^=== Diff ===$/{d=1; next} !d{print; next}
-       /^diff --git /{h=1; next} /^@@/{h=0; next} h{next} /^\+/{print}' "$payload" > "$tmp/scan"
+       /^diff --git /{h=1; next} /^@@/{h=0; next} h{next} /^\+/{print}' "$payload" > "$tmp/scan" \
+    && [ -s "$tmp/scan" ] || echo "could not read the payload" >> "$err"
+  awk '/^=== Diff ===$/{d=1; next} d' "$payload" > "$tmp/diff" || echo "could not read the diff" >> "$err"
 
-  local findings="$tmp/findings"; : > "$findings"
+  hits grep -Eno '/Users/[^/[:space:]]+|/home/[^/[:space:]]+|[A-Za-z]:\\+Users\\+[^\\[:space:]]*|/root/|/var/folders/|/private/(var|tmp)/|~/[^.[:space:]]' "$tmp/scan" > "$tmp/h1"
+  sed 's/^/home path: line /' "$tmp/h1" >> "$findings"
 
-  grep -Eno '/Users/[^/[:space:]]+|/home/[^/[:space:]]+|[A-Za-z]:\\+Users\\+[^\\[:space:]]*|/root/|/var/folders/|/private/(var|tmp)/|~/[^.[:space:]]' "$tmp/scan" \
-    | sed 's/^/home path: line /' >> "$findings" || true
+  hits grep -Eno '[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}' "$tmp/scan" > "$tmp/h2"
+  hits grep -Eiv '@(example\.(com|org|net)|users\.noreply\.github\.com)$' "$tmp/h2" > "$tmp/h2b"
+  sed 's/^/e-mail address: line /' "$tmp/h2b" >> "$findings"
 
-  grep -Eno '[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}' "$tmp/scan" \
-    | grep -Eiv '@(example\.(com|org|net)|users\.noreply\.github\.com)$' \
-    | sed 's/^/e-mail address: line /' >> "$findings" || true
-
-  grep -Eno 'gh[pousr]_[A-Za-z0-9]{20,}|github_pat_[A-Za-z0-9_]+|sk-ant-[A-Za-z0-9_-]+|sk-[A-Za-z0-9]{32,}|AKIA[0-9A-Z]{16}|xox[abpr]-[A-Za-z0-9-]+|-----BEGIN [A-Z ]*PRIVATE KEY' "$tmp/scan" \
-    | sed 's/^\(.*:\).*/secret-shaped string: line \1 (value withheld)/' >> "$findings" || true
+  hits grep -Eno 'gh[pousr]_[A-Za-z0-9]{20,}|github_pat_[A-Za-z0-9_]+|sk-ant-[A-Za-z0-9_-]+|sk-[A-Za-z0-9]{32,}|AKIA[0-9A-Z]{16}|xox[abpr]-[A-Za-z0-9-]+|-----BEGIN [A-Z ]*PRIVATE KEY' "$tmp/scan" > "$tmp/h3"
+  sed 's/^\([0-9]*\):.*/secret-shaped string: line \1 (value withheld)/' "$tmp/h3" >> "$findings"
 
   # The sending account and target repo are public by design and named in the header lines.
-  local target; target=$(meta_get "$WORKDIR" target | tr '[:upper:]' '[:lower:]')
-  personal_terms | grep -Fvx -e "$login" -e "${target%%/*}" -e "${target#*/}" > "$tmp/personal" || true
+  personal_terms > "$tmp/personal-all" || echo "could not list user and machine names" >> "$err"
+  hits grep -Fvx -e "$login" -e "${target%%/*}" -e "${target#*/}" "$tmp/personal-all" > "$tmp/personal"
   if [ -s "$tmp/personal" ]; then
-    grep -Fiwno -f "$tmp/personal" "$tmp/scan" | sed 's/^/user or machine name: line /' >> "$findings" || true
+    hits grep -Fiwno -f "$tmp/personal" "$tmp/scan" > "$tmp/h4"
+    sed 's/^/user or machine name: line /' "$tmp/h4" >> "$findings"
   fi
 
-  vocabulary > "$tmp/vocab"
-  project_terms | comm -23 - "$tmp/vocab" > "$tmp/project" || true
+  vocabulary > "$tmp/vocab" && [ -s "$tmp/vocab" ] || echo "could not read the plugin source in the workdir" >> "$err"
+  project_terms > "$tmp/project-all" || echo "could not list the project's files" >> "$err"
+  comm -23 "$tmp/project-all" "$tmp/vocab" > "$tmp/project" || echo "could not compare project names" >> "$err"
   if [ -s "$tmp/project" ]; then
-    grep -Fiwno -f "$tmp/project" "$tmp/scan" | sed 's/^/project name or file name: line /' >> "$findings" || true
+    hits grep -Fiwno -f "$tmp/project" "$tmp/scan" > "$tmp/h5"
+    sed 's/^/project name or file name: line /' "$tmp/h5" >> "$findings"
   fi
 
-  awk '/^=== Diff ===$/{d=1; next} d' "$payload" > "$tmp/diff"
   awk '
-    /^diff --git / { a=$3; b=$4; sub(/^a\//, "", a); sub(/^b\//, "", b); print a; print b; next }
-    /^diff --git / { h=1 }
-    /^@@/ { h=0 }
+    /^diff --git / { h=1; a=$3; b=$4; sub(/^a\//, "", a); sub(/^b\//, "", b); print a; print b; next }
+    /^@@/ { h=0; next }
     h && /^(\+\+\+|---) / { p=substr($0, 5); if (p != "/dev/null") { sub(/^[ab]\//, "", p); print p }; next }
     h && /^(rename|copy) (from|to) / { print substr($0, index($0, $3)) }
-  ' "$tmp/diff" | sort -u | while IFS= read -r p; do
-      case "$p" in
-        "$plugin_path"/*) case "$p" in *..*) echo "path outside the plugin: $p" ;; esac ;;
-        *) echo "path outside the plugin: $p" ;;
-      esac
-    done >> "$findings"
-  grep -Eq '^(GIT binary patch|Binary files )' "$tmp/diff" && echo "binary change: not allowed in a report" >> "$findings"
+  ' "$tmp/diff" | sort -u > "$tmp/paths" || echo "could not read the diff's paths" >> "$err"
+  while IFS= read -r p; do
+    case "$p" in
+      "$plugin_path"/*) case "$p" in *..*) echo "path outside the plugin: $p" ;; esac ;;
+      *) echo "path outside the plugin: $p" ;;
+    esac
+  done < "$tmp/paths" >> "$findings"
+  if grep -Eq '^(GIT binary patch|Binary files )' "$tmp/diff"; then echo "binary change: not allowed in a report" >> "$findings"; fi
 
   local rc=0
-  if [ -s "$findings" ]; then sort -u "$findings"; rc=1; fi
+  if [ -s "$err" ]; then sed 's/^/scrub could not run: /' "$err" | sort -u; rc=2
+  elif [ -s "$findings" ]; then sort -u "$findings"; rc=1; fi
   rm -rf "$tmp"
   return $rc
 }
