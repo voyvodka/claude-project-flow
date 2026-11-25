@@ -192,8 +192,8 @@ counts as a defect, and the rule that a fix is applied when it has been *seen to
 the text is saved.
 
 Versions 1.2.0 through 2.1.1 — the tool met real projects and mostly lost. A second trial on a
-small Go CLI proved right-sizing works: product docs came out a third the size of the SaaS trial's,
-one research branch instead of four, zero custom agents. Along the way the profile split out the
+small Go CLI proved right-sizing works: product docs came out much smaller than the first trial's,
+with fewer research branches and no custom agents. Along the way the profile split out the
 local machine from the server, the repository-layout convention landed, README generation moved to
 MVP close with separate internal and public shapes, and the phase files learned to re-read the
 profile at the moment a rule applies rather than trusting Phase 1 to have remembered it. 2.1.1 was
@@ -229,9 +229,7 @@ tests could not have caught, because the tests never built the case it needed. "
 explicit exception for a failure class that is invisible in review and fatal to the product —
 the author is the person least able to construct the case they did not think of.
 
-Version 0.8.0 — verification held up: the project's most important rule was checked against the
-database directly, with the application layer out of the picture, rather than only through the
-happy path. Documentation did not hold up. Two causes, both now specified: the session task list
+Version 0.8.0 — verification held up. Documentation did not. Two causes, both now specified: the session task list
 had become a parallel progress tracker and was being fed instead of the durable roadmap, and an
 architectural decision made during implementation was recorded in a code comment and nowhere a
 reader could find it without already knowing which file to open.
@@ -285,7 +283,7 @@ the user's own core premise. Fixes from that trial: the dead-ends section is now
 opening rather than an emergent habit, verification markers sit next to claims instead of in
 a section at the end, and calculations must separate sourced inputs from estimates.
 
-Phase 0 and Phase 1 trialled against a real project (a multi-tenant SaaS). Both behaved as designed: the folder was classified correctly, discovery
+Phase 0 and Phase 1 trialled against a real project (a SaaS product). Both behaved as designed: the folder was classified correctly, discovery
 finished in a few rounds, out-of-scope was pushed on properly, and a scope-versus-deadline
 contradiction was recorded rather than smoothed over.
 
