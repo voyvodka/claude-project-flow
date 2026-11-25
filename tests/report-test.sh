@@ -294,5 +294,10 @@ new_workdir; "$REPORT" prepare --workdir "$W" --project "$P" >/dev/null 2>"$T/er
 check "a personal name that is also tool vocabulary does not block every report (rc=$rc)" '[ $rc = 0 ]'
 git config --global user.name "Dana Quillfeather"
 
+new_workdir; mkdir -p "$P/pf-report.inside/src/plugins/project-flow"; echo x > "$P/pf-report.inside/src/plugins/project-flow/uniqueinsidename.md"
+"$REPORT" prepare --workdir "$W" --project "$P" >/dev/null 2>"$T/err"; rc=$?
+check "a report workdir inside the project is not scanned as project files (rc=$rc)" '[ $rc = 0 ]'
+rm -rf "$P/pf-report.inside"
+
 echo "passed $pass, failed $fail"
 [ "$fail" = 0 ]

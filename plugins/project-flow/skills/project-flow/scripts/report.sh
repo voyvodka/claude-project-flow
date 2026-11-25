@@ -62,9 +62,12 @@ squash() { lower | tr -cd 'a-z0-9\n'; }
 # Tool vocabulary is read from the base commit, not the working tree: a name the fix adds must not
 # whitelist itself.
 vocabulary() {
-  plain_git -C "$WORKDIR/src" archive --format=tar "$(meta_get base)" -- "$(meta_get plugin)" | tar -xOf - \
+  { plain_git -C "$WORKDIR/src" archive --format=tar "$(meta_get base)" -- "$(meta_get plugin)" | tar -xOf -
+    plain_git -C "$WORKDIR/src" ls-tree -r --name-only "$(meta_get base)" -- "$(meta_get plugin)" | tr '/' '\n'
+  } \
     | tr -cs 'A-Za-z0-9._-' '\n' | lower | sed 's/^[._-]*//; s/[._-]*$//' \
-    | awk 'length($0) { print; while (sub(/\.[^.]*$/, "")) print }' | sort -u
+    | awk 'length($0) { print; n = split($0, part, /[-_.]+/); for (i = 1; i <= n; i++) print part[i]
+                        while (sub(/\.[^.]*$/, "")) print }' | sort -u
 }
 
 GENERIC_ACCOUNTS='^(root|admin|administrator|user|users|runner|ubuntu|guest|test|home|local|localhost|macbook|macbook-air|macbook-pro|imac|mac|pc|desktop|laptop|computer|owner|default)$'
@@ -92,9 +95,9 @@ project_terms() {
     basename "$(dirname "$PROJECT")"
     git -C "$PROJECT" remote -v 2>/dev/null | awk '{ print $2 }' | tr ':/' '\n' | sed 's/\.git$//'
     if git -C "$PROJECT" rev-parse --git-dir >/dev/null 2>&1; then
-      git -C "$PROJECT" ls-files --cached --others --exclude-standard 2>/dev/null
+      git -C "$PROJECT" ls-files --cached --others --exclude-standard 2>/dev/null | grep -Ev '(^|/)pf-report\.[^/]*/'
     else
-      (cd "$PROJECT" && find . \( -name .git -o -name node_modules \) -prune -o -print 2>/dev/null)
+      (cd "$PROJECT" && find . \( -name .git -o -name node_modules -o -name 'pf-report.*' \) -prune -o -print 2>/dev/null)
     fi
   } | tr '/' '\n' | awk '
       length($0) && $0 != "." && $0 != ".." { print; s = $0
