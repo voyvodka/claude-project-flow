@@ -99,15 +99,13 @@ project_terms() {
   done | tr '[:upper:]' '[:lower:]' | awk 'length($0) >= 3' | sort -u
 }
 
-# Callers run scrub inside `if !`, where bash ignores `set -e`, so every step checks itself and
-# any failure is reported as a finding: the scrub fails closed.
+# Callers run this under `if !`, where set -e is ignored, so each step checks itself (fail closed).
 scrub() {
   local payload=$1 tmp
   tmp=$(mktemp -d "${TMPDIR:-/tmp}/pf-scrub.XXXXXX" 2>/dev/null) && [ -d "$tmp" ] \
     || { echo "scrub could not run: no temporary directory (set TMPDIR to a writable directory)"; return 2; }
   local findings="$tmp/findings" err="$tmp/errors"
   { : > "$findings" && : > "$err"; } || { echo "scrub could not run: temporary directory is not writable"; rm -rf "$tmp"; return 2; }
-  # grep exits 1 for "no match", which is fine; 2 or more is an error.
   hits() { local rc; "$@"; rc=$?; [ $rc -le 1 ] || echo "grep failed ($rc)" >> "$err"; return 0; }
 
   local plugin_path login target
