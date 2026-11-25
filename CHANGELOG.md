@@ -13,6 +13,10 @@ from it and from git history.
 
 ### Added
 
+- **Defect reports reach the source repository.** When the tool's own instructions caused a miss, it asks once whether to report it; on yes a background agent fixes it in a fresh clone of this repository, the user sees the exact title, body and diff, and on a second yes the pull request opens from the user's own GitHub account — through a fork without write access. Without a `gh` session the report becomes a prefilled issue link instead (`references/defect-report.md`, `scripts/report.sh`, `.github/ISSUE_TEMPLATE/defect-report.md`).
+- `report.sh` refuses a payload naming a home-directory path, an e-mail address, the machine's user, host or git names, the project's directory or file names, a secret-shaped string, or a path outside `plugins/project-flow/`; it signs the commit with the account's GitHub no-reply address and a UTC date, and sends only the payload whose digest the user was shown.
+- `hooks/`: `report.sh send` runs only after the user has replied to the session's latest preview, and pushes or pull-request and issue creation from a report workdir are refused. `tests/report-test.sh` covers the scrub, the digest, both pull-request routes, the issue link and the hook, in CI.
+- `evals/report-asks-first`, `report-preview-stops`, `report-scrub-blocks`, `report-issue-route`.
 - `evals/stack-open` and `evals/stack-user-named`: with no technology named, the next question leaves the stack open; with one named, it is taken as given.
 - `evals/new-turkish-project`: a new Turkish project's first state file uses the Turkish keys. The existing Turkish fixtures (`mid-concrete-task`, `stale-state`, `closed-reentry`) now cover projects written with the old keys.
 - `evals/old-turkish-keys-kept`: an answer written into a project started with the Turkish keys keeps those keys; it checks the files on disk, not the reply (#32, #33).
@@ -20,6 +24,7 @@ from it and from git history.
 
 ### Changed
 
+- **The findings ledger is no longer shipped.** `feedback/observations.md` moved from the plugin to the repository root, so installs stop receiving it, and the tool no longer writes to its own install: every change, a repair included, goes out as a report the user approves (`self-improvement.md`).
 - Routing asks for the go-ahead as a yes-or-no question about the next phase and stops there; without the removed rails, empty-folder runs had started Phase 1 by asking for the idea.
 - **No default stack.** The stack is the one the user names, the one the project's code already uses, or — when neither exists — candidates Phase 2 derives from the brief and current sources. Phase 1 asks about existing skill as an open question, and Phase 3 records where the stack came from. The profile's stack files (.NET, React, Next.js, Go, Tauri, Swift, Astro, mobile) and its defaults table are removed; `avoid.md` is an empty template; `code-style.md` no longer prefers a package manager or language.
 - **Templates and the phase files are in English.** Documents still follow the user's language; a Turkish document takes its wording from the new `references/turkish-keys.md`. Projects started before this release keep their Turkish keys (`Aktif faz`, `Belge düzeni`, `Bakım`, `Elenenler`, `⚠️ VARSAYIM`), which are read as the English ones and kept when writing; renaming them is left to the user.

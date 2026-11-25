@@ -69,6 +69,14 @@ jobs:
           done
           exit $fail
 
+      # A defect report leaves the user's machine, so its privacy checks are tested rather than
+      # trusted: the scrub, preview-equals-payload, the digest, and the hook's turn boundary.
+      - name: Defect-report script and hook
+        run: |
+          shellcheck plugins/project-flow/skills/project-flow/scripts/report.sh \
+            plugins/project-flow/hooks/report-guard.sh tests/report-test.sh
+          bash tests/report-test.sh
+
       # Two releases shipped a version block holding the same fixes twice, under two `### Fixed`
       # headings, because separate PRs each appended to `[Unreleased]` and the release stamped both
       # without merging them. Reading the file is what caught it, months later. A duplicated heading

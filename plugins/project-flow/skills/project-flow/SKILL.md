@@ -123,17 +123,17 @@ Load **only** the reference file for the phase being worked. Do not preload the 
 
 At phase gates and at increment close, ask once whether anything went wrong **because of how this
 tool is written** — and follow `references/self-improvement.md` if it did. Usually nothing did,
-and that is the end of it. This tool never edits itself without the user's approval, with two
-narrow exceptions for repairs — a reference to a file that does not exist, and one of two directly
-contradictory statements being plainly stale. Both are defined in `references/self-improvement.md`;
-anything that is a design change, not a repair, goes to the user.
+and that is the end of it. This tool never edits its own install — not even a repair of a broken
+reference; every change goes to the user as a report they approve.
 
-**Before any self-edit or log entry, check where this skill is running from:**
-`${CLAUDE_PLUGIN_ROOT}`. Claude Code substitutes that path into this file when it loads; it is not
-set in the Bash environment, and it is not substituted in the reference files. If the substitution
-did not happen, use the base directory Claude Code showed when this skill loaded. A path
-containing `plugins/cache/` is a marketplace copy that the next update replaces — say so and hand
-the user the change instead of writing it. `references/self-improvement.md` explains why.
+**A tool defect goes to the source repository as a report, not into this install.**
+`references/defect-report.md` is the flow: one yes/no question, a fix prepared in the background,
+an exact preview, and a second yes/no before anything is sent. Its script is
+`${CLAUDE_PLUGIN_ROOT}/skills/project-flow/scripts/report.sh` — Claude Code substitutes that path
+into this file when it loads; it is not set in the Bash environment and not substituted in the
+reference files. If the substitution did not happen, use the base directory Claude Code showed when
+this skill loaded, three levels up. Nothing about a defect is written into the install itself: a
+path containing `plugins/cache/` is a marketplace copy the next update replaces.
 
 Phases are ordered but not rigid: if the user has already settled the stack, Phase 2's stack comparison is skipped and the stack recorded as "user-supplied". Skipping is allowed; skipping *silently* is not — say what you are skipping and why, and note it in `00-state.md`.
 

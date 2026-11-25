@@ -1,8 +1,12 @@
 # Observations
 
 Evidence from real projects about how this tool behaves. See
-[`../references/self-improvement.md`](../references/self-improvement.md) for what belongs here and
-what the bar for acting on it is.
+[`self-improvement.md`](../plugins/project-flow/skills/project-flow/references/self-improvement.md)
+for what belongs here and what the bar for acting on it is.
+
+This ledger is the maintainer's and is not shipped: it sits outside `plugins/project-flow/`, so
+installs never receive it. Reports from installs arrive as pull requests or issues
+(`references/defect-report.md`); the ones worth keeping are recorded here.
 
 **This is a redirect, not an archive.** An applied entry collapses to a row naming where the fix
 now lives; the incident that justified it stays in git history. A lesson kept here as prose is a
