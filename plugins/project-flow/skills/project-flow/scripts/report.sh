@@ -9,6 +9,7 @@ MANIFEST="$PLUGIN_ROOT/.claude-plugin/plugin.json"
 
 die() { echo "report: $*" >&2; exit 2; }
 blocked() { echo "report: BLOCKED — $*" >&2; exit 3; }
+broken() { echo "report: SCRUB FAILED — $* Nothing was shown or sent; rewording will not help." >&2; exit 4; }
 
 manifest_field() {
   sed -n "s/^[[:space:]]*\"$1\"[[:space:]]*:[[:space:]]*\"\([^\"]*\)\".*/\1/p" "$MANIFEST" | head -n1
@@ -26,9 +27,9 @@ plain_git() {
 }
 plain_diff() { plain_git -C "$1" diff --no-ext-diff --no-textconv --no-renames "${@:2}"; }
 
-meta_get() { sed -n "s/^$2=//p" "$1/meta" | head -n1; }
+meta_get() { sed -n "s/^$1=//p" "$WORKDIR/meta" | head -n1; }
+header() { sed -n "1,/^Title: /s/^$1: //p" "$WORKDIR/payload.txt" | head -n1; }
 
-# --- argument parsing -------------------------------------------------------------------
 CMD=${1:-}; [ -n "$CMD" ] || die "usage: report.sh clone|prepare|preview|send ..."
 shift || true
 WORKDIR=""; PROJECT=""; ROUTE=""; DIGEST=""
@@ -44,21 +45,25 @@ done
 
 need_workdir() {
   [ -n "$WORKDIR" ] && [ -f "$WORKDIR/meta" ] || die "--workdir must name a directory made by 'report.sh clone'"
-  WORKDIR=$(cd "$WORKDIR" && pwd)
+  WORKDIR=$(cd "$WORKDIR" && pwd -P)
 }
+# The project is scanned, never sent. prepare records it so preview and send cannot scan a different one.
 need_project() {
-  [ -n "$PROJECT" ] && [ -d "$PROJECT" ] || die "--project must name the user's project directory (it is scanned, never sent)"
-  PROJECT=$(cd "$PROJECT" && pwd)
+  [ -n "$PROJECT" ] && [ -d "$PROJECT" ] || die "--project must name the user's project directory"
+  PROJECT=$(cd "$PROJECT" && pwd -P)
+  if [ "$1" = record ]; then printf '%s\n' "$PROJECT" > "$WORKDIR/project"
+  else [ "$PROJECT" = "$(cat "$WORKDIR/project" 2>/dev/null)" ] || die "--project differs from the one prepare scanned; run prepare again"; fi
 }
 
 # --- scrub ------------------------------------------------------------------------------
-# Words that are tool vocabulary rather than identifying: every token in the plugin's own
-# public source. A project file called README.md says nothing about the project.
+lower() { tr '[:upper:]' '[:lower:]'; }
+squash() { lower | tr -cd 'a-z0-9\n'; }
+
+# Tool vocabulary is read from the base commit, not the working tree: a name the fix adds must not
+# whitelist itself.
 vocabulary() {
-  local plugin_path; plugin_path=$(meta_get "$WORKDIR" plugin)
-  find "$WORKDIR/src/$plugin_path" -type f -print0 2>/dev/null | xargs -0 cat 2>/dev/null \
-    | tr -cs 'A-Za-z0-9._-' '\n' | tr '[:upper:]' '[:lower:]' \
-    | sed 's/^[._-]*//; s/[._-]*$//' \
+  plain_git -C "$WORKDIR/src" archive --format=tar "$(meta_get base)" -- "$(meta_get plugin)" | tar -xOf - \
+    | tr -cs 'A-Za-z0-9._-' '\n' | lower | sed 's/^[._-]*//; s/[._-]*$//' \
     | awk 'length($0) { print; while (sub(/\.[^.]*$/, "")) print }' | sort -u
 }
 
@@ -69,108 +74,143 @@ personal_terms() {
     id -un 2>/dev/null || true
     id -F 2>/dev/null || true
     hostname 2>/dev/null || true
-    hostname -s 2>/dev/null || true
     scutil --get ComputerName 2>/dev/null || true
     scutil --get LocalHostName 2>/dev/null || true
     git config --global user.name 2>/dev/null || true
-    git config --global user.email 2>/dev/null | sed 's/@.*//' || true
+    git config --global user.email 2>/dev/null || true
     git -C "$PROJECT" config user.name 2>/dev/null || true
-    git -C "$PROJECT" config user.email 2>/dev/null | sed 's/@.*//' || true
-  } | while IFS= read -r line; do
-    [ -n "$line" ] || continue
-    printf '%s\n' "$line"
-    printf '%s\n' "$line" | tr -cs 'A-Za-z0-9._-' '\n'
-  done | tr '[:upper:]' '[:lower:]' | sed 's/^[._-]*//; s/[._-]*$//' | awk 'length($0) >= 3' \
-    | grep -Ev "$GENERIC_ACCOUNTS" | sort -u
+    git -C "$PROJECT" config user.email 2>/dev/null || true
+  } | awk '{ print; n = split($0, w, /[^A-Za-z0-9._-]+|@/); for (i = 1; i <= n; i++) print w[i] }' \
+    | lower | sed 's/^[._-]*//; s/[._-]*$//' | awk 'length($0) >= 3' \
+    | { grep -Ev "$GENERIC_ACCOUNTS" || true; } | sort -u
 }
 
 project_terms() {
   {
     basename "$PROJECT"
+    basename "$(dirname "$PROJECT")"
+    git -C "$PROJECT" remote -v 2>/dev/null | awk '{ print $2 }' | tr ':/' '\n' | sed 's/\.git$//'
     if git -C "$PROJECT" rev-parse --git-dir >/dev/null 2>&1; then
-      git -C "$PROJECT" ls-files 2>/dev/null | head -n 20000
+      git -C "$PROJECT" ls-files 2>/dev/null | awk 'NR <= 20000'
     else
-      (cd "$PROJECT" && find . -maxdepth 5 \( -name .git -o -name node_modules \) -prune -o -print 2>/dev/null | head -n 20000)
+      (cd "$PROJECT" && find . -maxdepth 5 \( -name .git -o -name node_modules \) -prune -o -print 2>/dev/null | awk 'NR <= 20000')
     fi
-  } | tr '/' '\n' | sed 's/^\.\{1,2\}$//' | while IFS= read -r part; do
-    [ -n "$part" ] || continue
-    printf '%s\n' "$part"
-    case "$part" in *.*) printf '%s\n' "${part%.*}" ;; esac
-  done | tr '[:upper:]' '[:lower:]' | awk 'length($0) >= 3' | sort -u
+  } | tr '/' '\n' | awk '
+      length($0) && $0 != "." && $0 != ".." { print; s = $0
+        while (sub(/\.[^.]*$/, "", s)) print s
+        n = split($0, part, /[-_.]+/); if (n > 1) for (i = 1; i <= n; i++) if (length(part[i]) >= 5) print part[i] }' \
+    | lower | awk 'length($0) >= 3' | sort -u
+}
+
+# Lines before "Title:" are generated by prepare; each must match its fixed shape exactly, so they
+# can carry the public account and target without being scanned as free text.
+check_header() {
+  awk -v target="$(meta_get target)" -v base="$(meta_get base)" '
+    /^Title: / { exit }
+    NR == 1 { if ($0 != "project-flow defect report") bad(); next }
+    /^Target: / { if ($0 != "Target: " target) bad(); next }
+    /^Base: / { if ($0 !~ /^Base: [A-Za-z0-9._\/-]+ @ [0-9a-f]+$/ || $NF != base) bad(); next }
+    /^Route: / { if ($0 != "Route: pull request from a fork under the account below (public)" &&
+                     $0 != "Route: pull request from a branch on " target ", opened by the account below (public)" &&
+                     $0 != "Route: issue link that you open and submit yourself (no diff is sent)") bad(); next }
+    /^Account: / { if ($0 !~ /^Account: [A-Za-z0-9-]+ \(GitHub id [0-9]+\)$/) bad(); acct = $2; id = $5; sub(/\)$/, "", id); next }
+    /^Commit: / { if ($0 != "Commit: author and committer " acct " <" id "+" acct "@users.noreply.github.com>, date in UTC, message = title") bad(); next }
+    /^Branch: / { if ($0 !~ /^Branch: report\/[a-z0-9-]+$/) bad(); next }
+    { bad() }
+    function bad() { print "header line " NR " is not in the form prepare writes"; }
+  ' "$1"
 }
 
 # Callers run this under `if !`, where set -e is ignored, so each step checks itself (fail closed).
 scrub() {
   local payload=$1 tmp
   tmp=$(mktemp -d "${TMPDIR:-/tmp}/pf-scrub.XXXXXX" 2>/dev/null) && [ -d "$tmp" ] \
-    || { echo "scrub could not run: no temporary directory (set TMPDIR to a writable directory)"; return 2; }
+    || { echo "no temporary directory (set TMPDIR to a writable directory)"; return 2; }
   local findings="$tmp/findings" err="$tmp/errors"
-  { : > "$findings" && : > "$err"; } || { echo "scrub could not run: temporary directory is not writable"; rm -rf "$tmp"; return 2; }
+  { : > "$findings" && : > "$err"; } || { echo "temporary directory is not writable"; rm -rf "$tmp"; return 2; }
   hits() { local rc; "$@"; rc=$?; [ $rc -le 1 ] || echo "grep failed ($rc)" >> "$err"; return 0; }
+  ok() { "$@" || echo "step failed: $*" >> "$err"; }
 
-  local plugin_path login target
-  plugin_path=$(meta_get "$WORKDIR" plugin)
-  [ -n "$plugin_path" ] || echo "meta has no plugin path" >> "$err"
-  login=$(sed -n 's/^Login: //p' "$WORKDIR/meta.route" 2>/dev/null | tr '[:upper:]' '[:lower:]')
-  target=$(meta_get "$WORKDIR" target | tr '[:upper:]' '[:lower:]')
+  local plugin_path; plugin_path=$(meta_get plugin)
+  [ -n "$plugin_path" ] && [ -n "$(meta_get base)" ] || echo "meta is incomplete" >> "$err"
 
-  # Diff context and removed lines are already public in the source repo; only added lines are new.
-  awk '/^=== Diff ===$/{d=1; next} !d{print; next}
-       /^diff --git /{h=1; next} /^@@/{h=0; next} h{next} /^\+/{print}' "$payload" > "$tmp/scan" \
-    && [ -s "$tmp/scan" ] || echo "could not read the payload" >> "$err"
+  ok check_header "$payload" >> "$findings"
   awk '/^=== Diff ===$/{d=1; next} d' "$payload" > "$tmp/diff" || echo "could not read the diff" >> "$err"
-
-  hits grep -Eno '/Users/[^/[:space:]]+|/home/[^/[:space:]]+|[A-Za-z]:\\+Users\\+[^\\[:space:]]*|/root/|/var/folders/|/private/(var|tmp)/|~/[^.[:space:]]' "$tmp/scan" > "$tmp/h1"
-  sed 's/^/home path: line /' "$tmp/h1" >> "$findings"
-
-  hits grep -Eno '[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}' "$tmp/scan" > "$tmp/h2"
-  hits grep -Eiv '@(example\.(com|org|net)|users\.noreply\.github\.com)$' "$tmp/h2" > "$tmp/h2b"
-  sed 's/^/e-mail address: line /' "$tmp/h2b" >> "$findings"
-
-  hits grep -Eno 'gh[pousr]_[A-Za-z0-9]{20,}|github_pat_[A-Za-z0-9_]+|sk-ant-[A-Za-z0-9_-]+|sk-[A-Za-z0-9]{32,}|AKIA[0-9A-Z]{16}|xox[abpr]-[A-Za-z0-9-]+|-----BEGIN [A-Z ]*PRIVATE KEY' "$tmp/scan" > "$tmp/h3"
-  sed 's/^\([0-9]*\):.*/secret-shaped string: line \1 (value withheld)/' "$tmp/h3" >> "$findings"
-
-  # The sending account and target repo are public by design and named in the header lines.
-  personal_terms > "$tmp/personal-all" || echo "could not list user and machine names" >> "$err"
-  hits grep -Fvx -e "$login" -e "${target%%/*}" -e "${target#*/}" "$tmp/personal-all" > "$tmp/personal"
-  # A user name can be part of the public login ("dana" in "dana-ops"); mask those strings first.
-  awk -v a="$login" -v b="$target" '
-    function mask(line, w,   i, out) { if (w == "") return line; out = ""
-      while ((i = index(tolower(line), w)) > 0) { out = out substr(line, 1, i - 1) "_"; line = substr(line, i + length(w)) }
-      return out line }
-    { print mask(mask($0, b), a) }' "$tmp/scan" > "$tmp/scan-personal" || echo "could not mask the account name" >> "$err"
-  if [ -s "$tmp/personal" ]; then
-    hits grep -Fiwno -f "$tmp/personal" "$tmp/scan-personal" > "$tmp/h4"
-    sed 's/^/user or machine name: line /' "$tmp/h4" >> "$findings"
-  fi
-
-  vocabulary > "$tmp/vocab" && [ -s "$tmp/vocab" ] || echo "could not read the plugin source in the workdir" >> "$err"
-  project_terms > "$tmp/project-all" || echo "could not list the project's files" >> "$err"
-  comm -23 "$tmp/project-all" "$tmp/vocab" > "$tmp/project" || echo "could not compare project names" >> "$err"
-  if [ -s "$tmp/project" ]; then
-    hits grep -Fiwno -f "$tmp/project" "$tmp/scan" > "$tmp/h5"
-    sed 's/^/project name or file name: line /' "$tmp/h5" >> "$findings"
-  fi
-
   awk '
     /^diff --git / { h=1; a=$3; b=$4; sub(/^a\//, "", a); sub(/^b\//, "", b); print a; print b; next }
     /^@@/ { h=0; next }
     h && /^(\+\+\+|---) / { p=substr($0, 5); if (p != "/dev/null") { sub(/^[ab]\//, "", p); print p }; next }
     h && /^(rename|copy) (from|to) / { print substr($0, index($0, $3)) }
   ' "$tmp/diff" | sort -u > "$tmp/paths" || echo "could not read the diff's paths" >> "$err"
+
+  # Free text that leaves: title, branch, body, the diff's file paths and added lines. Diff context
+  # and removed lines are already public in the source repository.
+  { awk '/^Title: /{t=1} /^Branch: report\//{print substr($0, 16); next} t && !/^=== Diff ===$/{print} /^=== Diff ===$/{exit}' "$payload"
+    sed 's/^/path: /' "$tmp/paths"
+    awk '/^=== Diff ===$/{d=1; next} !d{next} /^diff --git /{h=1; next} /^@@/{h=0; next} h{next} /^\+/{print}' "$payload"
+  } > "$tmp/scan" && [ -s "$tmp/scan" ] || echo "could not read the payload" >> "$err"
+  squash < "$tmp/scan" > "$tmp/scan-squashed" || echo "could not normalise the payload" >> "$err"
+
+  hits grep -Eino '/users/[^/[:space:]]+|/home/[^/[:space:]]+|[a-z]:\\+users\\+[^\\[:space:]]*|/root/|/var/folders/|/private/(var|tmp)/|~/[^.[:space:]]' "$tmp/scan" > "$tmp/h1"
+  sed 's/^/home path: line /' "$tmp/h1" >> "$findings"
+
+  hits grep -Eno '[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}' "$tmp/scan" > "$tmp/h2"
+  hits grep -Eiv '@(example\.(com|org|net)|users\.noreply\.github\.com)$' "$tmp/h2" > "$tmp/h2b"
+  sed 's/^/e-mail address: line /' "$tmp/h2b" >> "$findings"
+
+  hits grep -Eno 'gh[pousr]_[A-Za-z0-9]{20,}|github_pat_[A-Za-z0-9_]+|glpat-[A-Za-z0-9_-]{16,}|sk-ant-[A-Za-z0-9_-]+|sk-[A-Za-z0-9_-]{32,}|[sr]k_(live|test)_[A-Za-z0-9]{16,}|AKIA[0-9A-Z]{16}|AIza[0-9A-Za-z_-]{30,}|npm_[A-Za-z0-9]{30,}|xox[abpr]-[A-Za-z0-9-]+|eyJ[A-Za-z0-9_-]{10,}\.eyJ[A-Za-z0-9_-]{10,}|-----BEGIN [A-Z ]*PRIVATE KEY' "$tmp/scan" > "$tmp/h3"
+  sed 's/^\([0-9]*\):.*/secret-shaped string: line \1 (value withheld)/' "$tmp/h3" >> "$findings"
+
+  hits grep -Eno '([0-9]{1,3}\.){3}[0-9]{1,3}' "$tmp/scan" > "$tmp/h6"
+  hits grep -Ev ':(127\.0\.0\.1|0\.0\.0\.0|192\.0\.2\.[0-9]+|198\.51\.100\.[0-9]+|203\.0\.113\.[0-9]+)$' "$tmp/h6" > "$tmp/h6b"
+  sed 's/^/IP address: line /' "$tmp/h6b" >> "$findings"
+  hits grep -Eino '[a-z0-9-]+\.(local|internal|lan|corp|intranet|home\.arpa)([^a-z0-9-]|$)' "$tmp/scan" > "$tmp/h7"
+  sed 's/^/internal host name: line /' "$tmp/h7" >> "$findings"
+
+  # Names match as whole words and, when longer, with separators removed (spaced or joined spellings).
+  vocabulary > "$tmp/vocab" && [ -s "$tmp/vocab" ] || echo "could not read the plugin source at the base commit" >> "$err"
+  squash < "$tmp/vocab" | sort -u > "$tmp/vocab-squashed"
+  personal_terms > "$tmp/personal" || echo "could not list user and machine names" >> "$err"
+  project_terms > "$tmp/project-all" || echo "could not list the project's files" >> "$err"
+  comm -23 "$tmp/project-all" "$tmp/vocab" > "$tmp/project" || echo "could not compare project names" >> "$err"
+  local kind list
+  for kind in personal project; do
+    list="$tmp/$kind"
+    [ "$kind" = personal ] && label="user or machine name" || label="project name or file name"
+    if [ -s "$list" ]; then
+      hits grep -Fiwno -f "$list" "$tmp/scan" > "$tmp/w-$kind"
+      sed "s/^/$label: line /" "$tmp/w-$kind" >> "$findings"
+      squash < "$list" | awk 'length($0) >= 6' | sort -u | comm -23 - "$tmp/vocab-squashed" > "$list-squashed"
+      if [ -s "$list-squashed" ]; then
+        hits grep -Fno -f "$list-squashed" "$tmp/scan-squashed" > "$tmp/s-$kind"
+        sed "s/^/$label (run together): line /" "$tmp/s-$kind" >> "$findings"
+      fi
+    fi
+  done
+
   while IFS= read -r p; do
     case "$p" in
-      "$plugin_path"/*) case "$p" in *..*) echo "path outside the plugin: $p" ;; esac ;;
-      *) echo "path outside the plugin: $p" ;;
+      "$plugin_path"/*) ;;
+      *) echo "path outside the plugin: $p"; continue ;;
     esac
+    case "$p" in *..*|*[!A-Za-z0-9._/-]*) echo "path with unexpected characters: $p" ;; esac
   done < "$tmp/paths" >> "$findings"
   if grep -Eq '^(GIT binary patch|Binary files )' "$tmp/diff"; then echo "binary change: not allowed in a report" >> "$findings"; fi
 
   local rc=0
-  if [ -s "$err" ]; then sed 's/^/scrub could not run: /' "$err" | sort -u; rc=2
+  if [ -s "$err" ]; then sort -u "$err"; rc=2
   elif [ -s "$findings" ]; then sort -u "$findings"; rc=1; fi
   rm -rf "$tmp"
   return $rc
+}
+
+run_scrub() {
+  local out rc=0
+  out=$(scrub "$WORKDIR/payload.txt") || rc=$?
+  [ $rc = 0 ] && return 0
+  printf '%s\n' "$out" >&2
+  [ $rc = 1 ] || broken "the privacy scrub could not run (listed above)."
+  blocked "$1"
 }
 
 # --- commands ---------------------------------------------------------------------------
@@ -181,14 +221,16 @@ cmd_clone() {
   local source="$repo.git" target=${repo#https://github.com/}
   local w; w=$(mktemp -d "${TMPDIR:-/tmp}/pf-report.XXXXXX")
   git clone -q --template= "$source" "$w/src" || die "could not clone $source"
-  # The background agent works in this clone and must not be able to push.
-  git -C "$w/src" remote set-url --push origin "push-disabled-use-report-send"
-  local base_branch; base_branch=$(git -C "$w/src" symbolic-ref --short HEAD)
+  # The background agent works in this clone; every push URL it could name is rewritten to nothing.
+  local prefix
+  for prefix in https:// http:// ssh:// git@ git:// file:// /; do
+    git -C "$w/src" config --add url."push-disabled-use-report-send:".pushInsteadOf "$prefix"
+  done
   {
     echo "source=$source"
     echo "target=$target"
     echo "base=$(git -C "$w/src" rev-parse HEAD)"
-    echo "base_branch=$base_branch"
+    echo "base_branch=$(git -C "$w/src" symbolic-ref --short HEAD)"
     echo "plugin=plugins/$(manifest_field name)"
   } > "$w/meta"
   echo "$w"
@@ -197,7 +239,8 @@ cmd_clone() {
 field() { sed -n "s/^$1:[[:space:]]*//p" "$WORKDIR/fields" | head -n1; }
 
 cmd_prepare() {
-  need_workdir; need_project
+  need_workdir; need_project record
+  rm -f "$WORKDIR/previewed"
   [ -f "$WORKDIR/fields" ] || die "write $WORKDIR/fields first (title, class, instruction, what-happened, proposed-change)"
   local k v
   for k in title class instruction what-happened proposed-change; do
@@ -210,42 +253,39 @@ cmd_prepare() {
   done
   [ "$(grep -cv '^[[:space:]]*$' "$WORKDIR/fields")" = 5 ] || die "fields: only the five 'key: value' lines are allowed"
 
-  local target; target=$(meta_get "$WORKDIR" target)
+  local target; target=$(meta_get target)
   if [ -z "$ROUTE" ]; then
-    if [ -n "$target" ] && command -v gh >/dev/null 2>&1 && gh auth status >/dev/null 2>&1; then ROUTE="pr"; else ROUTE="issue"; fi
+    if command -v gh >/dev/null 2>&1 && gh auth status >/dev/null 2>&1; then ROUTE="pr"; else ROUTE="issue"; fi
   fi
   case "$ROUTE" in pr|issue) ;; *) die "--route is pr or issue" ;; esac
-  [ -n "$target" ] || [ "$ROUTE" = issue ] || die "this workdir has no GitHub target; only --route issue is possible"
 
   local title; title=$(field title)
-  local slug; slug=$(printf '%s' "$title" | tr '[:upper:]' '[:lower:]' | tr -cs 'a-z0-9' '-' | sed 's/^-*//; s/-*$//' | cut -c1-40 | sed 's/-*$//')
-  local p="$WORKDIR/payload.txt"
-  : > "$WORKDIR/meta.route"
-
+  local slug; slug=$(printf '%s' "$title" | lower | tr -cs 'a-z0-9' '-' | sed 's/^-*//; s/-*$//' | cut -c1-40 | sed 's/-*$//')
+  local p="$WORKDIR/payload.txt" diff=""
   {
     echo "project-flow defect report"
-    echo "Target: ${target:-none (sending disabled)}"
-    echo "Base: $(meta_get "$WORKDIR" base_branch) @ $(meta_get "$WORKDIR" base | cut -c1-12)"
+    echo "Target: $target"
+    echo "Base: $(meta_get base_branch) @ $(meta_get base)"
   } > "$p"
 
   if [ "$ROUTE" = pr ]; then
-    local plugin_path; plugin_path=$(meta_get "$WORKDIR" plugin)
     plain_git -C "$WORKDIR/src" add -A
-    local diff; diff=$(plain_diff "$WORKDIR/src" --cached "$(meta_get "$WORKDIR" base)")
-    [ -n "$diff" ] || die "no change in $WORKDIR/src — make the fix there first"
+    diff=$(plain_diff "$WORKDIR/src" --cached "$(meta_get base)")
+    [ -n "$diff" ] || die "no change in $WORKDIR/src — make the fix there, or use --route issue for a finding with no change yet"
     local who; who=$(gh api user --jq '.login + " " + (.id|tostring)') || die "gh could not read the signed-in account"
     local login=${who% *} uid=${who#* }
-    local push; push=$(gh api "repos/$target" --jq '.permissions.push' 2>/dev/null || echo false)
-    local how="from a fork under your GitHub account"
-    [ "$push" = true ] && how="from a branch on $target"
-    { echo "Login: $login"; echo "Id: $uid"; echo "Push: $push"; } > "$WORKDIR/meta.route"
+    if [ "$(gh api "repos/$target" --jq '.permissions.push' 2>/dev/null || echo false)" = true ]; then
+      echo "Route: pull request from a branch on $target, opened by the account below (public)"
+    else
+      echo "Route: pull request from a fork under the account below (public)"
+    fi >> "$p"
     {
-      echo "Route: pull request $how, opened as $login (public)"
-      echo "Branch: report/$slug"
+      echo "Account: $login (GitHub id $uid)"
       echo "Commit: author and committer $login <$uid+$login@users.noreply.github.com>, date in UTC, message = title"
+      echo "Branch: report/$slug"
     } >> "$p"
   else
-    echo "Route: issue link — you open it in your browser and submit it yourself; no diff is sent" >> "$p"
+    echo "Route: issue link that you open and submit yourself (no diff is sent)" >> "$p"
   fi
 
   {
@@ -262,35 +302,24 @@ cmd_prepare() {
     echo
     echo "_Sent from a project-flow install after its user saw this exact text$( [ "$ROUTE" = pr ] && echo ' and diff'). It carries no project files, names or paths._"
   } >> "$p"
-  if [ "$ROUTE" = pr ]; then
-    { echo "=== Diff ==="; printf '%s\n' "$diff"; } >> "$p"
-  fi
+  [ "$ROUTE" = issue ] || { echo "=== Diff ==="; printf '%s\n' "$diff"; } >> "$p"
 
-  local findings
-  if ! findings=$(scrub "$p"); then
-    printf '%s\n' "$findings" >&2
-    blocked "the payload names something personal or project-specific (listed above). Rewrite the fields or the change in abstract terms and run prepare again."
-  fi
+  run_scrub "the payload names something personal or project-specific (listed above). Rewrite the fields or the change in more general terms and run prepare again."
   echo "prepared: $p (route: $ROUTE). Run preview to show it."
 }
 
 payload_digest() { sha256 < "$WORKDIR/payload.txt" | cut -c1-16; }
 
-checked_payload() {
-  [ -f "$WORKDIR/payload.txt" ] || die "no payload — run prepare first"
-  local findings
-  if ! findings=$(scrub "$WORKDIR/payload.txt"); then
-    printf '%s\n' "$findings" >&2
-    blocked "the payload names something personal or project-specific (listed above); nothing was shown or sent."
-  fi
-}
-
 cmd_preview() {
-  need_workdir; need_project; checked_payload
+  need_workdir; need_project check
+  [ -f "$WORKDIR/payload.txt" ] || die "no payload — run prepare first"
+  run_scrub "the payload names something personal or project-specific (listed above); nothing was shown or sent."
+  local d; d=$(payload_digest)
+  printf '%s\n' "$d" > "$WORKDIR/previewed"
   echo "----- BEGIN PREVIEW: this is exactly what will be sent -----"
   cat "$WORKDIR/payload.txt"
   echo "----- END PREVIEW -----"
-  echo "Digest: $(payload_digest)"
+  echo "Digest: $d"
 }
 
 urlencode() {
@@ -307,30 +336,33 @@ urlencode() {
 }
 
 cmd_send() {
-  need_workdir; need_project; checked_payload
+  need_workdir; need_project check
+  [ -f "$WORKDIR/payload.txt" ] || die "no payload — run prepare first"
   [ -n "$DIGEST" ] || die "--digest is required: the one printed by the preview the user approved"
-  [ "$DIGEST" = "$(payload_digest)" ] || die "the payload changed since that preview (digest mismatch) — run preview again and show it to the user"
+  [ -f "$WORKDIR/previewed" ] || die "this payload was never previewed — run preview and show it to the user"
+  [ "$DIGEST" = "$(cat "$WORKDIR/previewed")" ] && [ "$DIGEST" = "$(payload_digest)" ] \
+    || die "the payload is not the one last previewed (digest mismatch) — run preview again and show it to the user"
+  run_scrub "the payload names something personal or project-specific (listed above); nothing was sent."
 
-  local p="$WORKDIR/payload.txt" target; target=$(meta_get "$WORKDIR" target)
-  [ -n "$target" ] || die "this workdir has no GitHub target; sending is disabled"
-  local title; title=$(sed -n 's/^Title: //p' "$p" | head -n1)
+  local p="$WORKDIR/payload.txt" target route title
+  target=$(header Target); route=$(header Route); title=$(sed -n 's/^Title: //p' "$p" | head -n1)
   awk '/^=== Body ===$/{b=1; next} /^=== Diff ===$/{exit} b' "$p" > "$WORKDIR/body.md"
 
-  if grep -q '^Route: issue' "$p"; then
-    echo "Open this link, check it and submit it yourself:"
-    echo "https://github.com/$target/issues/new?title=$(printf '%s' "$title" | urlencode)&body=$(urlencode < "$WORKDIR/body.md")"
-    return 0
-  fi
+  case "$route" in
+    "issue link"*)
+      echo "Open this link, check it and submit it yourself:"
+      echo "https://github.com/$target/issues/new?title=$(printf '%s' "$title" | urlencode)&body=$(urlencode < "$WORKDIR/body.md")"
+      return 0 ;;
+  esac
 
-  local source; source=$(meta_get "$WORKDIR" source)
+  local source; source=$(meta_get source)
   [ "$source" = "https://github.com/$target.git" ] || die "source and target disagree; refusing to send"
-  local login uid push base base_branch branch
-  login=$(sed -n 's/^Login: //p' "$WORKDIR/meta.route"); uid=$(sed -n 's/^Id: //p' "$WORKDIR/meta.route")
-  push=$(sed -n 's/^Push: //p' "$WORKDIR/meta.route")
-  base=$(meta_get "$WORKDIR" base); base_branch=$(meta_get "$WORKDIR" base_branch)
-  branch=$(sed -n 's/^Branch: //p' "$p" | head -n1)
+  local account login uid base base_branch branch
+  account=$(header Account); login=${account%% *}; uid=${account##* }; uid=${uid%)}
+  base=$(header Base); base_branch=${base%% @ *}; base=${base##* @ }
+  branch=$(header Branch)
   local now; now=$(gh api user --jq .login) || die "gh is not signed in"
-  [ "$now" = "$login" ] || die "the signed-in GitHub account changed since prepare; run prepare and preview again"
+  [ "$now" = "$login" ] || die "the signed-in GitHub account is not the one in the preview; run prepare and preview again"
 
   # Rebuilt from the previewed diff, never from the agent's working tree.
   awk '/^=== Diff ===$/{d=1; next} d' "$p" > "$WORKDIR/send.patch"
@@ -345,14 +377,15 @@ cmd_send() {
   plain_diff "$WORKDIR/send" "$base" HEAD > "$WORKDIR/sent.diff"
   cmp -s "$WORKDIR/sent.diff" "$WORKDIR/send.patch" || die "the commit differs from the previewed diff; nothing was sent"
 
-  local remote_url head_owner=$login repo_name=${target#*/}
-  if [ "$push" = true ]; then
-    remote_url=$source; head_owner=${target%%/*}
-  else
-    gh repo fork "$target" --clone=false --default-branch-only >/dev/null 2>&1 || true
-    gh repo view "$login/$repo_name" --json name >/dev/null 2>&1 || die "could not create or find the fork $login/$repo_name"
-    remote_url="https://github.com/$login/$repo_name.git"
-  fi
+  local remote_url head_owner repo_name=${target#*/}
+  case "$route" in
+    "pull request from a branch on"*) remote_url=$source; head_owner=${target%%/*} ;;
+    *)
+      gh repo fork "$target" --clone=false --default-branch-only >/dev/null 2>&1 || true
+      [ "$(gh repo view "$login/$repo_name" --json parent --jq '.parent.owner.login + "/" + .parent.name' 2>/dev/null)" = "$target" ] \
+        || die "$login/$repo_name is not a fork of $target; nothing was pushed"
+      remote_url="https://github.com/$login/$repo_name.git"; head_owner=$login ;;
+  esac
   plain_git -C "$WORKDIR/send" -c credential.helper= -c 'credential.helper=!gh auth git-credential' \
     push -q "$remote_url" "HEAD:refs/heads/$branch" || die "push to $remote_url failed"
   gh pr create --repo "$target" --base "$base_branch" --head "$head_owner:$branch" \

@@ -117,7 +117,7 @@ plugins/project-flow/
 Research and defect-report fixes use `general-purpose` subagents with prompts defined in
 `phase-2-research.md` and `defect-report.md`, rather than plugin-level agent definitions — those
 would register globally in every project, which is a cost this plugin does not need to impose.
-The one global piece is `hooks/`: it runs a short shell check on each prompt and Bash call, because
+The one global piece is `hooks/`: it runs a short shell check on each prompt and on each Bash or file-writing tool call, because
 the rule that nothing is sent before the user has answered its preview has to hold mechanically.
 
 ## Developer profile

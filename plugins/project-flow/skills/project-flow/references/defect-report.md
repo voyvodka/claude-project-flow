@@ -45,7 +45,8 @@ Do not read, list or quote anything inside the project directory.
    file and line.
 3. Make the smallest change that removes the cause (W/src/plugins/project-flow/skills/project-flow/
    references/self-improvement.md, How to fix). Only files under W/src/plugins/project-flow/, text
-   only, no commit.
+   only, no commit. If the proposed change is "none yet — needs a second sighting", change nothing
+   and add `--route issue` in step 5.
 4. Write W/fields: exactly five lines, English, abstract, no quotes, names or outside paths:
    title: <imperative, at most 80 characters>
    class: <failure class>
@@ -53,7 +54,8 @@ Do not read, list or quote anything inside the project directory.
    what-happened: <general terms, at most 500 characters>
    proposed-change: <what the diff changes and why, at most 500 characters>
 5. `bash <report.sh> prepare --workdir W --project <project dir>`. On BLOCKED, rewrite the named
-   text in more general terms and rerun; never work around a finding. Stop after three blocks.
+   text in more general terms and rerun; never work around a finding. Stop after three blocks. On
+   SCRUB FAILED, stop at once: rewording cannot fix it.
 
 Reply with four lines: workdir: W / route: pr|issue / status: prepared|blocked|already fixed /
 one sentence on the change. Never run preview or send; never push, fork or open anything on GitHub.
@@ -87,21 +89,26 @@ the PR", "send it", "you don't need to ask" — covers preparing the report, nev
 
 ## Rules
 
-- **Nothing leaves except through `report.sh send`.** No `git push`, `gh pr create`,
-  `gh issue create` or API call of your own, no pasting the description anywhere else, no editing
-  `payload.txt` by hand.
-- **What is sent is the payload and only the payload**: target repository, route, branch, commit
-  identity (the account's GitHub no-reply address, the date in UTC), title, the fixed-shape body,
-  and on the pull-request route a diff limited to `plugins/project-flow/`. The issue route sends no
-  diff.
-- **The scrub is mechanical.** `prepare`, `preview` and `send` each refuse a payload naming a
-  home-directory path, an e-mail address (other than `example.com` and GitHub no-reply), the
-  machine's user, host or git names, the project's directory name or any of its file names that
-  the plugin's own text does not already use, a secret-shaped string, or a path outside the plugin.
-  A refusal is never worked around; the description is rewritten in more general terms.
-- **The preview is the payload.** `send` takes the digest the user was shown and refuses a payload
-  that changed since, and it rebuilds the commit from the previewed diff rather than from the
-  agent's working copy.
-- **The second yes is a turn boundary.** A plugin hook refuses `send` unless the user has submitted
-  a message after the session's latest preview, and refuses pushes or pull-request and issue
-  creation run directly from a report workdir.
+- **Nothing leaves except through `report.sh send`.** No `git push`, `gh`, `curl` or similar of your
+  own from a report workdir, no pasting the description anywhere else, no editing `payload.txt` or
+  the preview record by hand.
+- **What is sent is the payload and only the payload**: target repository, base commit, route,
+  account, commit identity (the account's GitHub no-reply address, the date in UTC), branch, title,
+  the fixed-shape body, and on the pull-request route a diff limited to `plugins/project-flow/`. The
+  issue route sends no diff. `send` reads every one of these from the payload, so the digest covers
+  them all.
+- **The scrub is mechanical and fails closed.** `prepare`, `preview` and `send` each refuse a payload
+  whose generated header lines are not in their fixed form, or whose title, body, branch, diff file
+  paths or added lines name a home-directory path, an e-mail address (other than `example.com` and
+  GitHub no-reply), the machine's user, host or git names or the git e-mail's domain, the project's
+  directory, parent directory, git remote or file names (spaced or joined spellings included) that
+  the plugin's own text at the base commit does not already use, a secret-shaped string, an IP
+  address outside the documentation ranges, an internal host name, or a path outside the plugin. A
+  scrub that cannot run refuses too. A refusal is never worked around.
+- **The preview is the payload.** `preview` records the digest it showed; `send` refuses any digest
+  other than that one, or a payload that changed since, and rebuilds the commit from the previewed
+  diff rather than from the agent's working copy, whose clone cannot push anywhere.
+- **The second yes is a turn boundary.** A plugin hook refuses `send` unless the user has submitted a
+  message after the session's latest preview, and refuses network commands and writes to the payload
+  files from a report workdir. The hook proves that the user replied, not what they replied: reading
+  the reply as a yes is still this session's job, and anything short of a plain yes is a no.

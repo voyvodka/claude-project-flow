@@ -190,7 +190,7 @@ keep their Turkish keys.
 plugins/project-flow/              the plugin — see its own README for detail
 feedback/observations.md           the maintainer's findings ledger; not shipped
 tests/report-test.sh               checks for the defect-report script and hook; run in CI
-.github/ISSUE_TEMPLATE/            the form a defect-report issue link opens
+.github/ISSUE_TEMPLATE/            the defect-report form, for reports filed by hand; the tool's link fills a blank issue
 ```
 
 ## Licence

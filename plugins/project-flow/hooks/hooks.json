@@ -10,7 +10,7 @@
     ],
     "PreToolUse": [
       {
-        "matcher": "Bash",
+        "matcher": "Bash|Write|Edit|MultiEdit|NotebookEdit",
         "hooks": [
           { "type": "command", "command": "bash \"${CLAUDE_PLUGIN_ROOT}/hooks/report-guard.sh\"" }
         ]
