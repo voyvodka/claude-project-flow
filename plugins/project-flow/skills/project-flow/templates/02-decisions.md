@@ -1,23 +1,22 @@
-# Kararlar
+# Decisions
 
-> Yerinde güncellenen dosya — geçmiş git'te durur, burada değil. Her zaman güncel gerçeği
-> anlatır. Bir karar değişirse ilgili başlık yeniden yazılır, "Neden" satırında dönüşün
-> gerekçesi belirtilir.
+> Updated in place — history lives in git, not here. Always describes current truth. When a
+> decision changes, its heading is rewritten and the **Why** line gives the reason for the reversal.
 >
-> "Elenenler" satırı bu dosyanın en değerli kısmıdır: onsuz devralan kişi aynı elenen
-> seçeneği baştan değerlendirip aynı sonuca yavaşça varır.
+> The **Rejected** line is the most valuable part of this file: without it, whoever inherits the
+> project re-evaluates the same rejected option and slowly reaches the same conclusion.
 >
-> **Günlük değildir.** Tarihli başlık açılmaz; değişen kararın eski hali yanında bırakılmaz,
-> elenen seçenek olarak "Elenenler"e girer. Bir karar ~15 satırı geçmez. Dosya ~800 satırı
-> geçince konulara bölünür: `decisions/<konu>.md` dosyaları, bu dosya da karar başına bir
-> satırlık dizine döner (tarih · karar · dosya).
+> **Not a log.** No dated headings; a changed decision's old form is not left beside the new one,
+> it goes into **Rejected** as a rejected option. One decision stays under ~15 lines. Past ~800
+> lines the file splits by topic into `decisions/<topic>.md` files, and this file becomes a
+> one-line-per-decision index (date · decision · file).
 
-## <Konu>
+## <Topic>
 
-**Karar:** <ne seçildi>
-**Neden:** <kararı asıl belirleyen gerekçe, bir iki cümle>
-**Elenenler:** <ne reddedildi ve tam olarak neden — boş bırakılmaz; gerçekten alternatif
-yoksa "yok — <sebep>" yazılır>
-**Kabul edilen bedel:** <bu kararın bilerek feda ettiği şey; yoksa "—">
-**Bağlı olduğu varsayım:** <V1 — yoksa "—">
-**Kaynak:** <araştırma dosyası veya link — isteğe bağlı; yoksa satır silinir>
+**Decision:** <what was chosen>
+**Why:** <the reason that actually decided it, one or two sentences>
+**Rejected:** <what was rejected and exactly why — never left blank; if there genuinely was no
+alternative, write "none — <reason>">
+**Accepted cost:** <what this decision knowingly gives up; "—" if nothing>
+**Rests on:** <A1 — "—" if none>
+**Source:** <research file or link — optional; delete the line if none>

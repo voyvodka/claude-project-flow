@@ -118,14 +118,14 @@ When the blocking items are done, walk items **7 through 12 one at a time** befo
 
 This step is not optional and it is not satisfied by the information appearing "somewhere in the document". Answers scattered across prose, or buried inside the assumptions table, read as complete while leaving real gaps: an unanswered row is only visible when there is a row to be empty. Identity and permissions, and external integrations, are the two that vanish this way most often — and both are expensive to discover late.
 
-If an item genuinely does not apply — no revenue model for an internal tool — write "yok / uygulanmaz" with the reason. That is an answer. A blank is not.
+If an item genuinely does not apply — no revenue model for an internal tool — write "none / not applicable" with the reason. That is an answer. A blank is not.
 
 ## Assumptions
 
 Any non-blocking item still unanswered when blocking items are complete gets written as:
 
 ```
-⚠️ VARSAYIM: <what was assumed> — <why this was assumed> — <what breaks if it is wrong>
+⚠️ ASSUMPTION: <what was assumed> — <why this was assumed> — <what breaks if it is wrong>
 ```
 
 Assumptions are recorded in both `01-brief.md` (in context) and `00-state.md` (as a running list). They are never deleted silently. When Phase 5 touches code that depends on an assumption, that is the moment to ask the user to confirm it — the third field above is what tells you it matters.
@@ -145,10 +145,10 @@ For a small project, say so out loud and compress: fewer questions, no market re
 | Compact file | Absorbs | Written by |
 |---|---|---|
 | `docs/product/00-state.md` | unchanged — always exists | every phase |
-| `docs/product/01-brief.md` | `02-decisions.md` — decisions become a `## Kararlar` section at the end | Phases 1 and 3 |
-| `docs/product/03-mvp.md` | `04-roadmap.md` — the phased plan becomes a `## Yol haritası` section | Phases 3 and 5 |
+| `docs/product/01-brief.md` | `02-decisions.md` — decisions become a `## Decisions` section at the end | Phases 1 and 3 |
+| `docs/product/03-mvp.md` | `04-roadmap.md` — the phased plan becomes a `## Roadmap` section | Phases 3 and 5 |
 
-Record the choice on the `Belge düzeni` line of `00-state.md` (`tam` for five files, or `kompakt`
+Record the choice on the `Document layout` line of `00-state.md` (`full` for five files, or `compact`
 followed by the mapping exactly as the template writes it). The mapping goes on that line because
 the later phases never load this file and read the state file first.
 Phases 3, 4 and 5 name `02-decisions.md` and `04-roadmap.md` directly; when the layout is compact,

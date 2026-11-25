@@ -21,7 +21,7 @@ Breaking any of these breaks the tool.
    only evidence about whether it works. Use it — but a rule added for every irritation makes a
    document too long to read, and an unread instruction is worse than a missing one. See
    `references/self-improvement.md` for the bar.
-7. **Never invent a fact.** Market numbers, competitor names, library versions, and pricing come from research with a source, or they are written as `⚠️ VARSAYIM` / `⚠️ ASSUMPTION`. Never from memory presented as fact.
+7. **Never invent a fact.** Market numbers, competitor names, library versions, and pricing come from research with a source, or they are written as `⚠️ ASSUMPTION` (in the document's language). Never from memory presented as fact.
 
 ## Language
 
@@ -31,18 +31,23 @@ Breaking any of these breaks the tool.
 
 If the project already has documents in a given language, match that language rather than switching.
 
-**The templates are written in Turkish and the phase files quote their literals; the documents
-they produce need not be Turkish.** Headings, field labels and fixed literals — `Ek bilgiler`,
-`Karar`, `yok / uygulanmaz`, `Belge düzeni: kompakt`, `Artım 3`, `⚠️ VARSAYIM` — are translated
-into the document's language when written. What is fixed is the *section set and the fields*,
-never the words naming them: an English project gets `Additional details`, `Decision`,
-`none / not applicable` and `⚠️ ASSUMPTION`, with the same sections in the same order.
+**The templates and the phase files are written in English; the documents they produce follow
+the document's language.** Headings, field labels and fixed literals — `Additional details`,
+`Decision`, `none / not applicable`, `Document layout: compact`, `Increment 3`, `⚠️ ASSUMPTION` —
+are translated into that language when written. What is fixed is the *section set and the fields*,
+never the words naming them.
+
+**Turkish documents use the wording in `references/turkish-keys.md`** — load it whenever a project's
+documents are, or are about to be, in Turkish. Projects started with versions before 4.0.0 carry
+those Turkish keys (`Aktif faz`, `Belge düzeni`, `Bakım`, `Elenenler`, `⚠️ VARSAYIM`); each one
+means exactly what its English key means, so read either form and keep the project's own wording
+when writing. Renaming a project's existing keys is the user's call, never a side effect.
 
 ## Document hygiene
 
 The documents belong to the project, not to this tool. Someone reading them a year from now should not be able to tell which tool produced them.
 
-- **Never leak this tool's vocabulary.** No checklist item numbers, no phase numbers in headings, no "madde 9 · cevaplandı". Internal scaffolding stays internal. Referring to a phase inside a note about *when* something will be decided is fine; naming one in a section heading is not.
+- **Never leak this tool's vocabulary.** No checklist item numbers, no phase numbers in headings, no "item 9 · answered". Internal scaffolding stays internal. Referring to a phase inside a note about *when* something will be decided is fine; naming one in a section heading is not.
 - **The template's section set is fixed.** Fill the sections that exist. Do not invent new top-level headings for content that belongs in an existing one — that is how the same fact ends up written twice, in two versions, with no way to tell which is current.
 - **A reversal is a sweep, not an addition.** When a decision changes, every earlier statement that encoded the old one gets rewritten or deleted — not left standing next to the new one. The stale statement is usually the more specific of the two, which makes it the one a reader follows.
 - **Write once.** If something is already stated in another document, link to it rather than restating it. `00-state.md` is the deliberate exception: it summarizes, and its summaries carry a pointer to the source.
@@ -101,11 +106,11 @@ approval. Which of the two is current is the user's call, not this tool's.
 Every `/project-flow` invocation follows the same opening move:
 
 1. Read `docs/product/00-state.md` if it exists.
-2. If it does not exist, run **Phase 0** to classify the folder. If `Aktif faz` says the MVP or a round is complete, or reads `Bakım`, the project is **closed, not in Phase 5**: load `references/phase-0-detect.md` and follow its Re-entry section before anything else.
+2. If it does not exist, run **Phase 0** to classify the folder. If `Active phase` says the MVP or a round is complete, or reads `Maintenance`, the project is **closed, not in Phase 5**: load `references/phase-0-detect.md` and follow its Re-entry section before anything else.
 3. Announce in one or two sentences where the project stands and which phase comes next — **every time**, including when the opening input is a concrete task ("review it", "how much is done"). Answer the task inside that frame, not instead of it: the announcement is what places the work in a phase for the user and for the next session.
 4. Get the user's go-ahead: ask it as a yes-or-no question about the next phase and end the reply there — the phase's own first question comes after the yes. Then load the reference file for that phase and follow it.
 
-Load **only** the reference file for the phase being worked. Do not preload the others. **After a context compaction, re-read it before continuing:** compaction re-attaches this file but re-reads no more than five recently modified files, so a phase reference may not come back, and the `Aktif faz` line in `00-state.md` names the phase whose reference applies.
+Load **only** the reference file for the phase being worked. Do not preload the others. **After a context compaction, re-read it before continuing:** compaction re-attaches this file but re-reads no more than five recently modified files, so a phase reference may not come back, and the `Active phase` line in `00-state.md` names the phase whose reference applies.
 
 | Phase | Reference | Purpose | Writes code |
 |---|---|---|---|
