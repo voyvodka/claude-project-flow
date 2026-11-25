@@ -109,17 +109,13 @@ continues from the same line of thought. That handover is the point of the whole
 
 ## The developer profile
 
-`plugins/project-flow/skills/project-flow/profile/` is the part you are meant to edit. It records what
-you already know and reach for by default, one file per stack, so a project reads only what it
-touches.
+`plugins/project-flow/skills/project-flow/profile/` is the part you are meant to edit. It records
+how you work and where things run — code conventions and safety rails, your machine, your hosting,
+technologies you have ruled out — so no project has to rediscover them.
 
-With it filled in, Phase 2 stops asking *"which stack?"* and starts asking *"is there a reason to
-deviate from the default here?"* — faster, and a better question, because it forces a candidate to
-beat the default on something the project actually needs.
-
-**The files in this repository are one developer's answers, kept as a worked example rather than
-as advice.** Replace them. A profile describing someone else is worse than an empty one, because
-it will be trusted.
+**It carries no default stack.** The stack is the one you name, the one your project already uses,
+or — when neither exists — the one Phase 2 research proposes from this project's own requirements
+and Phase 3 settles with you.
 
 ### Keeping your real profile out of git
 
@@ -134,14 +130,13 @@ profile/local/infrastructure.md    ignored     — the real one, read in prefere
 That is where hostnames, machine limits, git identity and repository paths belong. Two files
 ship as templates for exactly this reason — `infrastructure.md` and `local-environment.md` — and
 until one is filled in or overridden, the plugin treats its subject as genuinely open and asks
-rather than assuming.
+rather than assuming. `avoid.md` works the same way.
 
 **This requires running the plugin from a copy you own.** A marketplace install is copied into a
 versioned plugin cache, and that breaks the override in both directions: the clone it was built
 from never contained `local/`, and a `local/` you create inside the cache is deleted by the next
-update. Nothing errors when it fails — the templates are read instead, and the tool proceeds
-trusting answers that describe a different developer, which is exactly the outcome the profile
-warns about.
+update. Nothing errors when it fails — the templates are read instead, and the tool proceeds as
+if those subjects were unanswered.
 
 Two ways to have a real profile:
 
@@ -152,8 +147,8 @@ ln -s "$PWD/claude-project-flow/plugins/project-flow" ~/.claude/skills/project-f
 ```
 
 or install from the marketplace and edit the committed `profile/` files directly, accepting that
-an update overwrites them. If you do neither, treat every default in `profile/` as someone else's
-and expect Phase 1 to confirm each one with you.
+an update overwrites them. If you do neither, expect Phase 1 to confirm each default in `profile/`
+with you.
 
 ## It reviews itself
 

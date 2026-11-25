@@ -59,24 +59,21 @@ The remaining roles' flows belong to Phase 3's scope discussion, not here. Picki
 
 ### Item 6b — existing skill
 
-Read `profile/README.md` before asking anything. It already answers this for most projects, so do
-not re-ask what it states. Confirm it instead, in **one question**, folded into a round:
-
-> "Profile says <known stack> and defaults to <default for this project type>. Does that
-> hold for this project?"
+Ask it as **one question**, folded into a round: what the team can already build in at full
+speed, which technology the project must use, if any, and who or what writes the code. Where the
+user has named no technology, ask it open — the answer space is theirs (`SKILL.md` › Choosing the
+stack). In an existing-code project, name the stack Phase 0 found and ask whether it stays.
 
 Three answers to expect:
 
-- **Yes** — record it and move on. This is the common case and it should cost one line.
-- **Yes, but someone else is involved** — the profile describes one developer. If a
-  collaborator or a client team will build or inherit this, their skills matter more than
-  the profile's. Capture what is known about them.
-- **No** — the project has its own constraints. Record them and treat stack selection as
-  fully open in Phase 2.
+- **A named stack** — record it as user-supplied. Phase 2 researches inside it and runs no
+  comparison against other stacks.
+- **Someone else is involved** — a collaborator or a client team will build or inherit this.
+  Their skills weigh as much as the user's; capture what is known about them.
+- **No preference, or "you tell me"** — the stack is open. Record that, and Phase 2's tech
+  branch researches it.
 
-Write the outcome into `01-brief.md` under constraints. Phase 2's tech branch reads it from
-there, not from the profile — so a project that overrode the profile stays overridden even if
-the profile changes later.
+Write the outcome into `01-brief.md` under constraints. Phase 2's tech branch reads it from there.
 
 Record **who or what writes the code** alongside it. If an AI writes most of it, the human's
 own fluency stops being the only thing that matters and stack selection gains a criterion it

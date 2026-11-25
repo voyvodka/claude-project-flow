@@ -48,15 +48,28 @@ The documents belong to the project, not to this tool. Someone reading them a ye
 - **Write once.** If something is already stated in another document, link to it rather than restating it. `00-state.md` is the deliberate exception: it summarizes, and its summaries carry a pointer to the source.
 - **Date every document.** A stale document that admits its age is far safer than one that looks current.
 
+## Choosing the stack
+
+This tool carries no default stack. A project's language, framework and platform come from one of
+three places, checked in this order:
+
+1. **The user named it** — in this conversation or in the brief's constraints. That is the stack.
+   Record it as user-supplied; research only what sits inside it — libraries, versions, hosting.
+   If it carries a real risk for this project, state the risk once, with its evidence, and leave
+   the call with the user.
+2. **The project already has one** — Phase 0's scan of manifests and source names it. Confirm it
+   with the user once; confirmed, it counts as user-named.
+3. **Neither** — the stack is **open**. Phase 2's tech branch derives candidates from this
+   project's own requirements and current sources, and Phase 3 decides. Until then the stack has
+   no expected answer: Phase 1's existing-skill question (item 6b) asks what the team knows and
+   what the project must use, and offers no technology for the user to confirm.
+
 ## The developer profile
 
-`profile/README.md`, next to this file, records what the developer already knows and reaches for
-by default. **Read it at the start of Phase 1** — it indexes the rest and says which files a
-given project needs.
-
-It supplies defaults, never verdicts: Phase 1 confirms they apply, Phase 2 tests them against
-what the project actually needs. If it is empty or still full of placeholders, say so once and
-treat stack selection as fully open rather than inventing a background.
+`profile/README.md`, next to this file, indexes what is known about how the developer works and
+where things run: conventions and safety rails, the local machine, hosting, documentation habits.
+**Read it at the start of Phase 1.** It supplies defaults that Phase 1 confirms, and no stack.
+A file that is empty or still holds placeholders leaves its subject open: say so once and ask.
 
 **`profile/local/` overrides `profile/`.** Where `profile/local/<name>.md` exists, read it
 *instead of* `profile/<name>.md` — never both. That directory is not committed, and it is where
@@ -117,7 +130,7 @@ did not happen, use the base directory Claude Code showed when this skill loaded
 containing `plugins/cache/` is a marketplace copy that the next update replaces — say so and hand
 the user the change instead of writing it. `references/self-improvement.md` explains why.
 
-Phases are ordered but not rigid: if the user has already settled the stack, Phase 2's tech branch is skipped and recorded as "user-supplied". Skipping is allowed; skipping *silently* is not — say what you are skipping and why, and note it in `00-state.md`.
+Phases are ordered but not rigid: if the user has already settled the stack, Phase 2's stack comparison is skipped and the stack recorded as "user-supplied". Skipping is allowed; skipping *silently* is not — say what you are skipping and why, and note it in `00-state.md`.
 
 ## Target file layout
 

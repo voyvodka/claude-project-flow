@@ -98,7 +98,7 @@ plugins/project-flow/
     ├── project/SKILL.md                    /project — alias kept from before 3.3.0, user-invoked only
     └── project-flow/
         ├── SKILL.md                        directives, state contract, routing
-        ├── profile/                        EDIT THIS — one file per stack, README indexes
+        ├── profile/                        EDIT THIS — conventions, machine, hosting; README indexes
         ├── references/phase-0-detect.md    loaded one at a time, per phase
         ├── references/phase-1-discover.md
         ├── references/phase-2-research.md
@@ -114,26 +114,18 @@ which is a cost this plugin does not need to impose.
 
 ## Developer profile
 
-`skills/project-flow/profile/` records what the developer already knows and what they reach for
-by default. `README.md` indexes it; each stack gets its own file, so a project reads only what it
-touches. Without it, stack selection runs blind to the single heaviest factor in it.
+`skills/project-flow/profile/` records how the developer works and where things run: code
+conventions and safety rails, the local machine, hosting, documentation habits, and any
+technologies ruled out. `README.md` indexes it. Phase 1 confirms each default applies before a
+later phase leans on it.
 
-The most durable entries are not package lists but **pointers to reference implementations** —
-"a web app follows the shape of *this* repository". Those stay true as the repositories evolve,
-where a list of versions goes stale the month after it is written.
+**It holds no stack.** The stack comes from the user, from the project's existing code, or — when
+neither names one — from Phase 2 research against the project's own requirements; Phase 3
+records which of the three it was.
 
-With a filled profile, Phase 2 stops asking "which stack?" and starts asking "is there a
-reason to deviate from the default here?" — which is both faster and a better question, since
-it forces a candidate to beat the default on something the project actually needs.
-
-Phase 1 confirms the profile applies before Phase 2 uses it, and writes the outcome into the
-project's own brief. A project that overrode the profile stays overridden even if the profile
-changes later.
-
-The files here are a worked example, not advice — replace them. Anything machine-specific goes in
-`profile/local/`, which is gitignored and read *instead of* the file of the same name one
-directory up. See the repository README for the split — **and for why that split needs the plugin
-to run from a clone rather than from a marketplace install.**
+Anything machine-specific goes in `profile/local/`, which is gitignored and read *instead of* the
+file of the same name one directory up. See the repository README for the split — **and for why
+that split needs the plugin to run from a clone rather than from a marketplace install.**
 
 ## Status
 
