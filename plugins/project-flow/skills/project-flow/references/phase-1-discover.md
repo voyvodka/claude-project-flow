@@ -114,7 +114,7 @@ tests beats a fifth round the user has stopped reading.
 
 ## Closing the checklist
 
-When the blocking items are done, walk items **7 through 12 one at a time** before opening the gate. Each one gets a row in the "Ek bilgiler" table of `01-brief.md`, and every row is filled — with an answer, or with a marked assumption.
+When the blocking items are done, walk items **7 through 12 one at a time** before opening the gate. Each one gets a row in the "Additional details" table of `01-brief.md`, and every row is filled — with an answer, or with a marked assumption.
 
 This step is not optional and it is not satisfied by the information appearing "somewhere in the document". Answers scattered across prose, or buried inside the assumptions table, read as complete while leaving real gaps: an unanswered row is only visible when there is a row to be empty. Identity and permissions, and external integrations, are the two that vanish this way most often — and both are expensive to discover late.
 
@@ -162,7 +162,7 @@ layout knows every project's. A compact project that outgrows its two files is p
 The phase ends with:
 
 - All seven blocking items (1–6 and 6b) answered or explicitly assumed.
-- Items 7–12 each carrying a filled row in the "Ek bilgiler" table — no blanks.
+- Items 7–12 each carrying a filled row in the "Additional details" table — no blanks.
 - `01-brief.md` written, using the template's section set and no invented top-level sections.
 - `00-state.md` updated: phase, settled items, open items, assumption list.
 - A short recap to the user and a clear question — proceed to research?

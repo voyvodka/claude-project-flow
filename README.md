@@ -167,7 +167,10 @@ because the reason a plausible rule was wrong is the only thing that stops it co
 ## Language
 
 Conversation and everything under `docs/` follow the user's language. `CLAUDE.md`, `AGENTS.md`,
-`.claude/**`, all code and all commit messages are always English.
+`.claude/**`, all code and all commit messages are always English. From 4.0.0 the document
+templates are English too; Turkish documents take their fixed wording from
+`plugins/project-flow/skills/project-flow/references/turkish-keys.md`, and projects started earlier
+keep their Turkish keys.
 
 ## Repository layout
 

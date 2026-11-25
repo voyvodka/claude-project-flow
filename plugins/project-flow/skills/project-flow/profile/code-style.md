@@ -1,6 +1,7 @@
 # Code Style
 
-Cross-cutting rules. These hold in every language and every project — read this one always.
+Cross-cutting defaults for every language. Read this one always; like the rest of the profile, each
+section is a default Phase 1 confirms, and a project's own rules or the user's word override it.
 
 ## Language
 
@@ -38,15 +39,12 @@ Per language:
 | Dart | `///` |
 | Python | A one-line docstring |
 
-**API controller actions are exempt.** Their route and OpenAPI metadata already describe them, and
-a summary would only repeat it.
-
 The rule applies to new and hand-written code. Copied legacy code is exempt until it is rewritten.
 
 ## Dependencies
 
-**Latest stable, always** — pinned at install, no beta or release-candidate versions in a project
-meant to ship. The default is to be current, not conservative.
+**Latest stable by default** — pinned at install, no beta or release-candidate versions in a project
+meant to ship, unless the project or the user sets another policy.
 
 The one thing that overrides it is tooling that has not caught up — a linter, a framework or a
 plugin that does not support the new major yet. That is a temporary block with a named unblock
