@@ -72,7 +72,21 @@ and any question the user now has to answer. Nothing else — the file holds the
 Branch-specific additions:
 
 - **Market** — name real competitors with links, their pricing tier, and the specific gap the user's idea targets. If the space is crowded, say so bluntly; that is a finding, not a failure. Note if you find *no* competitors — that usually means the market is small, not untapped.
-- **Tech** — paste the constraints from `01-brief.md` (team size, deadline, existing skill) and the **whole of the relevant `profile/` stack file** plus `profile/avoid.md` and `profile/infrastructure.md` into the prompt, then frame the question as **"is there a reason to deviate from the default for this project?"** rather than "which stack should we use?". The branch must either defend the default or name the specific requirement that breaks it — a candidate is only worth proposing if it beats the default on something this project actually needs. If the profile has no default for this project type, or the project overrode it in Phase 1, fall back to 2–3 candidates with an honest case for each. Either way: weigh the maintenance and hiring dimension, not just the technical one, and check current major versions against a documentation tool or the package registry — whichever this session can actually reach.
+- **Tech** — start from the stack line in `01-brief.md` (`SKILL.md` › Choosing the stack):
+  - **User-supplied, or confirmed from the existing code** — the branch compares no stacks. It
+    researches what sits inside the chosen one for this project: libraries, current versions,
+    hosting and deployment fit. A requirement the stack meets badly is reported as a finding with
+    its evidence, never as a proposal to switch.
+  - **Open** — the branch derives 2–3 candidates from this project alone: the brief's main flow,
+    delivery target, scale, integrations and constraints, the team's existing skill, and whatever
+    the folder already contains. Each candidate traces to a requirement in the brief and gets an
+    honest case for and against; the question is "which of these fits what this project needs".
+
+  Either way, paste the brief's constraints (team size, deadline, existing skill, who writes the
+  code), `profile/infrastructure.md`, and `profile/avoid.md` when it lists anything. Weigh the
+  maintenance and hiring dimension, not just the technical one, and check current major versions
+  and maintenance status against a documentation tool or the package registry — whichever this
+  session can actually reach.
 
   > ⚠️ **`profile/infrastructure.md` is usually the local override, and the local override is private.**
   > `profile/local/infrastructure.md` is gitignored precisely because it holds real hostnames,
@@ -92,7 +106,7 @@ Branch-specific additions:
   > network addresses into this file… This file is likely to be shared."* The research output is
   > shared the same way and gets the same rule.
 
-  **When the profile says an AI writes most of the code, that is a first-class selection criterion, not a footnote.** The branch must weigh, for each candidate:
+  **When the brief says an AI writes most of the code, that is a first-class selection criterion, not a footnote.** The branch must weigh, for each candidate:
   - How well represented the stack is in model training data, and how stable its APIs have been. A framework that rewrote its core idioms recently produces confidently wrong code, because the model has learned both the old and the new shape.
   - How verifiable the output is without running it — static types, a compiler, a fast test path. This is what converts AI speed into AI reliability; a stack where mistakes surface only at runtime gives back everything it saved.
   - **Whether the agent can close the loop itself: run the thing, observe what it did, and confirm the result with no human in the middle.** This is a separate question from writing good code, and it is often the one that decides. A web interface an agent can drive in a browser and screenshot is in a different category from a mobile app that needs a simulator, a device, or a person tapping. Research the actual tooling — headless runners, e2e drivers, simulator automation, screenshot feedback — and report honestly where the loop still needs a human. Where a target platform closes the loop badly, say what the alternatives are: a different framework, a different test harness, or a different delivery form for that surface entirely (a responsive web view instead of a native app, when the reason for going native was perception rather than capability).

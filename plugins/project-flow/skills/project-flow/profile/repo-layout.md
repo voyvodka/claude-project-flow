@@ -26,9 +26,8 @@ information.
 
 ## Inside a surface, the ecosystem wins
 
-`backend/` holds the .NET solution laid out the way .NET solutions are laid out. `mobile/` holds
-the Expo project the way Expo expects it. A Tauri app keeps `src/` and `src-tauri/` side by side
-because that is what the framework requires.
+Each surface directory holds its project laid out the way its own framework and build tool expect
+it — whatever tree the official generator produces, and whatever paths the framework requires.
 
 The top-level split is about **surfaces**. Below it, the ecosystem's own convention is not
 negotiable — fighting it costs tooling support and gains nothing.
@@ -43,7 +42,7 @@ Two frontends, or two services, raise the question. The answer depends on one th
   top level, named for what they are. Two applications that happen to live in one repository are
   not a monorepo, and giving them a workspace adds tooling that manages nothing.
 - **Shared code** → `apps/<name>` plus `packages/<shared>`, using the package manager's native
-  workspaces. Both bun and pnpm support this directly; no separate monorepo tool is needed until
+  workspaces where it has them; no separate monorepo tool is needed until
   the build graph genuinely requires one.
 
 The trigger is shared code, not app count. This matters because the workspace shape is easy to
@@ -52,8 +51,8 @@ materialises.
 
 ### What counts as one surface
 
-A codebase that produces several artefacts from one source is **one** surface. An Expo project
-building a member app and a staff app from two build profiles is one `mobile/` directory, not two.
+A codebase that produces several artefacts from one source is **one** surface. A mobile project
+building a member app and a staff app from two build configurations is one `mobile/` directory, not two.
 Splitting it doubles the store and maintenance load and buys nothing — that was a real finding
 during research, not a stylistic call.
 

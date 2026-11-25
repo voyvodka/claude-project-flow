@@ -2,11 +2,9 @@
 
 Read this in Phase 4, before writing a project's `CLAUDE.md`.
 
-New projects here already carry a documentation directory — `docs/` or `dev-docs/` — and it is a
-habit worth matching rather than competing with. This tool should feel like the next entry in an
+A project that already carries a documentation directory — `docs/`, `dev-docs/` or similar — has
+a habit worth matching rather than competing with. This tool should feel like the next entry in an
 existing practice, not a second parallel system.
-
-Reference: the mature example is a business web app's `dev-docs`. See "Reference implementations" in [`README.md`](README.md#reference-implementations).
 
 ## The established shape
 

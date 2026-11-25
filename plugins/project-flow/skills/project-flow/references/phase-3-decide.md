@@ -48,15 +48,15 @@ assumption says so. `Kaynak` is the one line that may be omitted, when the decis
 research file or link.
 
 **The labels are written in the document's own language, not copied from here** — the general rule
-is under "Language" in `SKILL.md`. The block above is shown in Turkish because that is this
-profile's default; in an English-language project the fields are `Decision` / `Why` / `Rejected` /
+is under "Language" in `SKILL.md`. The block above is shown in Turkish because the templates are
+written in Turkish; in an English-language project the fields are `Decision` / `Why` / `Rejected` /
 `Accepted cost` / `Rests on`, plus the optional `Source`. The same goes for the literal values used
 below: `yok` is `none` in an English document.
 
-When a stack decision **departs from the profile default**, say so explicitly in the **Neden**
-line — "varsayılan X'ti, <şu gereksinim> nedeniyle Y seçildi". A deviation carries a real cost
-in ramp-up time, so the reason has to survive being read back later. When the default is kept,
-one line is enough; that is the point of having a default.
+A stack decision says in its **Neden** line where the stack came from: named by the user, kept
+from the existing code, or chosen from research — and for the last, the requirement in the brief
+that decided it. A reader who later wants to reopen the choice needs to know which of the three
+they are arguing with.
 
 The "Elenenler" line is the one that earns its keep on handover. Without it the next person re-evaluates the same rejected option and reaches the same conclusion, slowly. It is never left blank: if there genuinely was no alternative, write "yok" and the reason. An alternative folded into the **Neden** sentence does not count — it has to be findable where a reader looks for it.
 
