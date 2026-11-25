@@ -73,6 +73,11 @@ At the end of the next reply — not in the middle of the user's task:
   name, project name or file name, path outside the plugin) and that nothing was sent. Offer to
   retry with a more general description; a retry is a new first question.
 - **already fixed** — say so with the file, and suggest updating the plugin.
+- **failed** (no network, clone or `gh` error) — one line saying what stopped it and that nothing was
+  sent, then go on with the user's work. A retry is a new first question, asked at a later gate.
+
+In every case the report takes a few lines at the end of the reply; the user's own work comes first
+and does not wait on it.
 
 ## After the second answer
 
