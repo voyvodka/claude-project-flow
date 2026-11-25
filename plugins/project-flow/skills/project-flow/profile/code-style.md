@@ -109,20 +109,3 @@ diverge exactly where it matters.
 standing in a separate paragraph. Git holds the history; the file holds what is true now. Two
 versions side by side means a reader cannot tell which one binds them, and they will follow the
 more specific one — usually the stale one.
-
-## Safety rails
-
-These are absolute and hold in every project. They are the one exception to the profile's
-"default, not rule": Phase 1 does not reopen them, and a project that needs one lifted asks the
-user at the moment it applies.
-
-- **Never run EF migration or database update commands.** Not `dotnet ef migrations add`, not
-  `database update`, `remove`, or `script`. Write the entity change and tell the user the command.
-  Migration naming is sequential `vNNN` — find the next number from the migrations directory.
-- **Never run git commands** unless the user explicitly asks. Commit and push only on request.
-- **Never run tests** unless the user explicitly asks.
-- **Commit messages are short:** a Conventional Commit type and a single-line summary. No body.
-  No AI attribution lines, trailers, or "generated with" footers — anywhere, ever.
-- **A shared development database is read-only.** Even when the connection has write permission,
-  and even when testing a negative path: use input that is certain to fail before it reaches
-  mutating code. If unsure, `SELECT` first and confirm the state.

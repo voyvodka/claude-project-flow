@@ -67,7 +67,7 @@ three places, checked in this order:
 ## The developer profile
 
 `profile/README.md`, next to this file, indexes what is known about how the developer works and
-where things run: conventions and safety rails, the local machine, hosting, documentation habits.
+where things run: conventions, the local machine, hosting, documentation habits.
 **Read it at the start of Phase 1.** It supplies defaults that Phase 1 confirms, and no stack.
 A file that is empty or still holds placeholders leaves its subject open: say so once and ask.
 
@@ -103,7 +103,7 @@ Every `/project-flow` invocation follows the same opening move:
 1. Read `docs/product/00-state.md` if it exists.
 2. If it does not exist, run **Phase 0** to classify the folder. If `Aktif faz` says the MVP or a round is complete, or reads `Bakım`, the project is **closed, not in Phase 5**: load `references/phase-0-detect.md` and follow its Re-entry section before anything else.
 3. Announce in one or two sentences where the project stands and which phase comes next — **every time**, including when the opening input is a concrete task ("review it", "how much is done"). Answer the task inside that frame, not instead of it: the announcement is what places the work in a phase for the user and for the next session.
-4. Get the user's go-ahead, then load the reference file for that phase and follow it.
+4. Get the user's go-ahead: ask it as a yes-or-no question about the next phase and end the reply there — the phase's own first question comes after the yes. Then load the reference file for that phase and follow it.
 
 Load **only** the reference file for the phase being worked. Do not preload the others. **After a context compaction, re-read it before continuing:** compaction re-attaches this file but re-reads no more than five recently modified files, so a phase reference may not come back, and the `Aktif faz` line in `00-state.md` names the phase whose reference applies.
 

@@ -11,6 +11,14 @@ from it and from git history.
 
 ## [Unreleased]
 
+### Removed
+
+- The profile's safety rails (no git or tests unless asked, one-line commit messages, EF migration rules, read-only shared database). They were one developer's working rules. Phase 5 now asks before running a verification command only when the user or the project's `CLAUDE.md` says to, and Phase 4 offers the commit and makes it once the user agrees.
+
+### Changed
+
+- Routing asks for the go-ahead as a yes-or-no question about the next phase and stops there; without the removed rails, empty-folder runs had started Phase 1 by asking for the idea.
+
 ### Fixed
 
 - The brief template's existing-skill row no longer asks whether the profile applies, and a stack row records whether the stack is user-supplied, confirmed from code or open, which Phase 2 reads. `infrastructure.md` no longer assumes a paid-for server exists.

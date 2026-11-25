@@ -115,7 +115,7 @@ which is a cost this plugin does not need to impose.
 ## Developer profile
 
 `skills/project-flow/profile/` records how the developer works and where things run: code
-conventions and safety rails, the local machine, hosting, documentation habits, and any
+conventions, the local machine, hosting, documentation habits, and any
 technologies ruled out. `README.md` indexes it. Phase 1 confirms each default applies before a
 later phase leans on it.
 
