@@ -11,11 +11,36 @@ GUARD="$PLUGIN/hooks/report-guard.sh"
 export CLAUDE_PLUGIN_DATA  # set below, before the first hook call
 # Hook inputs in the shape Claude Code sends (captured from a real session, values replaced).
 hook_json() { # event, extra JSON fields
-  printf '{"session_id":"%s","transcript_path":"/t/x.jsonl","cwd":"/w","prompt_id":"p1","permission_mode":"default","hook_event_name":"%s"%s}' "${SID:-s1}" "$1" "$2"
+  printf '{"session_id":"%s","transcript_path":"%s","cwd":"/w","prompt_id":"p1","permission_mode":"default","hook_event_name":"%s"%s}' "${SID:-s1}" "$TRANSCRIPT" "$1" "$2"
 }
 json_str() { python3 -c 'import json,sys; sys.stdout.write(json.dumps(sys.stdin.read()))'; }
+# Transcript rows in the shape Claude Code writes them (compact JSON, one content block per row),
+# taken from a real session with ids and values replaced: the preview's tool result, then the reply.
+# REPLY=verbatim|summary|thinking chooses what the reply holds.
+write_transcript() { # preview stdout file
+  python3 - "$1" "${REPLY:-verbatim}" > "$TRANSCRIPT" <<'TR'
+import json, sys
+out = open(sys.argv[1]).read(); mode = sys.argv[2]
+def row(**o): print(json.dumps(o, separators=(",", ":"), ensure_ascii=False))
+base = {"isSidechain": False, "userType": "external", "cwd": "/w", "sessionId": "s1", "version": "2.9.0"}
+row(parentUuid="u1", **base, promptId="p0", type="user", uuid="u2", timestamp="2026-11-26T00:00:00.000Z",
+    message={"role": "user", "content": [{"tool_use_id": "toolu_01", "type": "tool_result", "content": out.rstrip("\n"), "is_error": False}]},
+    toolUseResult={"stdout": out.rstrip("\n"), "stderr": "", "interrupted": False, "isImage": False})
+shown = "The report is ready.\n\n`````\n" + out + "`````\n\nSend exactly this?"
+summary = "The report is ready: a one-line change to the phase file, with the usual header. Send it?"
+def assistant(block):
+    row(parentUuid="u2", **base, type="assistant", uuid="u3", timestamp="2026-11-26T00:00:01.000Z",
+        message={"model": "claude-x", "id": "msg_01", "type": "message", "role": "assistant", "content": [block], "stop_reason": "end_turn"})
+if mode == "thinking":
+    assistant({"type": "thinking", "thinking": shown, "signature": "sig"})
+    assistant({"type": "text", "text": summary})
+else:
+    assistant({"type": "text", "text": shown if mode == "verbatim" else summary})
+TR
+}
 post_preview() { # stdout file [agent]
   local extra=""; [ -n "${2:-}" ] && extra=',"agent_id":"a1","agent_type":"general-purpose"'
+  write_transcript "$1"
   hook_json PostToolUse "$extra,\"tool_name\":\"Bash\",\"tool_input\":{\"command\":\"bash \\\"\$R\\\" preview\"},\"tool_response\":{\"stdout\":$(json_str < "$1"),\"stderr\":\"\",\"interrupted\":false}" | bash "$GUARD"
 }
 user_prompt() { hook_json UserPromptSubmit ",\"prompt\":$(printf '%s' "$1" | json_str)" | bash "$GUARD"; }
@@ -26,6 +51,7 @@ preview_with_reply() { # runs preview, feeds the hook, then a typed reply; print
   sed -n 's/^Digest: //p' "$T/pv.out"
 }
 T=$(mktemp -d); trap 'rm -rf "$T"' EXIT
+TRANSCRIPT="$T/transcript.jsonl"
 pass=0; fail=0
 ok()  { pass=$((pass+1)); echo "ok   $1"; }
 bad() { fail=$((fail+1)); echo "FAIL $1"; }
@@ -298,6 +324,51 @@ new_workdir; mkdir -p "$P/pf-report.inside/src/plugins/project-flow"; echo x > "
 "$REPORT" prepare --workdir "$W" --project "$P" >/dev/null 2>"$T/err"; rc=$?
 check "a report workdir inside the project is not scanned as project files (rc=$rc)" '[ $rc = 0 ]'
 rm -rf "$P/pf-report.inside"
+
+# Round-3 review cases.
+new_workdir; "$REPORT" prepare --workdir "$W" --project "$P" >/dev/null
+"$REPORT" preview --workdir "$W" --project "$P" > "$T/preview"; D=$(sed -n 's/^Digest: //p' "$T/preview")
+post_preview "$T/preview"; user_prompt "yes"
+check "a reply holding the whole preview verbatim records consent" '[ "$(cut -d" " -f1 "$W/consent")" = "$D" ] && [ ! -f "$W/consent-refused" ]'
+user_prompt "and another thing"
+check "the next prompt in the session withdraws the consent" '[ ! -f "$W/consent" ]'
+for mode in summary thinking; do
+  REPLY=$mode post_preview "$T/preview"; user_prompt "yes"
+  "$REPORT" send --workdir "$W" --project "$P" --digest "$D" >/dev/null 2>"$T/err"; rc=$?
+  check "a $mode reply instead of the verbatim preview earns no consent (rc=$rc)" \
+    '[ $rc != 0 ] && [ -f "$W/consent-refused" ] && grep -q "not recorded as consent" "$T/err" && ! grep -q "pr create" "$GH_LOG"'
+done
+post_preview "$T/preview"; user_prompt "
+<task-notification><task-id>x</task-id></task-notification>"
+check "a notification after a leading newline is not a reply" '[ ! -f "$W/consent" ]'
+reset_consent; post_preview "$T/preview"; echo "$D $(( $(date +%s) - 3700 ))" > "$W/consent"
+"$REPORT" send --workdir "$W" --project "$P" --digest "$D" >/dev/null 2>"$T/err"; rc=$?
+check "a consent older than an hour is refused (rc=$rc)" '[ $rc != 0 ] && grep -q "more than an hour" "$T/err" && ! grep -q "pr create" "$GH_LOG"'
+echo "$D \$(reboot)" > "$W/consent"
+"$REPORT" send --workdir "$W" --project "$P" --digest "$D" >/dev/null 2>"$T/err"; rc=$?
+check "a malformed consent is refused (rc=$rc)" '[ $rc != 0 ] && grep -q "malformed" "$T/err"'
+
+new_workdir; head -c 21000 /dev/zero | tr '\0' 'a' | fold -w 70 | sed 's/^/x/' >> "$W/src/plugins/project-flow/skills/project-flow/references/phase-5-build.md"; reprep
+check "a payload too long for one tool output is refused at prepare (rc=$rc)" '[ $rc = 2 ] && grep -q "must fit" "$T/err"'
+new_workdir; printf 'carriage\r return\n' >> "$W/src/plugins/project-flow/README.md"; reprep
+check "a control character in the diff is blocked (rc=$rc)" '[ $rc = 3 ] && grep -q "control character" "$T/err"'
+
+for v in "It read ~/.ssh/config first." "It wrote ~/.claude/projects/x first." "The slug -Users-dquill-clinic appeared." \
+         "It read ~dquill/x first." "It opened file%3A%2F%2F%2FUsers%2Fdquill first." 'It read Users\\\\dquill\\\\x first.'; do
+  new_workdir; with_what "$v"; reprep
+  check "home path form is caught: $v (rc=$rc)" '[ $rc = 3 ] && grep -q "home path" "$T/err"'
+done
+
+mkdir -p "$P/Müşteriler"; echo x > "$P/Müşteriler/Şirket Planı.md"; echo x > "$P/ZephyrInvoices.cs"; echo x > "$P/Bluefin Corsair Notes.md"
+echo x > "$P/rootonlyquarry.md"
+for v in "Müşteriler was read." "Şirket Planı was read." "Zephyr stalled." "Bluefin stalled."; do
+  new_workdir; with_what "$v"; reprep
+  check "non-ASCII, spaced and CamelCase file names are scanned: $v (rc=$rc)" '[ $rc = 3 ] && grep -q "project name" "$T/err"'
+done
+new_workdir; with_what "rootonlyquarry was read."
+"$REPORT" prepare --workdir "$W" --project "$P/src" >/dev/null 2>"$T/err"; rc=$?
+check "a subdirectory --project still scans the whole repository (rc=$rc)" '[ $rc = 3 ] && grep -q "project name" "$T/err"'
+rm -rf "$P/Müşteriler" "$P/ZephyrInvoices.cs" "$P/Bluefin Corsair Notes.md" "$P/rootonlyquarry.md"
 
 echo "passed $pass, failed $fail"
 [ "$fail" = 0 ]

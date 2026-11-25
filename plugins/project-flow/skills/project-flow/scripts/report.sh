@@ -32,7 +32,7 @@ header() { sed -n "1,/^Title: /s/^$1: //p" "$WORKDIR/payload.txt" | head -n1; }
 
 CMD=${1:-}; [ -n "$CMD" ] || die "usage: report.sh clone|prepare|preview|send ..."
 shift || true
-WORKDIR=""; PROJECT=""; ROUTE=""; DIGEST=""
+WORKDIR=""; PROJECT=""; PROJECT_GIVEN=""; ROUTE=""; DIGEST=""
 while [ $# -gt 0 ]; do
   case "$1" in
     --workdir) WORKDIR=${2:-}; shift 2 ;;
@@ -48,9 +48,12 @@ need_workdir() {
   WORKDIR=$(cd "$WORKDIR" && pwd -P)
 }
 # The project is scanned, never sent. prepare records it so preview and send cannot scan a different one.
+# Inside a git repository the whole repository is scanned, whichever directory was named.
 need_project() {
   [ -n "$PROJECT" ] && [ -d "$PROJECT" ] || die "--project must name the user's project directory"
   PROJECT=$(cd "$PROJECT" && pwd -P)
+  PROJECT_GIVEN=$PROJECT
+  local top; top=$(git -C "$PROJECT" rev-parse --show-toplevel 2>/dev/null) && [ -n "$top" ] && PROJECT=$(cd "$top" && pwd -P)
   if [ "$1" = record ]; then printf '%s\n' "$PROJECT" > "$WORKDIR/project"
   else [ "$PROJECT" = "$(cat "$WORKDIR/project" 2>/dev/null)" ] || die "--project differs from the one prepare scanned; run prepare again"; fi
 }
@@ -93,16 +96,21 @@ project_terms() {
   {
     basename "$PROJECT"
     basename "$(dirname "$PROJECT")"
+    basename "$PROJECT_GIVEN"
+    basename "$(dirname "$PROJECT_GIVEN")"
     git -C "$PROJECT" remote -v 2>/dev/null | awk '{ print $2 }' | tr ':/' '\n' | sed 's/\.git$//'
     if git -C "$PROJECT" rev-parse --git-dir >/dev/null 2>&1; then
-      git -C "$PROJECT" ls-files --cached --others --exclude-standard 2>/dev/null | grep -Ev '(^|/)pf-report\.[^/]*/'
+      # quotePath=false: names outside ASCII would otherwise come out as octal escapes.
+      git -C "$PROJECT" -c core.quotePath=false ls-files -z --cached --others --exclude-standard 2>/dev/null \
+        | tr '\0' '\n' | grep -Ev '(^|/)pf-report\.[^/]*/'
     else
       (cd "$PROJECT" && find . \( -name .git -o -name node_modules -o -name 'pf-report.*' \) -prune -o -print 2>/dev/null)
     fi
-  } | tr '/' '\n' | awk '
-      length($0) && $0 != "." && $0 != ".." { print; s = $0
+  } | tr '/' '\n' | awk 'length($0) && $0 != "." && $0 != ".."' \
+    | sed -E 'p; s/([a-z0-9])([A-Z])/\1 \2/g; s/([A-Z]+)([A-Z][a-z])/\1 \2/g' | awk '
+      { print; s = $0
         while (sub(/\.[^.]*$/, "", s)) print s
-        n = split($0, part, /[-_.]+/); if (n > 1) for (i = 1; i <= n; i++) if (length(part[i]) >= 4) print part[i] }' \
+        n = split($0, part, /[-_. ]+/); if (n > 1) for (i = 1; i <= n; i++) if (length(part[i]) >= 4) print part[i] }' \
     | lower | awk 'length($0) >= 3' | sort -u
 }
 
@@ -155,7 +163,7 @@ scrub() {
   } > "$tmp/scan" && [ -s "$tmp/scan" ] || echo "could not read the payload" >> "$err"
   squash < "$tmp/scan" > "$tmp/scan-squashed" || echo "could not normalise the payload" >> "$err"
 
-  hits grep -Eino '/users/[^/[:space:]]+|/home/[^/[:space:]]+|[a-z]:\\+users\\+[^\\[:space:]]*|/root/|/var/folders/|/private/(var|tmp)/|~/[^.[:space:]]' "$tmp/scan" > "$tmp/h1"
+  hits grep -Eino '/users/[^/[:space:]]+|/home/[^/[:space:]]+|(^|[^a-z0-9])users\\+[^\\[:space:]]+|%2f(users|home)%2f|(^|[^a-z0-9])-(users|home)-[^-[:space:]]+|/root/|/var/folders/|/private/(var|tmp)/|~[a-z0-9._-]*/' "$tmp/scan" > "$tmp/h1"
   sed 's/^/home path: line /' "$tmp/h1" >> "$findings"
 
   hits grep -Eno '[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}' "$tmp/scan" > "$tmp/h2"
@@ -200,6 +208,8 @@ scrub() {
     esac
     case "$p" in *..*|*[!A-Za-z0-9._/-]*) echo "path with unexpected characters: $p" ;; esac
   done < "$tmp/paths" >> "$findings"
+  # The hook compares the payload with the transcript's JSON text, which escapes control characters.
+  if [ -n "$(tr -d '\t\n\040-\176\200-\377' < "$payload")" ]; then echo "control character (only tab is allowed)" >> "$findings"; fi
   if grep -Eq '^(GIT binary patch|Binary files )' "$tmp/diff"; then echo "binary change: not allowed in a report" >> "$findings"; fi
 
   local rc=0
@@ -207,6 +217,13 @@ scrub() {
   elif [ -s "$findings" ]; then sort -u "$findings"; rc=1; fi
   rm -rf "$tmp"
   return $rc
+}
+
+# A preview longer than one tool output would reach the user cut short.
+MAX_PAYLOAD=20000
+check_size() {
+  local n; n=$(wc -c < "$WORKDIR/payload.txt" | tr -d ' ')
+  [ "$n" -le $MAX_PAYLOAD ] || die "the payload is $n bytes; a preview must fit in $MAX_PAYLOAD. Make the change smaller or split it into separate reports."
 }
 
 run_scrub() {
@@ -312,6 +329,7 @@ cmd_prepare() {
   } >> "$p"
   [ "$ROUTE" = issue ] || { echo "=== Diff ==="; printf '%s\n' "$diff"; } >> "$p"
 
+  check_size
   run_scrub "the payload names something personal or project-specific (listed above). Rewrite the fields or the change in more general terms and run prepare again."
   echo "prepared: $p (route: $ROUTE). Run preview to show it."
 }
@@ -321,9 +339,10 @@ payload_digest() { sha256 < "$WORKDIR/payload.txt" | cut -c1-16; }
 cmd_preview() {
   need_workdir; need_project check
   [ -f "$WORKDIR/payload.txt" ] || die "no payload — run prepare first"
+  check_size
   run_scrub "the payload names something personal or project-specific (listed above); nothing was shown or sent."
   local d; d=$(payload_digest)
-  rm -f "$WORKDIR/consent"
+  rm -f "$WORKDIR/consent" "$WORKDIR/consent-refused"
   printf '%s\n' "$d" > "$WORKDIR/previewed"
   echo "----- BEGIN PREVIEW: this is exactly what will be sent -----"
   cat "$WORKDIR/payload.txt"
@@ -358,11 +377,21 @@ cmd_send() {
   target=$(header Target); route=$(header Route); title=$(sed -n 's/^Title: //p' "$p" | head -n1)
   awk '/^=== Body ===$/{b=1; next} /^=== Diff ===$/{exit} b' "$p" > "$WORKDIR/body.md"
 
-  # Written by hooks/report-guard.sh only when the user typed a message after this preview.
+  # "<digest> <epoch>", written by hooks/report-guard.sh when the user typed a message right after a
+  # reply holding this preview, and removed by the hook at the next prompt.
   if [ "$route" != "issue link that you open and submit yourself (no diff is sent)" ]; then
-    [ -f "$WORKDIR/consent" ] && [ "$(cat "$WORKDIR/consent")" = "$DIGEST" ] \
-      || die "no reply from the user is recorded since this preview. End the reply with the preview and the yes/no question; send only after the user answers yes."
+    if [ ! -f "$WORKDIR/consent" ]; then
+      [ -f "$WORKDIR/consent-refused" ] \
+        && die "the user's reply was not recorded as consent: $(head -n1 "$WORKDIR/consent-refused"). Run preview again."
+      die "no reply from the user is recorded since this preview. End the reply with the preview and the yes/no question; send only after the user answers yes."
+    fi
+    local c_digest c_time age
+    read -r c_digest c_time < "$WORKDIR/consent" || true
     rm -f "$WORKDIR/consent"
+    case "$c_time" in ''|*[!0-9]*) die "the consent record is malformed; run preview again" ;; esac
+    [ "$c_digest" = "$DIGEST" ] || die "the recorded reply is for another preview; run preview again"
+    age=$(( $(date +%s) - c_time ))
+    [ "$age" -ge 0 ] && [ "$age" -le 3600 ] || die "the recorded reply is more than an hour old; run preview again"
   fi
 
   case "$route" in

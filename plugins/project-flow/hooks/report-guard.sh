@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
-# Writes <workdir>/consent, which report.sh send requires: a main-session preview (seen in PostToolUse)
-# followed by a typed prompt. Prompts starting with "<" (task notifications) do not count; no jq on users' machines.
+# Writes <workdir>/consent, which report.sh send requires: a main-session preview (seen in PostToolUse),
+# then a typed prompt whose preceding assistant reply holds the whole payload verbatim. The consent
+# lasts until the next prompt in the session. Plain grep/sed/awk: no jq or python on users' machines.
 input=$(cat)
 field() { printf '%s' "$input" | sed -n "s/.*\"$1\"[[:space:]]*:[[:space:]]*\"\([^\"]*\)\".*/\1/p" | head -n1; }
 
@@ -9,6 +10,11 @@ sid=$(field session_id | tr -cd 'A-Za-z0-9_-')
 state=${CLAUDE_PLUGIN_DATA:-${TMPDIR:-/tmp}/project-flow-data}/report-guard
 mkdir -p "$state" 2>/dev/null || exit 0
 pending="$state/pending-$sid"
+granted="$state/granted-$sid"
+
+# The transcript stores text as JSON strings. prepare refuses control characters other than tab,
+# so backslash, quote and tab are the only escapes. Trailing blanks are ignored on both sides.
+json_escape() { sed 's/[[:space:]]*$//; s/\\/\\\\/g; s/"/\\"/g; s/	/\\t/g'; }
 
 case "$(field hook_event_name)" in
   PostToolUse)
@@ -17,16 +23,41 @@ case "$(field hook_event_name)" in
     digest=$(printf '%s' "$input" | grep -Eo 'Digest: [0-9a-f]{16}' | tail -n1 | cut -c9-)
     workdir=$(printf '%s' "$input" | grep -Eo 'Workdir: [A-Za-z0-9._/-]*pf-report\.[A-Za-z0-9]+' | tail -n1 | cut -c10-)
     [ -n "$digest" ] && [ -d "$workdir" ] && [ -f "$workdir/meta" ] || exit 0
-    rm -f "$workdir/consent"
+    rm -f "$workdir/consent" "$workdir/consent-refused"
     printf '%s %s\n' "$digest" "$workdir" > "$pending"
     ;;
   UserPromptSubmit)
+    # Any prompt, typed or not, ends the turn in which a consent could be used.
+    if [ -f "$granted" ]; then
+      read -r old < "$granted"
+      rm -f "$granted"
+      [ -n "$old" ] && rm -f "$old/consent"
+    fi
     [ -f "$pending" ] || exit 0
-    printf '%s' "$input" | grep -Eq '"prompt"[[:space:]]*:[[:space:]]*"[[:space:]]*<' && exit 0
+    prompt_start=$(printf '%s' "$input" | sed -n 's/.*"prompt"[[:space:]]*:[[:space:]]*"\(.\{0,40\}\).*/\1/p' | head -n1 \
+      | sed -E 's/^([[:space:]]|\\[nrt])*//')
+    case "$prompt_start" in "<"*) exit 0 ;; esac
     read -r digest workdir < "$pending"
     rm -f "$pending"
     [ -d "$workdir" ] && [ "$(cat "$workdir/previewed" 2>/dev/null)" = "$digest" ] || exit 0
-    printf '%s\n' "$digest" > "$workdir/consent"
+    refuse() { printf '%s\n' "$1" > "$workdir/consent-refused"; exit 0; }
+    transcript=$(field transcript_path)
+    [ -f "$transcript" ] || refuse "the session transcript could not be read, so it is unknown what the user was shown"
+    # Main-conversation assistant text rows written after the preview's tool result: what the user
+    # read before replying. Thinking, tool calls and request records are not text the user saw.
+    shown=$(mktemp "${TMPDIR:-/tmp}/pf-shown.XXXXXX") || exit 0
+    awk -v d="Digest: $digest" '
+      !index($0, "\"isSidechain\":false") { next }
+      index($0, "\"type\":\"tool_result\"") && index($0, d) && index($0, "BEGIN PREVIEW") { n = 1; buf = ""; next }
+      n && index($0, "\"role\":\"assistant\",\"content\":[{\"type\":\"text\",\"text\":\"") && !index($0, "\"type\":\"api-request") { buf = buf $0 "\n" }
+      END { printf "%s", buf }' "$transcript" | sed -E 's/([[:space:]]|\\t)+\\n/\\n/g' > "$shown"
+    needle=$(json_escape < "$workdir/payload.txt" | awk 'NR > 1 { printf "\\n" } { printf "%s", $0 }')
+    found=0
+    [ -n "$needle" ] && grep -qF -- "$needle" "$shown" && found=1
+    rm -f "$shown"
+    [ "$found" = 1 ] || refuse "the reply before the user's answer did not contain the whole preview verbatim; paste it unchanged and ask again"
+    printf '%s %s\n' "$digest" "$(date +%s)" > "$workdir/consent"
+    printf '%s\n' "$workdir" > "$granted"
     ;;
 esac
 exit 0
