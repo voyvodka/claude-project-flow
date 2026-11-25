@@ -21,7 +21,7 @@ and the reason it was turned down is the only thing that stops it.
 | Five behaviours the trial produced without being told to | — | 0.2.1, 0.3.0, 0.3.1, 0.6.x | `phase-2-research.md`, `phase-3-decide.md`, `phase-4-scaffold.md` |
 | A reversal added the new truth and left the old one standing four paragraphs below | structural | 0.5.0 | `SKILL.md` — Document hygiene |
 | Two files held one fact; the second went stale | duplication | 0.8.1 | `phase-5-build.md` — the state file points at the roadmap instead of restating it |
-| "Default: none" blocked an auditor that then found a cross-tenant account takeover | too blunt, found by being overruled | 0.9.0 | `phase-4-scaffold.md` — the invisible-and-fatal exception |
+| "Default: none" ruled out a review subagent for a defect class that review cannot see and that is fatal to the product; once added on request, it caught one | too blunt, found by being overruled | 0.9.0 | `phase-4-scaffold.md` — the invisible-and-fatal exception |
 | Per-round state update never fired — and turned out to be ceremony, not neglect | over-specified | 1.5.1 | `phase-1-discover.md` — relaxed, not enforced |
 | Git identity rule sat where it was read, not where it applied; the first commit carried the wrong author | never fires | 1.7.1 | `SKILL.md`, `phase-4-scaffold.md`, `phase-5-build.md` |
 | Dependency versions written from recall against a "latest stable" rule with no method | structural | 1.7.2 | `profile/code-style.md` — resolve with the package manager |
@@ -30,8 +30,8 @@ and the reason it was turned down is the only thing that stops it.
 | "Success criteria" had no referent in a project that already shipped; phases ran against an outward goal the owner would not have chosen first | structural | 2.5.0 | `phase-1-discover.md` — item 4 splits when the MVP already shipped; `phase-0-detect.md` — what a codebase conceals |
 | The map of `docs/` lived in `CLAUDE.md`; a folder that outgrew the skeleton ended up with a map naming 9 of 48 files, two whole directories absent | duplication | 2.6.0 | `docs/README.md` — new `templates/docs-README.md`, written in `phase-4-scaffold.md`; `CLAUDE.md` now points at it |
 | Three projects ended up enforcing their verification with a Stop or pre-push hook rather than a written instruction; Phase 4 had no place for either | gap, seen three times | 3.1.0 | `phase-4-scaffold.md` — Checks that must run; fired in one Phase 4 run (a dashboard project) |
-| `CLAUDE.md` files of 300–480 lines in two large projects loaded every area's rules into every session; each was cut by half or more, the area rules moved to path-scoped `.claude/rules/` | structural, seen twice in one cross-project audit (September 2026); a third project's 857-line file was later cut to about 200 | 3.1.0 | `phase-4-scaffold.md` — CLAUDE.md budget; `phase-5-build.md`; fired in one Phase 4 run (a dashboard project) |
-| A public repository whose owner wanted no AI tooling in it had no path through Phase 4, which writes every file as committed | gap, seen once — applied on the owner's decision | 3.1.0 | `phase-3-decide.md` — publication list; `phase-4-scaffold.md` — `.git/info/exclude`; fired once when an existing project was re-checked against 3.1.0 (the answer reached its publication decision), then in one Phase 4 run (a dashboard project) |
+| Long `CLAUDE.md` files in large projects loaded every area's rules into every session; cutting them by half or more and moving the area rules to path-scoped `.claude/rules/` fixed it | structural, seen in three projects | 3.1.0 | `phase-4-scaffold.md` — CLAUDE.md budget; `phase-5-build.md`; fired in one Phase 4 run (a dashboard project) |
+| A public repository meant to carry no AI tooling had no path through Phase 4, which writes every file as committed | gap, seen once — applied on the owner's decision | 3.1.0 | `phase-3-decide.md` — publication list; `phase-4-scaffold.md` — `.git/info/exclude`; fired once when an existing project was re-checked against 3.1.0 (the answer reached its publication decision), then in one Phase 4 run (a dashboard project) |
 | Advisory subagents given edit tools and the strongest model by default; two projects settled on one writer with read-only consultants on a cheaper model | structural, seen twice | 3.1.0 | `phase-4-scaffold.md` — One writer; fired in one Phase 4 run (a dashboard project) |
 | The tool offered to approve its own gates while the user was away, as the recommended option, on a premise it invented | structural — breaks a prime directive | 3.2.0 | `SKILL.md` — prime directive 4: never propose waiving gates; standing approvals recorded verbatim with scope and expiry; fired in one `claude -p` run (October 2026) — an unprompted approval was recorded verbatim with scope and expiry, and Phase 4 was not started because its inputs were missing |
 | When the opening input was a concrete task, routing was skipped and no session said which phase the work belonged to | structural, seen in four sessions | 3.2.0 | `SKILL.md` — Routing step 3, the announcement is made every time; fired in one run and in the `mid-concrete-task` eval — a progress question was answered inside the phase frame |
@@ -40,10 +40,10 @@ and the reason it was turned down is the only thing that stops it.
 | Phase 5 relied on the task tools, which are off by default for most users | structural, documented platform behaviour | 3.2.0 | `phase-5-build.md` — step 6 fallback when the task tools are absent; untested in a run |
 | Tooling kept local-only (ignored or excluded files) is missing from a git worktree | structural, documented platform behaviour | 3.2.0 | `phase-4-scaffold.md` — worktree note and `.worktreeinclude`; it does copy files excluded only through `.git/info/exclude` (checked on Claude Code 2.1.310) |
 | After the MVP closed, routing sent every project back to Phase 5; new work in four projects was appended as increments with no questions or research, and each owner invented a different workaround | structural, seen in every project that outlived its MVP | 3.2.0 | `SKILL.md` — Routing step 2; `phase-0-detect.md` — Closed class and Re-entry: increment, round or maintenance; `phase-5-build.md` — MVP close; fired in two runs, one Turkish state file and one English (`Maintenance`), and in the `closed-reentry` eval — each checked the record against the code and proposed a round |
-| State files and decision records grew without bound (a state file past 900 lines, a brief past 150 KB, a single decision file past 700 KB); header fields filled with paragraphs and dated sections turned the state file into a log; trimming by hand grew back | structural, seen in most projects past Phase 5 | 3.2.0 | `templates/00-state.md` and `templates/02-decisions.md` — caps in the file's own header; `phase-5-build.md` — archive instead of trim, five fields in Phase 5, compact promotion; `phase-0-detect.md` — Re-entry step 2 reshapes older projects; untested in a run |
+| State files and decision records grew without bound, far past what a session can read; header fields filled with paragraphs and dated sections turned the state file into a log; trimming by hand grew back | structural, seen in most projects past Phase 5 | 3.2.0 | `templates/00-state.md` and `templates/02-decisions.md` — caps in the file's own header; `phase-5-build.md` — archive instead of trim, five fields in Phase 5, compact promotion; `phase-0-detect.md` — Re-entry step 2 reshapes older projects; untested in a run |
 | A native macOS project found the desktop default inapplicable and its platform lessons had nowhere to go | gap, seen once — applied on the owner's decision | 3.2.0 | `profile/macos-swift.md` (removed in the release that dropped stack defaults) |
 | A state file that disagreed with the disk was rewritten before any go-ahead, in two of four resumption runs of an audit (October 2026) | too blunt, seen twice | 3.2.0 | `SKILL.md` — The state file: a conflict with what the user said is fixed at once, a conflict with the disk is reported and fixed on approval; measured with a stale-state eval, 3 of 5 runs wrote before the change, 0 of 5 after, and 3 of 3 still reported the gap |
-| A session resuming a compact project in Phase 3 never read the layout mapping, which lived only in Phase 1, and listed the brief's decisions as a missing `02-decisions.md` | dangling reference, seen once | 3.2.0 | `templates/00-state.md` — the `Belge düzeni` line carries the mapping; `phase-1-discover.md` says why; the replies read from eval runs whose state line carried the mapping did not repeat the misreading; no dedicated case yet |
+| A session resuming a compact project in Phase 3 never read the layout mapping, which lived only in Phase 1, and listed the brief's decisions as a missing `02-decisions.md` | dangling reference, seen once | 3.2.0 | `templates/00-state.md` — the `Document layout` line carries the mapping; `phase-1-discover.md` says why; the replies read from eval runs whose state line carried the mapping did not repeat the misreading; no dedicated case yet |
 
 Two rows are worth more than their fix. The git identity rule was **correct, prominent and indexed
 as always-relevant, and still could not fire** — placement beat wording. And the `--fetch`
@@ -54,7 +54,7 @@ designed rather than a defect found from outside.
 
 ### Phase 1 assumes the user arrives with a product idea
 
-- **Project:** `new-idea` (Unity Asset Store, July 2026)
+- **Project:** a channel-first project (2026)
 - **Class:** unsure — logged rather than fixed
 - **What happened:** The project was deliberately inverted: the distribution channel and the
   constraints were settled, and the product itself was left for Phase 2 research to determine.
@@ -98,9 +98,8 @@ user constraint rather than a profile rule, which is a place nothing had specifi
 - **Project:** a small single-user macOS menu-bar tool (September–October 2026)
 - **Class:** seen once, but Phase 1 has no item it could have been caught by
 - **What happened:** Increments were reported done on snapshots and passing tests. Snapshots render
-  neither the system's glass material nor motion, so the owner found the interface by using it:
-  "ui ı revize et çok kötü", "liquid glass ı native yapmadın mı". Five hours of rework followed,
-  recorded afterwards as new increments.
+  neither the system's materials nor motion, so the owner found the interface problems by using it.
+  Rework followed, recorded afterwards as new increments.
 - **Instruction involved:** `references/phase-5-build.md` step 7 — "run it, or say plainly that
   you did not"; `references/phase-1-discover.md` — nothing asks what the interface must feel like
 - **Proposed change:** for projects with an interface, a Phase 1 item for the feel and visual bar,
@@ -110,10 +109,10 @@ user constraint rather than a profile rule, which is a place nothing had specifi
 
 ### The self-improvement check almost never runs
 
-- **Project:** nine sessions across four projects (September–October 2026)
+- **Project:** several sessions across several projects (2026)
 - **Class:** never fires
-- **What happened:** The check at the end of an increment ran in one session of nine. In one
-  project it was not raised at the close of any of 24 increments.
+- **What happened:** The check at the end of an increment ran in only a small share of sessions. In
+  one project it was not raised at the close of any increment.
 - **Instruction involved:** `references/self-improvement.md`; `references/phase-5-build.md` —
   increment close
 - **Proposed change:** a fixed field in the increment close-out rather than a paragraph of prose —
@@ -125,7 +124,7 @@ user constraint rather than a profile rule, which is a place nothing had specifi
 - **Project:** a single-user dashboard (October 2026)
 - **Class:** seen once
 - **What happened:** Out-of-scope items from the brief were later treated as standing principles
-  rather than as the scope of one release. The owner: "kurallar ben söylediğim onayladığım sürece".
+  rather than as the scope of one release; the owner had meant them for the MVP only.
 - **Instruction involved:** `templates/01-brief.md` — out of scope; `references/phase-5-build.md` —
   when the MVP is done
 - **Proposed change:** the out-of-scope list is reviewed with the owner when the MVP closes
@@ -136,8 +135,8 @@ user constraint rather than a profile rule, which is a place nothing had specifi
 
 - **Project:** a repository shared by two developers (October 2026)
 - **Class:** seen once
-- **What happened:** Facts true only of one developer's machine landed in the committed rules; the
-  owner: "diğer geliştiriciler için yanıltıcı oluyor".
+- **What happened:** Facts true only of one developer's machine landed in the committed rules and
+  misled the other developer.
 - **Instruction involved:** `references/phase-4-scaffold.md` — CLAUDE.md
 - **Proposed change:** none yet — log only
 - **Status:** logged
@@ -169,7 +168,7 @@ user constraint rather than a profile rule, which is a place nothing had specifi
 
 ### A gate instruction needs a mandatory landing place — *shipped in 2.3.0, reverted in 2.3.1*
 
-- **Project:** `new-idea` (Unity Asset Store, July 2026)
+- **Project:** a channel-first project (2026)
 - **Class:** structural — *later shown to be circumstantial, which is why it was reverted*
 - **Instruction involved:** none — proposed as a gap
 - **What was observed:** A user instruction issued at a phase gate — run a feasibility spike earlier
@@ -177,9 +176,8 @@ user constraint rather than a profile rule, which is a place nothing had specifi
   said it had declined it either.
 - **Proposed change:** `SKILL.md` gains a rule that a gate instruction becomes an increment, a
   decision, or an assumption before the gate closes, or is refused out loud.
-- **Why rejected:** the instructions were being relayed into the session by hand from a second
-  conversation, and it later emerged that the relay itself was the lossy part — several were never
-  sent at all. The phase was never shown to have dropped anything. The rule was added to the
+- **Why rejected:** the instructions reached the session through a relay outside the tool, and it
+  later emerged that the relay itself was the lossy part — several never arrived at all. The phase was never shown to have dropped anything. The rule was added to the
   always-loaded file on evidence that did not survive contact with the actual cause.
 
 Kept because the idea will come back, and because the way it failed is more instructive than the

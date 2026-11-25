@@ -83,7 +83,9 @@ continues from the same line of thought. That is the point of the whole thing.
 ## Language
 
 Conversation and `docs/**` follow the user's language. `CLAUDE.md`, `AGENTS.md`, `.claude/**`,
-and all code are always English.
+and all code are always English. The templates are English; a Turkish document takes its fixed
+wording from `references/turkish-keys.md`, and a project started before 4.0.0 keeps its Turkish
+keys, which are read as the English ones.
 
 ## Layout
 
@@ -166,8 +168,8 @@ that explains local overrides.
 Versions 2.3.0 and 2.3.1 — a rule shipped and reverted in one day, which is the most useful entry
 here. A user instruction issued at a phase gate appeared to vanish four times running, so `SKILL.md`
 gained a rule forcing gate instructions to land somewhere. It then emerged that the instructions
-were being relayed by hand from a second conversation and several were never sent at all: the
-lossy component was outside the tool entirely. Reverted. Two of the project's own standards had
+reached the session through a relay outside the tool and several never arrived at all: the lossy
+component was outside the tool entirely. Reverted. Two of the project's own standards had
 been broken to ship it — "one project is one data point", and 2.2.0's own new rule that a fix is
 applied when it has been *seen to fire*. The entry stays in `feedback/observations.md` under
 Rejected, because the shape generalises: an explanation that indicts the system you are holding is
@@ -216,10 +218,8 @@ adding a reminder.
 
 Version 0.9.0 — the trial's sharpest lesson, and one against the tool's own judgement. The
 tool declined to build custom subagents for a solo-developer project; the user overruled it
-and asked for them anyway. The tenant-isolation auditor then found a cross-tenant account
-takeover that the increment's own tests could not have caught: those tests used two users in
-two tenants, while the flaw needed one user present in both. It was dormant that day and would
-have opened with the next increment's profile-editing endpoint. "Default: none" now carries an
+and asked for them anyway. One of those reviewers then caught a defect that the increment's own
+tests could not have caught, because the tests never built the case it needed. "Default: none" now carries an
 explicit exception for a failure class that is invisible in review and fatal to the product —
 the author is the person least able to construct the case they did not think of.
 
@@ -281,8 +281,7 @@ the user's own core premise. Fixes from that trial: the dead-ends section is now
 opening rather than an emergent habit, verification markers sit next to claims instead of in
 a section at the end, and calculations must separate sourced inputs from estimates.
 
-Phase 0 and Phase 1 trialled against a real project (a multi-tenant gym
-management SaaS). Both behaved as designed: the folder was classified correctly, discovery
+Phase 0 and Phase 1 trialled against a real project (a multi-tenant SaaS). Both behaved as designed: the folder was classified correctly, discovery
 finished in three rounds, out-of-scope was pushed on properly, and a scope-versus-deadline
 contradiction was recorded rather than smoothed over.
 
