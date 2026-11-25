@@ -11,24 +11,28 @@ from it and from git history.
 
 ## [Unreleased]
 
+## [4.0.0] - 2026-11-25
+
+Breaking: the profile no longer carries stack defaults or safety rails, and the templates are English. Projects written with the earlier Turkish keys keep working.
+
 ### Added
 
-- `evals/stack-open` and `evals/stack-user-named`: with no technology named, the next question leaves the stack open; with one named, it is taken as given.
-- `evals/new-turkish-project`: a new Turkish project's first state file uses the Turkish keys. The existing Turkish fixtures (`mid-concrete-task`, `stale-state`, `closed-reentry`) now cover projects written with the old keys.
+- `evals/stack-open` and `evals/stack-user-named`: with no technology named, the next question leaves the stack open; with one named, it is taken as given (#27).
+- `evals/new-turkish-project`: a new Turkish project's first state file uses the Turkish keys. The existing Turkish fixtures (`mid-concrete-task`, `stale-state`, `closed-reentry`) now cover projects written with the old keys (#30).
 
 ### Changed
 
-- Routing asks for the go-ahead as a yes-or-no question about the next phase and stops there; without the removed rails, empty-folder runs had started Phase 1 by asking for the idea.
-- **No default stack.** The stack is the one the user names, the one the project's code already uses, or — when neither exists — candidates Phase 2 derives from the brief and current sources. Phase 1 asks about existing skill as an open question, and Phase 3 records where the stack came from. The profile's stack files (.NET, React, Next.js, Go, Tauri, Swift, Astro, mobile) and its defaults table are removed; `avoid.md` is an empty template; `code-style.md` no longer prefers a package manager or language.
-- **Templates and the phase files are in English.** Documents still follow the user's language; a Turkish document takes its wording from the new `references/turkish-keys.md`. Projects started before this release keep their Turkish keys (`Aktif faz`, `Belge düzeni`, `Bakım`, `Elenenler`, `⚠️ VARSAYIM`), which are read as the English ones and kept when writing; renaming them is left to the user.
+- Routing asks for the go-ahead as a yes-or-no question about the next phase and stops there; without the removed rails, empty-folder runs had started Phase 1 by asking for the idea (#29).
+- **No default stack.** The stack is the one the user names, the one the project's code already uses, or — when neither exists — candidates Phase 2 derives from the brief and current sources. Phase 1 asks about existing skill as an open question, and Phase 3 records where the stack came from. The profile's stack files (.NET, React, Next.js, Go, Tauri, Swift, Astro, mobile) and its defaults table are removed; `avoid.md` is an empty template; `code-style.md` no longer prefers a package manager or language (#27).
+- **Templates and the phase files are in English.** Documents still follow the user's language; a Turkish document takes its wording from the new `references/turkish-keys.md`. Projects started before this release keep their Turkish keys (`Aktif faz`, `Belge düzeni`, `Bakım`, `Elenenler`, `⚠️ VARSAYIM`), which are read as the English ones and kept when writing; renaming them is left to the user (#30).
 
 ### Removed
 
-- The profile's safety rails (no git or tests unless asked, one-line commit messages, EF migration rules, read-only shared database). They were one developer's working rules. Phase 5 now asks before running a verification command only when the user or the project's `CLAUDE.md` says to, and Phase 4 offers the commit and makes it once the user agrees.
+- The profile's safety rails (no git or tests unless asked, one-line commit messages, EF migration rules, read-only shared database). They were one developer's working rules. Phase 5 now asks before running a verification command only when the user or the project's `CLAUDE.md` says to, and Phase 4 offers the commit and makes it once the user agrees (#29).
 
 ### Fixed
 
-- The brief template's existing-skill row no longer asks whether the profile applies, and a stack row records whether the stack is user-supplied, confirmed from code or open, which Phase 2 reads. `infrastructure.md` no longer assumes a paid-for server exists.
+- The brief template's existing-skill row no longer asks whether the profile applies, and a stack row records whether the stack is user-supplied, confirmed from code or open, which Phase 2 reads. `infrastructure.md` no longer assumes a paid-for server exists (#28).
 
 ## [3.3.0] - 2026-11-21
 
@@ -271,7 +275,8 @@ from it and from git history.
 - First public release. The developer profile split into committed templates carrying the
   questions and a gitignored `profile/local/` holding the answers, read in preference.
 
-[Unreleased]: https://github.com/voyvodka/claude-project-flow/compare/v3.3.0...HEAD
+[Unreleased]: https://github.com/voyvodka/claude-project-flow/compare/v4.0.0...HEAD
+[4.0.0]: https://github.com/voyvodka/claude-project-flow/compare/v3.3.0...v4.0.0
 [3.3.0]: https://github.com/voyvodka/claude-project-flow/compare/v3.2.2...v3.3.0
 [3.2.2]: https://github.com/voyvodka/claude-project-flow/compare/v3.2.1...v3.2.2
 [3.2.1]: https://github.com/voyvodka/claude-project-flow/compare/v3.2.0...v3.2.1
