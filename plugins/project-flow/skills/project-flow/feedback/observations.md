@@ -136,7 +136,7 @@ user constraint rather than a profile rule, which is a place nothing had specifi
 - **Project:** a repository shared by several developers (October 2026)
 - **Class:** seen once
 - **What happened:** Facts true only of one developer's machine landed in the committed rules and
-  misled the other developer.
+  misled others working in it.
 - **Instruction involved:** `references/phase-4-scaffold.md` — CLAUDE.md
 - **Proposed change:** none yet — log only
 - **Status:** logged

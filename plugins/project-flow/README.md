@@ -206,8 +206,7 @@ and comments stay minimal with critical ones welcome.
 
 Version 1.0.0 — the profile stopped pointing at reference repositories and absorbed them. Naming,
 comment policy (sparse by default, mandatory one-line summaries, controller actions exempt),
-safety rails, endpoint and envelope conventions, UTC-everywhere, tenant isolation, rotating-refresh
-auth, the UI rules that get re-litigated, and the personal/workplace infrastructure split are now
+safety rails, endpoint and envelope conventions, UTC-everywhere, the UI rules that get re-litigated, and the personal/workplace infrastructure split are now
 written into `profile/` rather than left to be rediscovered by reading code.
 
 Also new: a self-improvement loop. The tool asks at phase gates whether anything failed *because
