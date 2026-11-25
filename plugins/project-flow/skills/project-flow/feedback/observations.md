@@ -26,23 +26,23 @@ and the reason it was turned down is the only thing that stops it.
 | Git identity rule sat where it was read, not where it applied; the first commit carried the wrong author | never fires | 1.7.1 | `SKILL.md`, `phase-4-scaffold.md`, `phase-5-build.md` |
 | Dependency versions written from recall against a "latest stable" rule with no method | structural | 1.7.2 | `profile/code-style.md` — resolve with the package manager |
 | Decisions recorded individually and never read as a set; `--fetch` contradicted a read-only scope | structural, found by the tool itself | 1.9.0 | `phase-3-decide.md` — contradiction check before the gate |
-| Two of four research branches returned no summary, and the instruction forbade reading the files instead | structural, found by the tool itself | 2.2.1 | `phase-2-research.md` — the file is the deliverable, the summary a convenience |
+| Research branches returned no summary, and the instruction forbade reading the files instead | structural, found by the tool itself | 2.2.1 | `phase-2-research.md` — the file is the deliverable, the summary a convenience |
 | "Success criteria" had no referent in a project that already shipped; phases ran against an outward goal the owner would not have chosen first | structural | 2.5.0 | `phase-1-discover.md` — item 4 splits when the MVP already shipped; `phase-0-detect.md` — what a codebase conceals |
-| The map of `docs/` lived in `CLAUDE.md`; a folder that outgrew the skeleton ended up with a map naming 9 of 48 files, two whole directories absent | duplication | 2.6.0 | `docs/README.md` — new `templates/docs-README.md`, written in `phase-4-scaffold.md`; `CLAUDE.md` now points at it |
-| Three projects ended up enforcing their verification with a Stop or pre-push hook rather than a written instruction; Phase 4 had no place for either | gap, seen three times | 3.1.0 | `phase-4-scaffold.md` — Checks that must run; fired in one Phase 4 run (a dashboard project) |
-| Long `CLAUDE.md` files in large projects loaded every area's rules into every session; cutting them by half or more and moving the area rules to path-scoped `.claude/rules/` fixed it | structural, seen in three projects | 3.1.0 | `phase-4-scaffold.md` — CLAUDE.md budget; `phase-5-build.md`; fired in one Phase 4 run (a dashboard project) |
+| The map of `docs/` lived in `CLAUDE.md`; a folder that outgrew the skeleton ended up with a map naming a fraction of its files, whole directories absent | duplication | 2.6.0 | `docs/README.md` — new `templates/docs-README.md`, written in `phase-4-scaffold.md`; `CLAUDE.md` now points at it |
+| Several projects ended up enforcing their verification with a Stop or pre-push hook rather than a written instruction; Phase 4 had no place for either | gap, seen three times | 3.1.0 | `phase-4-scaffold.md` — Checks that must run; fired in one Phase 4 run (a dashboard project) |
+| Long `CLAUDE.md` files in large projects loaded every area's rules into every session; cutting them by half or more and moving the area rules to path-scoped `.claude/rules/` fixed it | structural, seen in several projects | 3.1.0 | `phase-4-scaffold.md` — CLAUDE.md budget; `phase-5-build.md`; fired in one Phase 4 run (a dashboard project) |
 | A public repository meant to carry no AI tooling had no path through Phase 4, which writes every file as committed | gap, seen once — applied on the owner's decision | 3.1.0 | `phase-3-decide.md` — publication list; `phase-4-scaffold.md` — `.git/info/exclude`; fired once when an existing project was re-checked against 3.1.0 (the answer reached its publication decision), then in one Phase 4 run (a dashboard project) |
-| Advisory subagents given edit tools and the strongest model by default; two projects settled on one writer with read-only consultants on a cheaper model | structural, seen twice | 3.1.0 | `phase-4-scaffold.md` — One writer; fired in one Phase 4 run (a dashboard project) |
+| Advisory subagents given edit tools and the strongest model by default; projects settled on one writer with read-only consultants on a cheaper model | structural, seen twice | 3.1.0 | `phase-4-scaffold.md` — One writer; fired in one Phase 4 run (a dashboard project) |
 | The tool offered to approve its own gates while the user was away, as the recommended option, on a premise it invented | structural — breaks a prime directive | 3.2.0 | `SKILL.md` — prime directive 4: never propose waiving gates; standing approvals recorded verbatim with scope and expiry; fired in one `claude -p` run (October 2026) — an unprompted approval was recorded verbatim with scope and expiry, and Phase 4 was not started because its inputs were missing |
-| When the opening input was a concrete task, routing was skipped and no session said which phase the work belonged to | structural, seen in four sessions | 3.2.0 | `SKILL.md` — Routing step 3, the announcement is made every time; fired in one run and in the `mid-concrete-task` eval — a progress question was answered inside the phase frame |
+| When the opening input was a concrete task, routing was skipped and no session said which phase the work belonged to | structural, seen in several sessions | 3.2.0 | `SKILL.md` — Routing step 3, the announcement is made every time; fired in one run and in the `mid-concrete-task` eval — a progress question was answered inside the phase frame |
 | A phase reference read with Read is not restored after context compaction; the session continued without its instructions | structural, documented platform behaviour | 3.2.0 | `SKILL.md` — Routing, re-read the active phase reference after compaction; untested in a run |
 | The entry skill pre-approved fourteen tools, but `allowed-tools` lapses after the turn it loads in, so later phases never had them | structural, documented platform behaviour | 3.2.0 | `skills/project/SKILL.md` — grants only `Skill`, the one tool that turn uses |
 | Phase 5 relied on the task tools, which are off by default for most users | structural, documented platform behaviour | 3.2.0 | `phase-5-build.md` — step 6 fallback when the task tools are absent; untested in a run |
 | Tooling kept local-only (ignored or excluded files) is missing from a git worktree | structural, documented platform behaviour | 3.2.0 | `phase-4-scaffold.md` — worktree note and `.worktreeinclude`; it does copy files excluded only through `.git/info/exclude` (checked on Claude Code 2.1.310) |
-| After the MVP closed, routing sent every project back to Phase 5; new work in four projects was appended as increments with no questions or research, and each owner invented a different workaround | structural, seen in every project that outlived its MVP | 3.2.0 | `SKILL.md` — Routing step 2; `phase-0-detect.md` — Closed class and Re-entry: increment, round or maintenance; `phase-5-build.md` — MVP close; fired in two runs, one Turkish state file and one English (`Maintenance`), and in the `closed-reentry` eval — each checked the record against the code and proposed a round |
+| After the MVP closed, routing sent every project back to Phase 5; new work in several projects was appended as increments with no questions or research, and each owner invented a different workaround | structural, seen in every project that outlived its MVP | 3.2.0 | `SKILL.md` — Routing step 2; `phase-0-detect.md` — Closed class and Re-entry: increment, round or maintenance; `phase-5-build.md` — MVP close; fired in two runs, one Turkish state file and one English (`Maintenance`), and in the `closed-reentry` eval — each checked the record against the code and proposed a round |
 | State files and decision records grew without bound, far past what a session can read; header fields filled with paragraphs and dated sections turned the state file into a log; trimming by hand grew back | structural, seen in most projects past Phase 5 | 3.2.0 | `templates/00-state.md` and `templates/02-decisions.md` — caps in the file's own header; `phase-5-build.md` — archive instead of trim, five fields in Phase 5, compact promotion; `phase-0-detect.md` — Re-entry step 2 reshapes older projects; untested in a run |
 | A native macOS project found the desktop default inapplicable and its platform lessons had nowhere to go | gap, seen once — applied on the owner's decision | 3.2.0 | `profile/macos-swift.md` (removed in the release that dropped stack defaults) |
-| A state file that disagreed with the disk was rewritten before any go-ahead, in two of four resumption runs of an audit (October 2026) | too blunt, seen twice | 3.2.0 | `SKILL.md` — The state file: a conflict with what the user said is fixed at once, a conflict with the disk is reported and fixed on approval; measured with a stale-state eval, 3 of 5 runs wrote before the change, 0 of 5 after, and 3 of 3 still reported the gap |
+| A state file that disagreed with the disk was rewritten before any go-ahead, in some resumption runs of an audit | too blunt, seen twice | 3.2.0 | `SKILL.md` — The state file: a conflict with what the user said is fixed at once, a conflict with the disk is reported and fixed on approval; measured with a stale-state eval, 3 of 5 runs wrote before the change, 0 of 5 after, and 3 of 3 still reported the gap |
 | A session resuming a compact project in Phase 3 never read the layout mapping, which lived only in Phase 1, and listed the brief's decisions as a missing `02-decisions.md` | dangling reference, seen once | 3.2.0 | `templates/00-state.md` — the `Document layout` line carries the mapping; `phase-1-discover.md` says why; the replies read from eval runs whose state line carried the mapping did not repeat the misreading; no dedicated case yet |
 
 Two rows are worth more than their fix. The git identity rule was **correct, prominent and indexed
@@ -72,8 +72,8 @@ earns nothing. The thing to watch on a second sighting is whether a different se
 pressures the user to invent a product on the spot — that would be the actual failure, and it has
 not been observed.
 
-Also worth pinning if it recurs: this phase turned "I don't want operational burden" into "2-4 hours
-per month", making a vague user constraint into a threshold Phase 2 can answer pass/fail. That is
+Also worth pinning if it recurs: this phase turned a vague wish to avoid operational work into a
+monthly hours budget, making a vague user constraint into a threshold Phase 2 can answer pass/fail. That is
 the `code-style.md` lesson — a requirement without a method is a wish — applied spontaneously to a
 user constraint rather than a profile rule, which is a place nothing had specified it for.
 
@@ -133,7 +133,7 @@ user constraint rather than a profile rule, which is a place nothing had specifi
 
 ### Machine-specific facts written into shared rules
 
-- **Project:** a repository shared by two developers (October 2026)
+- **Project:** a repository shared by several developers (October 2026)
 - **Class:** seen once
 - **What happened:** Facts true only of one developer's machine landed in the committed rules and
   misled the other developer.
@@ -145,7 +145,7 @@ user constraint rather than a profile rule, which is a place nothing had specifi
 
 - **Project:** one project's question rounds (October 2026)
 - **Class:** observation
-- **What happened:** 28% of `AskUserQuestion` answers were typed into "Other" rather than picked.
+- **What happened:** A sizeable share of `AskUserQuestion` answers were typed into "Other" rather than picked.
   Not a failure by itself; a rising share would mean the options are being written before the
   question is understood.
 - **Instruction involved:** `references/phase-1-discover.md` — question rounds
@@ -172,7 +172,7 @@ user constraint rather than a profile rule, which is a place nothing had specifi
 - **Class:** structural — *later shown to be circumstantial, which is why it was reverted*
 - **Instruction involved:** none — proposed as a gap
 - **What was observed:** A user instruction issued at a phase gate — run a feasibility spike earlier
-  than planned — never appeared in any project document across four attempts, and the phase never
+  than planned — never appeared in any project document across repeated attempts, and the phase never
   said it had declined it either.
 - **Proposed change:** `SKILL.md` gains a rule that a gate instruction becomes an increment, a
   decision, or an assumption before the gate closes, or is refused out loud.
@@ -187,8 +187,8 @@ idea. Two of this file's own standards were broken to ship it. **"One project is
 saved** — the rule was written, shipped and versioned without a single observation of it working.
 
 The general shape worth remembering: **an explanation that indicts the system you are holding is
-the one to distrust first.** Four failures were read as four data points about the phase, when they
-were four data points about a channel that was never examined because it was not part of the thing
+the one to distrust first.** The failures were read as data points about the phase, when they were
+data points about a channel that was never examined because it was not part of the thing
 being studied.
 
 If it recurs where the instruction is *known* to have arrived, that is a real first sighting and

@@ -59,7 +59,7 @@ Phases and statuses, as they appear on the `Active phase` line:
 | `Round 2 — <goal>` | `Tur 2 — <amaç>` |
 | `# Roadmap` · `Increments` | `# Yol Haritası` · `Parçalar` |
 | Increment fields `Delivers` · `Depends on` · `How it is verified` · `Status` · `Note` | `Ne teslim eder` · `Bağımlılık` · `Nasıl doğrulanır` · `Durum` · `Not` |
-| Status markers `⬜ waiting` · `🔄 in progress` · `✅ done` · `⏸️ paused` | `⬜ bekliyor` · `🔄 devam ediyor` · `✅ tamam` · `⏸️ durduruldu` |
+| `Status markers:` · `⬜ waiting` · `🔄 in progress` · `✅ done` · `⏸️ paused` | `Durum işaretleri:` · `⬜ bekliyor` · `🔄 devam ediyor` · `✅ tamam` · `⏸️ durduruldu` |
 | Compact sections `## Decisions` · `## Roadmap` | `## Kararlar` · `## Yol haritası` |
 
 ## Decision entries (`02-decisions.md`)
@@ -74,6 +74,7 @@ Phases and statuses, as they appear on the `Active phase` line:
 | `Rests on` | `Bağlı olduğu varsayım` |
 | `Source` | `Kaynak` |
 | `none` | `yok` |
+| Index columns once the file is split: `date · decision · file` | `tarih · karar · dosya` |
 | A reversal on the `Why` line: "X was chosen first; changed because of Y" | "önce X seçilmişti, Y nedeniyle değişti" |
 
 ## Internal README (`README-internal.md`)
