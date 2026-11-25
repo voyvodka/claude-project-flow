@@ -110,7 +110,7 @@ continues from the same line of thought. That handover is the point of the whole
 ## The developer profile
 
 `plugins/project-flow/skills/project-flow/profile/` is the part you are meant to edit. It records
-how you work and where things run — code conventions and safety rails, your machine, your hosting,
+how you work and where things run — code conventions, your machine, your hosting,
 technologies you have ruled out — so no project has to rediscover them.
 
 **It carries no default stack.** The stack is the one you name, the one your project already uses,

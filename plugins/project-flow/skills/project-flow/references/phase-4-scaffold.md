@@ -154,7 +154,7 @@ One case genuinely earns a skill: **a stack the AI writing the code gets predict
 
 Run the four-item guarantee in `SKILL.md` against this repository, item by item. The honest framing: if it were handed to a competent stranger with no chat history, could they open `CLAUDE.md` and `00-state.md` and know what to do next?
 
-If the project is a git repo, this is a natural commit point. Only suggest it — never run git commands unless the user asks.
+If the project is a git repo, this is a natural commit point: offer the commit, and make it once the user agrees.
 
 **Before initialising a repository or making a first commit, re-read `profile/local-environment.md`.** The profile was read at the start of Phase 1 and is no longer in mind by the time this offer is accepted; identity and setup requirements recorded there apply at exactly this moment and nowhere earlier. Set what it requires as part of the same action, and say what was set.
 

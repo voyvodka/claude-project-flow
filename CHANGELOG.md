@@ -11,17 +11,22 @@ from it and from git history.
 
 ## [Unreleased]
 
-### Fixed
-
-- The brief template's existing-skill row no longer asks whether the profile applies, and a stack row records whether the stack is user-supplied, confirmed from code or open, which Phase 2 reads. `infrastructure.md` no longer assumes a paid-for server exists.
-
-### Changed
-
-- **No default stack.** The stack is the one the user names, the one the project's code already uses, or — when neither exists — candidates Phase 2 derives from the brief and current sources. Phase 1 asks about existing skill as an open question, and Phase 3 records where the stack came from. The profile's stack files (.NET, React, Next.js, Go, Tauri, Swift, Astro, mobile) and its defaults table are removed; `avoid.md` is an empty template; `code-style.md` no longer prefers a package manager or language.
-
 ### Added
 
 - `evals/stack-open` and `evals/stack-user-named`: with no technology named, the next question leaves the stack open; with one named, it is taken as given.
+
+### Changed
+
+- Routing asks for the go-ahead as a yes-or-no question about the next phase and stops there; without the removed rails, empty-folder runs had started Phase 1 by asking for the idea.
+- **No default stack.** The stack is the one the user names, the one the project's code already uses, or — when neither exists — candidates Phase 2 derives from the brief and current sources. Phase 1 asks about existing skill as an open question, and Phase 3 records where the stack came from. The profile's stack files (.NET, React, Next.js, Go, Tauri, Swift, Astro, mobile) and its defaults table are removed; `avoid.md` is an empty template; `code-style.md` no longer prefers a package manager or language.
+
+### Removed
+
+- The profile's safety rails (no git or tests unless asked, one-line commit messages, EF migration rules, read-only shared database). They were one developer's working rules. Phase 5 now asks before running a verification command only when the user or the project's `CLAUDE.md` says to, and Phase 4 offers the commit and makes it once the user agrees.
+
+### Fixed
+
+- The brief template's existing-skill row no longer asks whether the profile applies, and a stack row records whether the stack is user-supplied, confirmed from code or open, which Phase 2 reads. `infrastructure.md` no longer assumes a paid-for server exists.
 
 ## [3.3.0] - 2026-11-21
 

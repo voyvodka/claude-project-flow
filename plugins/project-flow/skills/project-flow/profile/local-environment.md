@@ -33,9 +33,8 @@ Get this wrong and the first commits of a personal project carry a work address 
 that may end up public. Rewriting author history afterwards is possible and unpleasant, so it is
 worth doing at initialisation rather than discovering later.
 
-The tool never runs git commands unsupervised — see [`code-style.md`](code-style.md). But when the
-user asks for a repository to be initialised, setting the local identity is part of that request,
-not a separate favour. Say that it was set, and to what.
+When a repository is initialised, setting the local identity is part of that action, not a separate
+favour. Say that it was set, and to what.
 
 ## Machine
 
@@ -57,7 +56,7 @@ projects at once**, not part of any one project.
 Two consequences:
 
 - **A shared development database is read-only in practice.** Even with full permissions, another
-  project's data is in there. See the rule in [`code-style.md`](code-style.md).
+  project's data is in there.
 - **A new project should bring its own container rather than borrowing an existing one**, on its
   own port and with its own name. Sharing one Postgres instance across projects is how a migration
   in one drops a table in another.

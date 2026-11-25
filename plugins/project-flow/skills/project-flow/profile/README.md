@@ -1,6 +1,6 @@
 # Developer Profile
 
-How the developer works and where things run: code conventions and safety rails, the local
+How the developer works and where things run: code conventions, the local
 machine, hosting, documentation habits, repository layout. Read this index at the start of
 Phase 1, and each file at the moment it applies.
 
@@ -10,9 +10,7 @@ stack. A preference recorded here would be a verdict on projects nobody has seen
 
 **Edit these files directly.** This directory is the one part of the plugin meant to be
 personal. Everything in it is a **default, not a rule**: Phase 1 confirms it applies to the
-project at hand. The one exception is the safety rails in
-[`code-style.md`](code-style.md#safety-rails) — git, tests, migrations, shared databases. Those
-are rules, and no phase relaxes them on its own.
+project at hand.
 
 ## Personal overrides
 
@@ -47,7 +45,7 @@ inventing a server, an identity or an exclusion.
 
 | File | When to read it |
 |---|---|
-| [`code-style.md`](code-style.md) | **Always** — comments, dependencies, safety rails, doc order |
+| [`code-style.md`](code-style.md) | **Always** — comments, dependencies, doc order |
 | [`local-environment.md`](local-environment.md) | **Always** — git identity, machine limits, local containers |
 | [`infrastructure.md`](infrastructure.md) | Every project — hosting, CI, deployment target |
 | [`avoid.md`](avoid.md) | Phase 2, before proposing candidates — only if it lists anything |
