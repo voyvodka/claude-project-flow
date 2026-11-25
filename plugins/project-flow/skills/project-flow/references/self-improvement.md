@@ -51,12 +51,14 @@ Real ones, worth recognising:
 
 - **Structural** — the failure follows from how the instruction is built, and would recur in any
   project. A record only written on success will fail every time a run is interrupted. A dangling
-  reference is dangling for everyone. **Fix these immediately**, and say so.
+  reference is dangling for everyone. **Offer the report at once** (`defect-report.md`), and say
+  why it is structural.
 - **Circumstantial** — it happened once and might be this project's particularity. Perhaps this
-  domain is unusual, perhaps the phrasing was unlucky. **Log it, do not edit.** If the same
-  observation appears in a second project, it has stopped being circumstantial.
+  domain is unusual, perhaps the phrasing was unlucky. **Report it, do not edit.** If the same
+  observation reaches the maintainer from a second project, it has stopped being circumstantial.
 
-When unsure which it is, log it. An unlogged observation is lost; a logged one costs a line.
+When unsure which it is, report it. An unreported observation is lost; a report costs the user two
+short answers.
 
 ## How to fix
 
@@ -87,49 +89,36 @@ So: **propose, do not apply.** State what happened, which class it falls into, w
 would be, and what it might cost elsewhere. The user decides. This holds even when the fix looks
 obvious — especially then, since obvious fixes are the ones that get made without checking.
 
-Two exceptions, both narrow: fixing a factually broken reference (a path that does not exist, a
-file name that changed), and correcting an internal inconsistency where one of two contradictory
-statements is plainly stale. Both are repairs, not design changes.
+Two kinds of change are repairs rather than design changes: fixing a factually broken reference (a
+path that does not exist, a file name that changed), and correcting an internal inconsistency where
+one of two contradictory statements is plainly stale. A repair needs no case made for it beyond
+saying it is one — but it still reaches the tool only as a report the user approves.
 
 ## Where the edit has to land
 
-**Check first whether this plugin is running from a copy that survives an update.** A marketplace
-install is copied into a versioned plugin cache; an edit made there is deleted the next time the
-plugin updates, and it is deleted silently — the proposal was accepted, the file was written, and
-the change is simply gone. That is the same failure `profile/README.md` describes for
-`profile/local/`, and it applies to every file in this skill, not just that directory.
+**Not in this install.** A marketplace install is copied into a versioned plugin cache; an edit
+made there is deleted the next time the plugin updates, silently — the proposal was accepted, the
+file was written, and the change is simply gone. An accepted change that cannot survive an update
+is worse than a rejected one, because everyone involved believes it landed.
 
-So before applying anything, run the location check in `SKILL.md` — it lives there because the
-plugin path is substituted into `SKILL.md` on load and into nothing in this directory. If this
-skill runs from a `plugins/cache/` path, say so and stop. The change belongs in the source
-repository — open it there, or hand the user the proposal to carry over. An accepted change that
-cannot survive an update is worse than a rejected one, because everyone involved believes it
-landed.
+So every change to the tool, a repair or a design change, goes to the source repository through
+`defect-report.md`: the user agrees, a background agent makes the change in a fresh clone, the user
+sees exactly what would be sent, and agrees again. A circumstantial finding goes the same way, as a
+report whose proposed change is "none yet — needs a second sighting"; the maintainer keeps the
+ledger of such findings in the source repository, and the install keeps none.
 
-## Logging
+## Reporting
 
-Append to `feedback/observations.md` next to this skill. **The section above applies here too** —
-that file lives in this skill, so on a marketplace install it sits in the versioned cache and the
-next update deletes whatever was appended, silently. Run the location check in `SKILL.md` before
-writing: if this skill runs from under `plugins/cache/`, say so and hand the user the entry to
-carry into the source repository instead. A log the update wipes is worse than no log, because the
-observation is gone *and* it was counted as recorded.
+A report carries the shape of an observation entry, without the project:
 
-One entry:
+- **Class:** structural | circumstantial, and the failure class from the table above
+- **Instruction involved:** file and rule, or "none — gap"
+- **What happened:** the outcome in one or two sentences, in general terms
+- **Proposed change:** or "none yet — needs a second sighting"
 
-```
-## <short title>
-- **Project:** <where it was seen>
-- **Class:** structural | circumstantial
-- **What happened:** <one or two sentences — the outcome, not the feeling>
-- **Instruction involved:** <file and rule, or "none — gap">
-- **Proposed change:** <or "none yet — needs a second sighting">
-- **Status:** logged | proposed | applied in vX.Y.Z | rejected
-```
-
-Keep the log short the same way the project-level gotchas ledger is kept short. Entries that were
-applied can collapse to a line once the change is in; entries rejected stay, with the reason,
-because the same idea comes back.
+No quotes from the conversation, no project or person names, no paths outside the plugin — the
+report leaves the machine, and `report.sh` refuses it otherwise. If the user declines a report,
+nothing is written anywhere; the finding was worth one question, not a file.
 
 ## What not to do
 

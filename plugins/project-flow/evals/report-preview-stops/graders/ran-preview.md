@@ -1,0 +1,6 @@
+---
+type: tool_used
+tool: Bash
+input_match: 'report\.sh[^"]*\spreview\b'
+min: 1
+---
