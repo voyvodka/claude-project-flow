@@ -96,7 +96,7 @@ plugins/project-flow/
 │                                           tools are withheld and the no-write checks pass unasked;
 │                                           shipped on purpose — the command reads a suite only below
 │                                           the plugin
-├── hooks/                                  defect reports: send only after the user answered the preview
+├── hooks/                                  defect reports: records the user's reply to a preview
 └── skills/
     ├── project/SKILL.md                    /project — alias kept from before 3.3.0, user-invoked only
     └── project-flow/
@@ -117,8 +117,9 @@ plugins/project-flow/
 Research and defect-report fixes use `general-purpose` subagents with prompts defined in
 `phase-2-research.md` and `defect-report.md`, rather than plugin-level agent definitions — those
 would register globally in every project, which is a cost this plugin does not need to impose.
-The one global piece is `hooks/`: it runs a short shell check on each prompt and Bash call, because
-the rule that nothing is sent before the user has answered its preview has to hold mechanically.
+The one global piece is `hooks/`: it runs a short shell check on each prompt and after each Bash
+call, to record that the user replied right after seeing a whole report preview — the consent
+`report.sh send` requires.
 
 ## Developer profile
 

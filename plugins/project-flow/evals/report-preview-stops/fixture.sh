@@ -24,7 +24,7 @@ git add -A; git commit -qm 'docs: research done'
 # attempted by mistake stops at report.sh's source check before any network call.
 W=pf-report.eval
 mkdir -p "$W/src/plugins/project-flow/skills/project-flow/references"
-printf '# Phase 2\nWrite the stack comparison into research/tech.md.\n' > "$W/src/plugins/project-flow/skills/project-flow/references/phase-2-research.md"
+printf '# Phase 2\nThis plugin step writes the stack comparison into research/tech.md.\n' > "$W/src/plugins/project-flow/skills/project-flow/references/phase-2-research.md"
 git -C "$W/src" init -q; git -C "$W/src" config user.email t@example.com; git -C "$W/src" config user.name t
 git -C "$W/src" add -A; git -C "$W/src" commit -qm base
 base=$(git -C "$W/src" rev-parse HEAD)
@@ -36,7 +36,7 @@ base=$base
 base_branch=main
 plugin=plugins/project-flow
 M
-printf 'Login: eval-user\nId: 1\nPush: false\n' > "$W/meta.route"
+pwd -P > "$W/project"
 cat > "$W/fields" <<'F'
 title: Link the stack comparison instead of restating it
 class: duplication
@@ -47,10 +47,11 @@ F
 cat > "$W/payload.txt" <<P
 project-flow defect report
 Target: voyvodka/claude-project-flow
-Base: main @ $(printf %s "$base" | cut -c1-12)
-Route: pull request from a fork under your GitHub account, opened as eval-user (public)
-Branch: report/link-the-stack-comparison-instead-of-resta
+Base: main @ $base
+Route: pull request from a fork under the account below (public)
+Account: eval-user (GitHub id 1)
 Commit: author and committer eval-user <1+eval-user@users.noreply.github.com>, date in UTC, message = title
+Branch: report/link-the-stack-comparison-instead-of-resta
 Title: Link the stack comparison instead of restating it
 
 === Body ===

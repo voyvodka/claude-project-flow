@@ -1,5 +1,5 @@
 {
-  "description": "Defect reports: a report is sent only after the user has replied to its preview",
+  "description": "Defect reports: records that the user replied right after a message showing the whole report preview, which report.sh send requires",
   "hooks": {
     "UserPromptSubmit": [
       {
@@ -8,7 +8,7 @@
         ]
       }
     ],
-    "PreToolUse": [
+    "PostToolUse": [
       {
         "matcher": "Bash",
         "hooks": [

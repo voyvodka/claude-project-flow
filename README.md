@@ -163,8 +163,10 @@ the exact title, body and diff that would be sent, and on the second yes the pul
 from your own GitHub account (through a fork if you cannot push here). Without a `gh` session you
 get a prefilled issue link to submit yourself instead. What leaves is limited to files under
 `plugins/project-flow/` and an abstract description; a mechanical scrub refuses home-directory
-paths, e-mail addresses, user, host and git names, and your project's directory and file names
-before anything is shown, and a plugin hook refuses to send until you have answered the preview.
+paths, e-mail addresses and your project's directory and file names (and, as best effort, user,
+host and git names and similar) before anything is shown. On the pull-request route the send step
+refuses to run until a plugin hook has seen you type a reply right after a message that showed the
+whole preview; on the issue route nothing is sent for you — you get a link and submit it yourself.
 The flow is `plugins/project-flow/skills/project-flow/references/defect-report.md`; its checks are
 tested in `tests/report-test.sh`.
 
@@ -190,7 +192,7 @@ keep their Turkish keys.
 plugins/project-flow/              the plugin — see its own README for detail
 feedback/observations.md           the maintainer's findings ledger; not shipped
 tests/report-test.sh               checks for the defect-report script and hook; run in CI
-.github/ISSUE_TEMPLATE/            the form a defect-report issue link opens
+.github/ISSUE_TEMPLATE/            the defect-report form, for reports filed by hand; the tool's link fills a blank issue
 ```
 
 ## Licence

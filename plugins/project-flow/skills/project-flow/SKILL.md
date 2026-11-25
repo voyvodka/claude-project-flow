@@ -131,8 +131,8 @@ reference; every change goes to the user as a report they approve.
 an exact preview, and a second yes/no before anything is sent. Its script is
 `${CLAUDE_PLUGIN_ROOT}/skills/project-flow/scripts/report.sh` — Claude Code substitutes that path
 into this file when it loads; it is not set in the Bash environment and not substituted in the
-reference files. If the substitution did not happen, use the base directory Claude Code showed when
-this skill loaded, three levels up. Nothing about a defect is written into the install itself: a
+reference files. If the substitution did not happen, it is `scripts/report.sh` under the base
+directory Claude Code showed when this skill loaded. Nothing about a defect is written into the install itself: a
 path containing `plugins/cache/` is a marketplace copy the next update replaces.
 
 Phases are ordered but not rigid: if the user has already settled the stack, Phase 2's stack comparison is skipped and the stack recorded as "user-supplied". Skipping is allowed; skipping *silently* is not — say what you are skipping and why, and note it in `00-state.md`.
