@@ -1,8 +1,6 @@
 #!/usr/bin/env bash
-# Writes the consent file that `report.sh send` requires. A preview is recognised by its output
-# (PostToolUse in the main session, not a subagent); the next prompt the user types turns it into
-# <workdir>/consent holding the previewed digest. Background-task and other machine-generated prompts
-# start with "<" and do not count. Raw JSON is matched with grep because jq is not guaranteed.
+# Writes <workdir>/consent, which report.sh send requires: a main-session preview (seen in PostToolUse)
+# followed by a typed prompt. Prompts starting with "<" (task notifications) do not count; no jq on users' machines.
 input=$(cat)
 field() { printf '%s' "$input" | sed -n "s/.*\"$1\"[[:space:]]*:[[:space:]]*\"\([^\"]*\)\".*/\1/p" | head -n1; }
 
