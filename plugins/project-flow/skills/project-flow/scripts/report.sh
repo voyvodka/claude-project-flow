@@ -133,8 +133,14 @@ scrub() {
   # The sending account and target repo are public by design and named in the header lines.
   personal_terms > "$tmp/personal-all" || echo "could not list user and machine names" >> "$err"
   hits grep -Fvx -e "$login" -e "${target%%/*}" -e "${target#*/}" "$tmp/personal-all" > "$tmp/personal"
+  # A user name can be part of the public login ("dana" in "dana-ops"); mask those strings first.
+  awk -v a="$login" -v b="$target" '
+    function mask(line, w,   i, out) { if (w == "") return line; out = ""
+      while ((i = index(tolower(line), w)) > 0) { out = out substr(line, 1, i - 1) "_"; line = substr(line, i + length(w)) }
+      return out line }
+    { print mask(mask($0, b), a) }' "$tmp/scan" > "$tmp/scan-personal" || echo "could not mask the account name" >> "$err"
   if [ -s "$tmp/personal" ]; then
-    hits grep -Fiwno -f "$tmp/personal" "$tmp/scan" > "$tmp/h4"
+    hits grep -Fiwno -f "$tmp/personal" "$tmp/scan-personal" > "$tmp/h4"
     sed 's/^/user or machine name: line /' "$tmp/h4" >> "$findings"
   fi
 

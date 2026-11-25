@@ -33,7 +33,7 @@ cat > "$T/bin/gh" <<'GH'
 echo "gh $*" >> "$GH_LOG"
 case "$1 $2" in
   "auth status") [ "${GH_AUTHED:-1}" = 1 ] ;;
-  "api user") [[ "$*" == *"(.id"* ]] && echo "tester 4242" || echo "tester" ;;
+  "api user") [[ "$*" == *"(.id"* ]] && echo "${GH_LOGIN:-tester} 4242" || echo "${GH_LOGIN:-tester}" ;;
   "api repos/"*) echo "${PUSH_PERM:-false}" ;;
   "repo fork") git clone -q --bare "$GH_ROOT/voyvodka/claude-project-flow.git" "$GH_ROOT/tester/claude-project-flow.git" 2>/dev/null; true ;;
   "repo view") [ -d "$GH_ROOT/tester/claude-project-flow.git" ] ;;
@@ -92,6 +92,14 @@ check "scrub fails closed when it cannot run (rc=$rc)" '[ $rc != 0 ] && ! grep -
 new_workdir; printf '%s\n' "$FIELDS_OK" | sed 's|^what-happened:.*|what-happened: It read /home/dquill/x first.|' > "$W/fields"
 TMPDIR=/nonexistent/tmp "$REPORT" prepare --workdir "$W" --project "$P" >/dev/null 2>&1; rc=$?
 check "prepare with a broken scrub does not pass a dirty payload (rc=$rc)" '[ $rc != 0 ]'
+
+GH_LOGIN=dana-ops; export GH_LOGIN
+new_workdir; "$REPORT" prepare --workdir "$W" --project "$P" >/dev/null 2>"$T/err"; rc=$?
+check "a user name inside the public login does not block the header (rc=$rc)" '[ $rc = 0 ]'
+printf '%s\n' "$FIELDS_OK" | sed 's|^what-happened:.*|what-happened: Dana saw it twice.|' > "$W/fields"
+"$REPORT" prepare --workdir "$W" --project "$P" >/dev/null 2>"$T/err"; rc=$?
+check "the same user name elsewhere is still blocked (rc=$rc)" '[ $rc = 3 ] && grep -q "user or machine name" "$T/err"'
+unset GH_LOGIN
 
 new_workdir; echo "x" > "$W/src/OUTSIDE.md"
 "$REPORT" prepare --workdir "$W" --project "$P" >/dev/null 2>"$T/err"; rc=$?
