@@ -72,7 +72,7 @@ and any question the user now has to answer. Nothing else — the file holds the
 Branch-specific additions:
 
 - **Market** — name real competitors with links, their pricing tier, and the specific gap the user's idea targets. If the space is crowded, say so bluntly; that is a finding, not a failure. Note if you find *no* competitors — that usually means the market is small, not untapped.
-- **Tech** — start from the stack line in `01-brief.md` (`SKILL.md` › Choosing the stack):
+- **Tech** — start from the stack row in `01-brief.md`'s constraints table (`SKILL.md` › Choosing the stack):
   - **User-supplied, or confirmed from the existing code** — the branch compares no stacks. It
     researches what sits inside the chosen one for this project: libraries, current versions,
     hosting and deployment fit. A requirement the stack meets badly is reported as a finding with

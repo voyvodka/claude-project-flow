@@ -38,7 +38,8 @@
 | Bütçe | |
 | Ekip | |
 | Zorunlu teknolojiler | |
-| Mevcut yetkinlik | <profil geçerli mi, yoksa bu projeye özel durum var mı> |
+| Mevcut yetkinlik | <ekibin tam hızla çalıştığı teknolojiler; kodu kim ya da ne yazıyor> |
+| Teknoloji yığını | <kullanıcı belirtti: … / mevcut koddan doğrulandı: … / açık — araştırılacak> |
 
 ## Ek bilgiler
 

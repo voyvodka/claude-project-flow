@@ -104,8 +104,8 @@ user constraint rather than a profile rule, which is a place nothing had specifi
 - **Instruction involved:** `references/phase-5-build.md` step 7 — "run it, or say plainly that
   you did not"; `references/phase-1-discover.md` — nothing asks what the interface must feel like
 - **Proposed change:** for projects with an interface, a Phase 1 item for the feel and visual bar,
-  and in Phase 5 no "verified" for a screen nobody looked at. `profile/macos-swift.md` now carries
-  the platform half of this.
+  and in Phase 5 no "verified" for a screen nobody looked at. The platform half once lived in
+  `profile/macos-swift.md`, removed with the stack defaults.
 - **Status:** logged — needs a second project
 
 ### The self-improvement check almost never runs
