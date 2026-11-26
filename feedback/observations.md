@@ -1,8 +1,12 @@
 # Observations
 
 Evidence from real projects about how this tool behaves. See
-[`../references/self-improvement.md`](../references/self-improvement.md) for what belongs here and
-what the bar for acting on it is.
+[`self-improvement.md`](../plugins/project-flow/skills/project-flow/references/self-improvement.md)
+for what belongs here and what the bar for acting on it is.
+
+This ledger is the maintainer's and is not shipped: it sits outside `plugins/project-flow/`, so
+installs never receive it. Reports from installs arrive as pull requests or issues
+(`references/defect-report.md`); the ones worth keeping are recorded here.
 
 **This is a redirect, not an archive.** An applied entry collapses to a row naming where the fix
 now lives; the incident that justified it stays in git history. A lesson kept here as prose is a
@@ -136,7 +140,7 @@ user constraint rather than a profile rule, which is a place nothing had specifi
 - **Project:** a repository shared by several developers (October 2026)
 - **Class:** seen once
 - **What happened:** Facts true only of one developer's machine landed in the committed rules and
-  misled the other developer.
+  misled others working in it.
 - **Instruction involved:** `references/phase-4-scaffold.md` — CLAUDE.md
 - **Proposed change:** none yet — log only
 - **Status:** logged

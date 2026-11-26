@@ -100,6 +100,7 @@ plugins/project-flow/
     ├── project/SKILL.md                    /project — alias kept from before 3.3.0, user-invoked only
     └── project-flow/
         ├── SKILL.md                        directives, state contract, routing
+        ├── scripts/report.sh               defect report: clone, prepare, scrub, preview, send
         ├── profile/                        EDIT THIS — conventions, machine, hosting; README indexes
         ├── references/phase-0-detect.md    loaded one at a time, per phase
         ├── references/phase-1-discover.md
@@ -107,12 +108,14 @@ plugins/project-flow/
         ├── references/phase-3-decide.md
         ├── references/phase-4-scaffold.md
         ├── references/phase-5-build.md
+        ├── references/self-improvement.md  when a miss is the tool's fault, and the bar for a change
+        ├── references/defect-report.md     turning such a miss into an issue link
         └── templates/                      document skeletons
 ```
 
-Research uses `general-purpose` subagents with prompts defined in `phase-2-research.md`,
-rather than plugin-level agent definitions — those would register globally in every project,
-which is a cost this plugin does not need to impose.
+Research and defect-report fixes use `general-purpose` subagents with prompts defined in
+`phase-2-research.md` and `defect-report.md`, rather than plugin-level agent definitions — those
+would register globally in every project, which is a cost this plugin does not need to impose.
 
 ## Developer profile
 
@@ -206,8 +209,7 @@ and comments stay minimal with critical ones welcome.
 
 Version 1.0.0 — the profile stopped pointing at reference repositories and absorbed them. Naming,
 comment policy (sparse by default, mandatory one-line summaries, controller actions exempt),
-safety rails, endpoint and envelope conventions, UTC-everywhere, tenant isolation, rotating-refresh
-auth, the UI rules that get re-litigated, and the personal/workplace infrastructure split are now
+safety rails, endpoint and envelope conventions, UTC-everywhere, the UI rules that get re-litigated, and the personal/workplace infrastructure split are now
 written into `profile/` rather than left to be rediscovered by reading code.
 
 Also new: a self-improvement loop. The tool asks at phase gates whether anything failed *because
