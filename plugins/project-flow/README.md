@@ -96,7 +96,6 @@ plugins/project-flow/
 │                                           tools are withheld and the no-write checks pass unasked;
 │                                           shipped on purpose — the command reads a suite only below
 │                                           the plugin
-├── hooks/                                  defect reports: send only after the user answered the preview
 └── skills/
     ├── project/SKILL.md                    /project — alias kept from before 3.3.0, user-invoked only
     └── project-flow/
@@ -110,15 +109,13 @@ plugins/project-flow/
         ├── references/phase-4-scaffold.md
         ├── references/phase-5-build.md
         ├── references/self-improvement.md  when a miss is the tool's fault, and the bar for a change
-        ├── references/defect-report.md     turning such a miss into a pull request or issue link
+        ├── references/defect-report.md     turning such a miss into an issue link
         └── templates/                      document skeletons
 ```
 
 Research and defect-report fixes use `general-purpose` subagents with prompts defined in
 `phase-2-research.md` and `defect-report.md`, rather than plugin-level agent definitions — those
 would register globally in every project, which is a cost this plugin does not need to impose.
-The one global piece is `hooks/`: it runs a short shell check on each prompt and Bash call, because
-the rule that nothing is sent before the user has answered its preview has to hold mechanically.
 
 ## Developer profile
 

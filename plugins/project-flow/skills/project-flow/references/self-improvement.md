@@ -102,8 +102,8 @@ file was written, and the change is simply gone. An accepted change that cannot 
 is worse than a rejected one, because everyone involved believes it landed.
 
 So every change to the tool, a repair or a design change, goes to the source repository through
-`defect-report.md`: the user agrees, a background agent makes the change in a fresh clone, the user
-sees exactly what would be sent, and agrees again. A circumstantial finding goes the same way, as a
+`defect-report.md`: the user agrees, a background agent writes the finding and its proposed change
+up as an issue, the user sees its exact text, and agrees again before getting the link to submit. A circumstantial finding goes the same way, as a
 report whose proposed change is "none yet — needs a second sighting"; the maintainer keeps the
 ledger of such findings in the source repository, and the install keeps none.
 
@@ -117,7 +117,7 @@ A report carries the shape of an observation entry, without the project:
 - **Proposed change:** or "none yet — needs a second sighting"
 
 No quotes from the conversation, no project or person names, no paths outside the plugin — the
-report leaves the machine, and `report.sh` refuses it otherwise. If the user declines a report,
+report goes into a public issue, and `report.sh` refuses it otherwise. If the user declines a report,
 nothing is written anywhere; the finding was worth one question, not a file.
 
 ## What not to do

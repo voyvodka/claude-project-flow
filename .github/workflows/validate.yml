@@ -70,10 +70,9 @@ jobs:
           exit $fail
 
       # A defect report leaves the user's machine, so its privacy checks are tested, not trusted.
-      - name: Defect-report script and hook
+      - name: Defect-report script
         run: |
-          shellcheck plugins/project-flow/skills/project-flow/scripts/report.sh \
-            plugins/project-flow/hooks/report-guard.sh tests/report-test.sh
+          shellcheck plugins/project-flow/skills/project-flow/scripts/report.sh tests/report-test.sh
           bash tests/report-test.sh
 
       # Two releases shipped a version block holding the same fixes twice, under two `### Fixed`
