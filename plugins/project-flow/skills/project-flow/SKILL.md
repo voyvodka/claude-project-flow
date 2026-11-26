@@ -127,7 +127,7 @@ and that is the end of it. This tool never edits its own install — not even a 
 reference; every change goes to the user as a report they approve.
 
 **A tool defect goes to the source repository as a report, not into this install.**
-`references/defect-report.md` is the flow: one yes/no question, a fix prepared in the background,
+`references/defect-report.md` is the flow: one yes/no question, a report prepared in the background,
 an exact preview, and a second yes/no before anything is sent. Its script is
 `${CLAUDE_PLUGIN_ROOT}/skills/project-flow/scripts/report.sh` — Claude Code substitutes that path
 into this file when it loads; it is not set in the Bash environment and not substituted in the

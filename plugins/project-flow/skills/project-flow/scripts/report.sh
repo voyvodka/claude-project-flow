@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-# Defect report: clone | prepare | preview | send. Flow and consent rules: references/defect-report.md.
+# Defect report: clone | prepare | preview | send. Flow: references/defect-report.md.
+# Only the issue-link route exists: the pull-request route is withheld until its consent gate holds.
 set -euo pipefail
 export LC_ALL=C
 
@@ -19,12 +20,7 @@ sha256() {
   else shasum -a 256 | cut -c1-64; fi
 }
 
-# User git config (noprefix, colour, diff drivers) would make send's rebuilt diff differ from the preview.
-plain_git() {
-  git -c diff.noprefix=false -c diff.mnemonicPrefix=false -c color.ui=false \
-      -c core.hooksPath=/dev/null -c commit.gpgsign=false -c core.autocrlf=false "$@"
-}
-plain_diff() { plain_git -C "$1" diff --no-ext-diff --no-textconv --no-renames "${@:2}"; }
+ISSUE_ROUTE="Route: issue link — you open it in your browser and submit it yourself; no diff is sent"
 
 meta_get() { sed -n "s/^$2=//p" "$1/meta" | head -n1; }
 
@@ -211,16 +207,11 @@ cmd_prepare() {
   [ "$(grep -cv '^[[:space:]]*$' "$WORKDIR/fields")" = 5 ] || die "fields: only the five 'key: value' lines are allowed"
 
   local target; target=$(meta_get "$WORKDIR" target)
-  if [ -z "$ROUTE" ]; then
-    if [ -n "$target" ] && command -v gh >/dev/null 2>&1 && gh auth status >/dev/null 2>&1; then ROUTE="pr"; else ROUTE="issue"; fi
-  fi
-  case "$ROUTE" in pr|issue) ;; *) die "--route is pr or issue" ;; esac
-  [ -n "$target" ] || [ "$ROUTE" = issue ] || die "this workdir has no GitHub target; only --route issue is possible"
+  [ -z "$ROUTE" ] || [ "$ROUTE" = issue ] || die "--route $ROUTE is not available in this release; the report is an issue link"
+  ROUTE=issue
 
   local title; title=$(field title)
-  local slug; slug=$(printf '%s' "$title" | tr '[:upper:]' '[:lower:]' | tr -cs 'a-z0-9' '-' | sed 's/^-*//; s/-*$//' | cut -c1-40 | sed 's/-*$//')
   local p="$WORKDIR/payload.txt"
-  : > "$WORKDIR/meta.route"
 
   {
     echo "project-flow defect report"
@@ -228,25 +219,7 @@ cmd_prepare() {
     echo "Base: $(meta_get "$WORKDIR" base_branch) @ $(meta_get "$WORKDIR" base | cut -c1-12)"
   } > "$p"
 
-  if [ "$ROUTE" = pr ]; then
-    local plugin_path; plugin_path=$(meta_get "$WORKDIR" plugin)
-    plain_git -C "$WORKDIR/src" add -A
-    local diff; diff=$(plain_diff "$WORKDIR/src" --cached "$(meta_get "$WORKDIR" base)")
-    [ -n "$diff" ] || die "no change in $WORKDIR/src — make the fix there first"
-    local who; who=$(gh api user --jq '.login + " " + (.id|tostring)') || die "gh could not read the signed-in account"
-    local login=${who% *} uid=${who#* }
-    local push; push=$(gh api "repos/$target" --jq '.permissions.push' 2>/dev/null || echo false)
-    local how="from a fork under your GitHub account"
-    [ "$push" = true ] && how="from a branch on $target"
-    { echo "Login: $login"; echo "Id: $uid"; echo "Push: $push"; } > "$WORKDIR/meta.route"
-    {
-      echo "Route: pull request $how, opened as $login (public)"
-      echo "Branch: report/$slug"
-      echo "Commit: author and committer $login <$uid+$login@users.noreply.github.com>, date in UTC, message = title"
-    } >> "$p"
-  else
-    echo "Route: issue link — you open it in your browser and submit it yourself; no diff is sent" >> "$p"
-  fi
+  echo "$ISSUE_ROUTE" >> "$p"
 
   {
     echo "Title: $title"
@@ -260,11 +233,8 @@ cmd_prepare() {
     echo
     echo "**Proposed change:** $(field proposed-change)"
     echo
-    echo "_Sent from a project-flow install after its user saw this exact text$( [ "$ROUTE" = pr ] && echo ' and diff'). It carries no project files, names or paths._"
+    echo "_Sent from a project-flow install after its user saw this exact text. It carries no project files, names or paths._"
   } >> "$p"
-  if [ "$ROUTE" = pr ]; then
-    { echo "=== Diff ==="; printf '%s\n' "$diff"; } >> "$p"
-  fi
 
   local findings
   if ! findings=$(scrub "$p"); then
@@ -316,47 +286,9 @@ cmd_send() {
   local title; title=$(sed -n 's/^Title: //p' "$p" | head -n1)
   awk '/^=== Body ===$/{b=1; next} /^=== Diff ===$/{exit} b' "$p" > "$WORKDIR/body.md"
 
-  if grep -q '^Route: issue' "$p"; then
-    echo "Open this link, check it and submit it yourself:"
-    echo "https://github.com/$target/issues/new?title=$(printf '%s' "$title" | urlencode)&body=$(urlencode < "$WORKDIR/body.md")"
-    return 0
-  fi
-
-  local source; source=$(meta_get "$WORKDIR" source)
-  [ "$source" = "https://github.com/$target.git" ] || die "source and target disagree; refusing to send"
-  local login uid push base base_branch branch
-  login=$(sed -n 's/^Login: //p' "$WORKDIR/meta.route"); uid=$(sed -n 's/^Id: //p' "$WORKDIR/meta.route")
-  push=$(sed -n 's/^Push: //p' "$WORKDIR/meta.route")
-  base=$(meta_get "$WORKDIR" base); base_branch=$(meta_get "$WORKDIR" base_branch)
-  branch=$(sed -n 's/^Branch: //p' "$p" | head -n1)
-  local now; now=$(gh api user --jq .login) || die "gh is not signed in"
-  [ "$now" = "$login" ] || die "the signed-in GitHub account changed since prepare; run prepare and preview again"
-
-  # Rebuilt from the previewed diff, never from the agent's working tree.
-  awk '/^=== Diff ===$/{d=1; next} d' "$p" > "$WORKDIR/send.patch"
-  rm -rf "$WORKDIR/send"
-  git clone -q --template= "$source" "$WORKDIR/send"
-  plain_git -C "$WORKDIR/send" checkout -q -b "$branch" "$base"
-  plain_git -C "$WORKDIR/send" apply --index "$WORKDIR/send.patch" || die "the previewed diff does not apply to $base"
-  local email="$uid+$login@users.noreply.github.com" date; date=$(date -u +%Y-%m-%dT%H:%M:%S+0000)
-  GIT_AUTHOR_NAME="$login" GIT_AUTHOR_EMAIL="$email" GIT_AUTHOR_DATE="$date" \
-  GIT_COMMITTER_NAME="$login" GIT_COMMITTER_EMAIL="$email" GIT_COMMITTER_DATE="$date" \
-    plain_git -C "$WORKDIR/send" commit -q --no-verify -m "$title"
-  plain_diff "$WORKDIR/send" "$base" HEAD > "$WORKDIR/sent.diff"
-  cmp -s "$WORKDIR/sent.diff" "$WORKDIR/send.patch" || die "the commit differs from the previewed diff; nothing was sent"
-
-  local remote_url head_owner=$login repo_name=${target#*/}
-  if [ "$push" = true ]; then
-    remote_url=$source; head_owner=${target%%/*}
-  else
-    gh repo fork "$target" --clone=false --default-branch-only >/dev/null 2>&1 || true
-    gh repo view "$login/$repo_name" --json name >/dev/null 2>&1 || die "could not create or find the fork $login/$repo_name"
-    remote_url="https://github.com/$login/$repo_name.git"
-  fi
-  plain_git -C "$WORKDIR/send" -c credential.helper= -c 'credential.helper=!gh auth git-credential' \
-    push -q "$remote_url" "HEAD:refs/heads/$branch" || die "push to $remote_url failed"
-  gh pr create --repo "$target" --base "$base_branch" --head "$head_owner:$branch" \
-    --title "$title" --body-file "$WORKDIR/body.md"
+  grep -qxF "$ISSUE_ROUTE" "$p" || die "only the issue link is available in this release; run prepare again"
+  echo "Open this link, check it and submit it yourself:"
+  echo "https://github.com/$target/issues/new?title=$(printf '%s' "$title" | urlencode)&body=$(urlencode < "$WORKDIR/body.md")"
 }
 
 case "$CMD" in

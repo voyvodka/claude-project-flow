@@ -7,7 +7,6 @@ export LC_ALL=C
 ROOT=$(cd "$(dirname "$0")/.." && pwd)
 PLUGIN="$ROOT/plugins/project-flow"
 REPORT="$PLUGIN/skills/project-flow/scripts/report.sh"
-GUARD="$PLUGIN/hooks/report-guard.sh"
 T=$(mktemp -d); trap 'rm -rf "$T"' EXIT
 pass=0; fail=0
 ok()  { pass=$((pass+1)); echo "ok   $1"; }
@@ -93,98 +92,51 @@ new_workdir; printf '%s\n' "$FIELDS_OK" | sed 's|^what-happened:.*|what-happened
 TMPDIR=/nonexistent/tmp "$REPORT" prepare --workdir "$W" --project "$P" >/dev/null 2>&1; rc=$?
 check "prepare with a broken scrub does not pass a dirty payload (rc=$rc)" '[ $rc != 0 ]'
 
-GH_LOGIN=dana-ops; export GH_LOGIN
-new_workdir; "$REPORT" prepare --workdir "$W" --project "$P" >/dev/null 2>"$T/err"; rc=$?
-check "a user name inside the public login does not block the header (rc=$rc)" '[ $rc = 0 ]'
-printf '%s\n' "$FIELDS_OK" | sed 's|^what-happened:.*|what-happened: Dana saw it twice.|' > "$W/fields"
-"$REPORT" prepare --workdir "$W" --project "$P" >/dev/null 2>"$T/err"; rc=$?
-check "the same user name elsewhere is still blocked (rc=$rc)" '[ $rc = 3 ] && grep -q "user or machine name" "$T/err"'
-unset GH_LOGIN
-
-new_workdir; echo "x" > "$W/src/OUTSIDE.md"
-"$REPORT" prepare --workdir "$W" --project "$P" >/dev/null 2>"$T/err"; rc=$?
-check "scrub blocks a change outside plugins/project-flow (rc=$rc)" '[ $rc = 3 ] && grep -q "outside the plugin" "$T/err"'
-
-new_workdir; printf 'see /Users/dquill/x\n' >> "$W/src/plugins/project-flow/README.md"
-"$REPORT" prepare --workdir "$W" --project "$P" >/dev/null 2>"$T/err"; rc=$?
-check "scrub reads added diff lines (rc=$rc)" '[ $rc = 3 ] && grep -q "home path" "$T/err"'
-
 new_workdir; printf '%s\n' "$FIELDS_OK" | sed 's|^what-happened:.*|what-happened: A fixture used t@example.com as its git address.|' > "$W/fields"
 "$REPORT" prepare --workdir "$W" --project "$P" >/dev/null 2>&1; rc=$?
 check "reserved example.com address passes (rc=$rc)" '[ $rc = 0 ]'
 
-new_workdir; "$REPORT" prepare --workdir "$W" --project "$P" >/dev/null
+# The pull-request route is withheld in this release: prepare makes an issue link and send only prints it.
+: > "$GH_LOG"
+new_workdir; "$REPORT" prepare --workdir "$W" --project "$P" >/dev/null 2>"$T/err"; rc=$?
+check "prepare makes the issue route even with a gh session and a change in the clone (rc=$rc)" \
+  '[ $rc = 0 ] && grep -q "^Route: issue link" "$W/payload.txt" && ! grep -q "=== Diff ===" "$W/payload.txt" && ! grep -q "^Branch: " "$W/payload.txt"'
 "$REPORT" preview --workdir "$W" --project "$P" > "$T/preview"
 D=$(sed -n 's/^Digest: //p' "$T/preview")
 sed -n '/^----- BEGIN PREVIEW/,/^----- END PREVIEW/p' "$T/preview" | sed '1d;$d' > "$T/shown"
 check "preview prints the payload byte for byte" 'cmp -s "$T/shown" "$W/payload.txt"'
-check "preview shows the noreply commit identity, not the git config" 'grep -q "4242+tester@users.noreply.github.com" "$T/shown" && ! grep -qi quillfeather "$T/shown"'
 
 "$REPORT" send --workdir "$W" --project "$P" >/dev/null 2>&1; rc=$?
-check "send without --digest is refused (rc=$rc)" '[ $rc != 0 ] && ! grep -q "pr create" "$GH_LOG"'
+check "send without --digest is refused (rc=$rc)" '[ $rc != 0 ]'
 cp "$W/payload.txt" "$T/payload.bak"; sed -i.x 's/^Title: .*/Title: Gate question skipped after a resumed phase, edited/' "$W/payload.txt"
 "$REPORT" send --workdir "$W" --project "$P" --digest "$D" >/dev/null 2>"$T/err"; rc=$?
-check "send with a digest from an older preview is refused (rc=$rc)" '[ $rc != 0 ] && grep -q "digest mismatch" "$T/err" && ! grep -q "pr create" "$GH_LOG"'
+check "send with a digest from an older preview is refused (rc=$rc)" '[ $rc != 0 ] && grep -q "digest mismatch" "$T/err"'
 cp "$T/payload.bak" "$W/payload.txt"
 sed -i.x 's|^\*\*Proposed change:\*\* |&Reported from /Users/dquill/x. |' "$W/payload.txt"
 "$REPORT" send --workdir "$W" --project "$P" --digest "$(shasum -a 256 < "$W/payload.txt" | cut -c1-16)" >/dev/null 2>"$T/err"; rc=$?
-check "send re-scrubs a payload edited after preview, even with its own digest (rc=$rc)" '[ $rc = 3 ] && ! grep -q "pr create" "$GH_LOG"'
+check "send re-scrubs a payload edited after preview, even with its own digest (rc=$rc)" '[ $rc = 3 ]'
 cp "$T/payload.bak" "$W/payload.txt"
 
-: > "$GH_LOG"
-"$REPORT" send --workdir "$W" --project "$P" --digest "$D" > "$T/out" 2>"$T/err"; rc=$?
-check "send via fork succeeds (rc=$rc)" '[ $rc = 0 ] && grep -q "repo fork" "$GH_LOG" && grep -q "pull/999" "$T/out"'
-BR=$(sed -n 's/^Branch: //p' "$W/payload.txt")
-FORK="$T/gh/tester/claude-project-flow.git"; BASE=$(sed -n 's/^base=//p' "$W/meta")
-git --git-dir="$FORK" diff --no-ext-diff "$BASE" "$BR" > "$T/pushed.diff" 2>/dev/null
-awk '/^=== Diff ===$/{d=1; next} d' "$W/payload.txt" > "$T/previewed.diff"
-check "pushed diff equals the previewed diff" 'cmp -s "$T/pushed.diff" "$T/previewed.diff"'
-check "commit author is the noreply address, date in UTC" \
-  '[ "$(git --git-dir="$FORK" log -1 --format="%ae %ce %ad" --date=format:%z "$BR")" = "4242+tester@users.noreply.github.com 4242+tester@users.noreply.github.com +0000" ]'
-awk '/^=== Body ===$/{b=1; next} /^=== Diff ===$/{exit} b' "$W/payload.txt" > "$T/previewed.body"
-check "PR body equals the previewed body" 'cmp -s "$GH_LOG.body" "$T/previewed.body"'
-check "PR head is the fork branch" '[ "$(cat "$GH_LOG.head")" = "tester:$BR" ]'
-check "nothing in the sent commit names the user" '! git --git-dir="$FORK" log -1 --format=%B%an%ae%cn%ce "$BR" | grep -qi -e quillfeather -e dana'
-
-export PUSH_PERM=true; : > "$GH_LOG"
-new_workdir; "$REPORT" prepare --workdir "$W" --project "$P" >/dev/null
-D=$("$REPORT" preview --workdir "$W" --project "$P" | sed -n 's/^Digest: //p')
-"$REPORT" send --workdir "$W" --project "$P" --digest "$D" >/dev/null 2>"$T/err"; rc=$?
-BR=$(sed -n 's/^Branch: //p' "$W/payload.txt")
-check "with push permission the branch goes to the repository, no fork (rc=$rc)" \
-  '[ $rc = 0 ] && ! grep -q "repo fork" "$GH_LOG" && git --git-dir="$T/gh/voyvodka/claude-project-flow.git" rev-parse -q --verify "$BR" >/dev/null'
-unset PUSH_PERM
-
-export GH_AUTHED=0; : > "$GH_LOG"
-new_workdir; "$REPORT" prepare --workdir "$W" --project "$P" >/dev/null
-check "without a gh session the route is the issue link" 'grep -q "^Route: issue link" "$W/payload.txt" && ! grep -q "=== Diff ===" "$W/payload.txt"'
-D=$("$REPORT" preview --workdir "$W" --project "$P" | sed -n 's/^Digest: //p')
 URL=$("$REPORT" send --workdir "$W" --project "$P" --digest "$D" | tail -n1)
 decoded=$(python3 -c 'import sys,urllib.parse as u; q=u.parse_qs(u.urlsplit(sys.argv[1]).query); sys.stdout.write(q["body"][0])' "$URL")
 awk '/^=== Body ===$/{b=1; next} b' "$W/payload.txt" > "$T/issue.body"
-check "issue link body decodes to the previewed body" '[ "$decoded" = "$(cat "$T/issue.body")" ]'
-check "issue route makes no pr/push call" '! grep -q -e "pr create" -e "repo fork" "$GH_LOG"'
-unset GH_AUTHED
+check "send prints an issue link whose body decodes to the previewed body" \
+  '[[ "$URL" == https://github.com/voyvodka/claude-project-flow/issues/new\?* ]] && [ "$decoded" = "$(cat "$T/issue.body")" ]'
 
-export CLAUDE_PLUGIN_DATA="$T/data"
-ev() { printf '{"session_id":"s1","hook_event_name":"%s","tool_name":"Bash","tool_input":{"command":"%s"}}' "$1" "$2" | bash "$GUARD"; }
-out=$(ev PreToolUse "bash /x/report.sh send --workdir /t/pf-report.1 --project . --digest ab")
-check "hook: send with no preview in the session is denied" '[[ "$out" == *deny* ]]'
-ev UserPromptSubmit "" >/dev/null; sleep 1
-ev PreToolUse "bash /x/report.sh preview --workdir /t/pf-report.1 --project ." >/dev/null
-out=$(ev PreToolUse "bash /x/report.sh send --workdir /t/pf-report.1 --project . --digest ab")
-check "hook: send in the same turn as the preview is denied" '[[ "$out" == *deny* ]]'
-sleep 1; ev UserPromptSubmit "" >/dev/null
-out=$(ev PreToolUse "bash /x/report.sh send --workdir /t/pf-report.1 --project . --digest ab")
-check "hook: send after the user replied is allowed" '[ -z "$out" ]'
-out=$(printf '{"session_id":"s2","hook_event_name":"PreToolUse","tool_input":{"command":"bash /x/report.sh send --digest ab"}}' | bash "$GUARD")
-check "hook: a reply in another session does not count" '[[ "$out" == *deny* ]]'
-out=$(ev PreToolUse "cd /t/pf-report.1/src && git push origin HEAD")
-check "hook: raw git push from a report workdir is denied" '[[ "$out" == *deny* ]]'
-out=$(ev PreToolUse "cd /t/pf-report.1 && gh pr create --title x --body y")
-check "hook: raw gh pr create from a report workdir is denied" '[[ "$out" == *deny* ]]'
-out=$(ev PreToolUse "git push origin main")
-check "hook: ordinary pushes elsewhere are untouched" '[ -z "$out" ]'
+new_workdir; "$REPORT" prepare --workdir "$W" --project "$P" --route pr >/dev/null 2>"$T/err"; rc=$?
+check "prepare refuses --route pr (rc=$rc)" '[ $rc = 2 ] && grep -q "not available" "$T/err" && [ ! -f "$W/payload.txt" ]'
+
+# A payload written by an older release, or by hand, for the pull-request route.
+"$REPORT" prepare --workdir "$W" --project "$P" >/dev/null
+sed -i.x 's/^Route: .*/Route: pull request from a fork under your GitHub account, opened as tester (public)/' "$W/payload.txt"
+printf 'Login: tester\nId: 4242\nPush: true\n' > "$W/meta.route"
+D=$("$REPORT" preview --workdir "$W" --project "$P" | sed -n 's/^Digest: //p')
+"$REPORT" send --workdir "$W" --project "$P" --digest "$D" > "$T/out" 2>"$T/err"; rc=$?
+check "send refuses a pull-request payload and pushes nothing (rc=$rc)" \
+  '[ $rc = 2 ] && grep -q "only the issue link" "$T/err" && ! grep -q "github.com" "$T/out" && [ "$(git --git-dir="$T/gh/voyvodka/claude-project-flow.git" for-each-ref | wc -l | tr -d " ")" = 1 ]'
+check "no step called gh to push, fork or open anything" '! grep -q -e "pr create" -e "repo fork" -e "api user" -e "api repos" "$GH_LOG"'
+check "report.sh has no push, fork or pull-request code" '! grep -Eq "git[^#]*[[:space:]]push|gh (pr|repo fork)|pull request [a-z]" "$REPORT"'
+check "the plugin registers no hooks" '[ ! -e "$PLUGIN/hooks" ]'
 
 echo "passed $pass, failed $fail"
 [ "$fail" = 0 ]

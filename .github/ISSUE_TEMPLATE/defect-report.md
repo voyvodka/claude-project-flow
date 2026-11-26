@@ -1,6 +1,6 @@
 ---
 name: Tool defect report
-about: Something went wrong because of how project-flow is written. project-flow fills this in for you when you have no gh session.
+about: Something went wrong because of how project-flow is written. project-flow fills this in for you.
 title: ''
 labels: ''
 ---

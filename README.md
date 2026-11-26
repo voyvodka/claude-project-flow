@@ -157,14 +157,13 @@ separates structural failures from circumstantial ones, and offers to report the
 acting is evidence from a real project, not taste, and the preferred fix is to remove the cause
 rather than add a reminder. It never edits its own install.
 
-A report is two yes/no questions at a gate. On the first yes a background agent clones this
-repository, makes the fix and builds the report while you keep working; once it is ready you see
-the exact title, body and diff that would be sent, and on the second yes the pull request opens
-from your own GitHub account (through a fork if you cannot push here). Without a `gh` session you
-get a prefilled issue link to submit yourself instead. What leaves is limited to files under
-`plugins/project-flow/` and an abstract description; a mechanical scrub refuses home-directory
-paths, e-mail addresses, user, host and git names, and your project's directory and file names
-before anything is shown, and a plugin hook refuses to send until you have answered the preview.
+A report is two yes/no questions at a gate. On the first yes a background agent checks the finding
+against a fresh clone of this repository and writes it up while you keep working; once it is ready
+you see the exact title and body, and on the second yes you get a prefilled issue link that you
+open and submit on GitHub yourself — nothing is sent for you. The text is an abstract description;
+a mechanical scrub refuses home-directory paths, e-mail addresses, user, host and git names, and
+your project's directory and file names before anything is shown. Sending a fix as a pull request
+from your own account is not available in this release.
 The flow is `plugins/project-flow/skills/project-flow/references/defect-report.md`; its checks are
 tested in `tests/report-test.sh`.
 
@@ -189,7 +188,7 @@ keep their Turkish keys.
 ```
 plugins/project-flow/              the plugin — see its own README for detail
 feedback/observations.md           the maintainer's findings ledger; not shipped
-tests/report-test.sh               checks for the defect-report script and hook; run in CI
+tests/report-test.sh               checks for the defect-report script; run in CI
 .github/ISSUE_TEMPLATE/            the form a defect-report issue link opens
 ```
 
